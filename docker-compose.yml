@@ -1,0 +1,35 @@
+services:
+  # Database Service
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=bb26_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Gold1
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  # Servizio Backend
+  backend:
+    build: ./bugboard26-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/bb26_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=Gold1
+    depends_on:
+      - db
+
+  # Servizio Frontend
+  frontend:
+    build: ./bugboard26-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
