@@ -1,0 +1,88 @@
+package com.bugboard25.controller;
+
+
+import com.bugboard25.dto.IssueDTO;
+import com.bugboard25.dto.NotificheDTO;
+import com.bugboard25.dto.UtenteCreateRequestDTO;
+import com.bugboard25.dto.UtentiDTO;
+import com.bugboard25.entity.Issue;
+import com.bugboard25.entity.Notifiche;
+import com.bugboard25.entity.Utenti;
+import com.bugboard25.service.IssueService;
+import com.bugboard25.service.NotificheService;
+import com.bugboard25.service.UtentiService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/utenti")
+public class UtentiController {
+    @Autowired
+    private UtentiService utentiService;
+
+    @Autowired
+    private IssueService issueService;
+
+    @Autowired
+    private NotificheService notificheService;
+
+    @GetMapping
+    public ResponseEntity<List<UtentiDTO>> getAllUtenti() {
+        List<UtentiDTO> utenti = utentiService.getUtenti();
+
+        return ResponseEntity.ok(utenti);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UtentiDTO> getUtentiByEmail(@PathVariable String email) {
+        UtentiDTO utente = utentiService.getUtentiByEmail(email);
+        return ResponseEntity.ok(utente);
+    }
+    
+    @GetMapping("{email}/issues")
+    public ResponseEntity<List<IssueDTO>> getIssuesAssegnate(
+            @PathVariable String email,
+            @RequestParam("idProgetto") int idProgetto,
+            java.security.Principal principal) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        List<IssueDTO> issues = issueService.getIssueAssegnate(email, idProgetto, principal.getName(), sort);
+        return ResponseEntity.ok(issues);
+    }
+
+    @GetMapping("/{email}/issuesCreate")
+    public ResponseEntity<List<IssueDTO>> getIssuesCreate(@PathVariable String email, java.security.Principal principal) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "data_creazione");
+        List<IssueDTO> issues = issueService.getIssueByAutore(email, principal.getName(), sort);
+        return ResponseEntity.ok(issues);
+    }
+
+    @GetMapping("/{email}/notifiche")
+    public ResponseEntity<List<NotificheDTO>> getNotifiche(@PathVariable String email) {
+        List<NotificheDTO> notifiche = notificheService.getNotificheByDestinatario(email);
+        return ResponseEntity.ok(notifiche);
+    }
+
+    @PostMapping
+    public ResponseEntity<UtentiDTO> createUtenti(@RequestBody UtenteCreateRequestDTO dto) {
+        UtentiDTO nuovoUtente = utentiService.creaUtente(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuovoUtente);
+    }
+
+    @PutMapping("/{email}")
+    public ResponseEntity<UtentiDTO> updateUtente(@PathVariable String email, @RequestBody UtenteCreateRequestDTO dto) {
+        UtentiDTO utenteAggiornato = utentiService.updateUtenteByEmail(email, dto);
+        return ResponseEntity.ok(utenteAggiornato);
+    }
+
+    @DeleteMapping("/{email}")
+    public ResponseEntity<Void> deleteUtenteByEmail(@PathVariable String email) {
+        utentiService.deleteUtenteByEmail(email);
+        return ResponseEntity.noContent().build();
+    }
+}
