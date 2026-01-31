@@ -1,0 +1,101 @@
+package com.bugboard25.controller;
+
+import com.bugboard25.dto.*;
+import com.bugboard25.entity.Commenti;
+import com.bugboard25.entity.Etichette;
+import com.bugboard25.entity.Issue;
+import com.bugboard25.entity.enumerations.priorita_issue;
+import com.bugboard25.entity.enumerations.stato_issue;
+import com.bugboard25.entity.enumerations.tipo_issue;
+import com.bugboard25.service.CommentiService;
+import com.bugboard25.service.EtichetteService;
+import com.bugboard25.service.IssueService;
+import com.bugboard25.service.NotificheService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/issues")
+public class IssueController {
+    @Autowired
+    private IssueService issueService;
+
+    @Autowired
+    private EtichetteService etichetteService;
+    @Autowired
+    private NotificheService notificheService;
+    @Autowired
+    private CommentiService commentiService;
+
+    @GetMapping("/stato/{stato_issue}")
+    public ResponseEntity<List<IssueDTO>> getIssueByStato(@PathVariable stato_issue stato_issue, java.security.Principal principal) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        List<IssueDTO> issues = issueService.getIssueByStato(stato_issue, principal.getName(), sort);
+        return ResponseEntity.ok(issues);
+    }
+
+    @GetMapping("/priorita/{priorita_issue}")
+    public ResponseEntity<List<IssueDTO>> getIssuePriorita(@PathVariable priorita_issue priorita_issue, java.security.Principal principal) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        List<IssueDTO> issues = issueService.getIssueByPriorita(priorita_issue, principal.getName(), sort);
+        return ResponseEntity.ok(issues);
+    }
+
+    @GetMapping("/tipo/{tipo_issue}")
+    public ResponseEntity<List<IssueDTO>> getIssueByTipo(@PathVariable tipo_issue tipo_issue, java.security.Principal principal) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        List<IssueDTO> issues = issueService.getIssueByTipo(tipo_issue, principal.getName(), sort);
+        return ResponseEntity.ok(issues);
+    }
+
+    @GetMapping("{idIssue}/etichette")
+    public ResponseEntity<List<EtichettaDTO>> getEtichetteByIssue(@PathVariable int idIssue) {
+        List<EtichettaDTO> etichette = etichetteService.getEtichetteByIssue(idIssue);
+        return ResponseEntity.ok(etichette);
+    }
+
+    @GetMapping("by-data")
+    public ResponseEntity<List<IssueDTO>> getIssueByData(
+            @RequestParam("dataInizio") @DateTimeFormat(pattern = "dd-MM-yyyy") Date dataInizio,
+            @RequestParam("dataFine") @DateTimeFormat(pattern = "dd-MM-yyyy") Date dataFine,
+            java.security.Principal principal) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        List<IssueDTO> issues = issueService.getIssueByData(dataInizio, dataFine, principal.getName(), sort);
+        return ResponseEntity.ok(issues);
+    }
+
+    @GetMapping("/{idIssue}/commenti")
+    public ResponseEntity<List<CommentoCompletoDTO>> getCommentByIssue(@PathVariable int idIssue) {
+        List<CommentoCompletoDTO> commenti = commentiService.getAllByIssue(idIssue);
+        return ResponseEntity.ok(commenti);
+    }
+
+    @PostMapping
+    public ResponseEntity<IssueDTO> createIssue(
+            @RequestPart("issueData") IssueCreateRequestDTO dto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+        IssueDTO nuovaIssue = issueService.creaIssue(dto, file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuovaIssue);
+    }
+
+    @PutMapping("/{idIssue}")
+    public ResponseEntity<IssueDTO> updateIssue(@PathVariable int idIssue, @RequestBody IssueUpdateRequestDTO dto, java.security.Principal principal) {
+        String emailRichiedente = principal.getName();
+        IssueDTO issue = issueService.updateIssueById(idIssue, dto, emailRichiedente);
+        return ResponseEntity.ok(issue);
+    }
+
+    @PutMapping("/archiviate/{idIssue}")
+    public ResponseEntity<IssueDTO> archiveIssue(@PathVariable int idIssue) {
+        IssueDTO issue = issueService.archiviaIssueById(idIssue);
+        return ResponseEntity.ok(issue);
+    }
+}
