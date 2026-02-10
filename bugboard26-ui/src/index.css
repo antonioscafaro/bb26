@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #4A55A2;
+    --on-primary: #FFFFFF;
+    --primary-container: #DDE0FF;
+    --on-primary-container: #00104D;
+    --secondary-container: #E2E0F9;
+    --on-secondary-container: #191A2C;
+    --tertiary-container: #FFD9E3;
+    --on-tertiary-container: #3D001E;
+    --error: #BA1A1A;
+    --on-error: #FFFFFF;
+    --background: #FEFBFF;
+    --on-background: #1B1B1F;
+    --surface: #F3F0F4;
+    --on-surface: #1B1B1F;
+    --surface-variant: #E4E1EC;
+    --on-surface-variant: #47464F;
+    --outline: #777680;
+    --outline-variant: #C8C5D0;
+  }
+
+  .dark {
+    --primary: #B8C3FF;
+    --on-primary: #122472;
+    --primary-container: #313D89;
+    --on-primary-container: #DDE0FF;
+    --secondary-container: #444559;
+    --on-secondary-container: #E2E0F9;
+    --tertiary-container: #743B52;
+    --on-tertiary-container: #FFD9E3;
+    --error: #FFB4AB;
+    --on-error: #690005;
+    --background: #1B1B1F;
+    --on-background: #E4E2E6;
+    --surface: #2A292E;
+    --on-surface: #C8C6CA;
+    --surface-variant: #47464F;
+    --on-surface-variant: #C8C5D0;
+    --outline: #91909A;
+    --outline-variant: #47464F;
+  }
+
+  body {
+    @apply bg-background text-on-background transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Toast Animations */
+    .animate-enter {
+        animation: slideIn 0.3s ease-out;
+    }
+    .animate-leave {
+        animation: slideOut 0.2s ease-in;
+    }
+
+    /* Card Exit Animations */
+    .card-exit {
+        animation: cardExit 0.4s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+    }
+    
+    .card-exit-mobile {
+        animation: cardExitMobile 0.3s ease-in forwards;
+    }
+
+    /* Drag and Drop Styles */
+    .drag-preview {
+        transform: rotate(5deg) scale(1.05);
+        opacity: 0.8;
+        z-index: 1000;
+    }
+    
+    .drop-zone-active {
+        background: rgba(74, 85, 162, 0.1);
+        border: 2px dashed var(--primary);
+        transform: scale(1.02);
+    }
+
+    /* Bottom Sheet Animation */
+    .bottom-sheet-enter {
+        animation: bottomSheetSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bottom-sheet-exit {
+        animation: bottomSheetSlideDown 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes cardExit {
+    0% {
+        transform: scale(1) rotateX(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(0.95) rotateX(-10deg);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(0.8) rotateX(-90deg);
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@keyframes cardExitMobile {
+    0% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%) scale(0.9);
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@keyframes bottomSheetSlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bottomSheetSlideDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
