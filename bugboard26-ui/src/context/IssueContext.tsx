@@ -7,7 +7,10 @@ import {
   mapStatusToBackend, mapStatusFromBackend,
   mapPriorityToBackend, mapPriorityFromBackend,
   mapTypeToBackend, mapTypeFromBackend,
-  mapRoleToBackend, mapRoleFromBackend
+  mapRoleToBackend, mapRoleFromBackend,
+  mapBackendIssueToIssue,
+  mapBackendUserToUser,
+  mapBackendNotificationToNotification
 } from '../utils/mappers';
 
 
@@ -91,15 +94,9 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
     try {
       const res = await api.get<BackendNotification[]>(`/notifiche/destinatario/${currentUser.email}`);
       console.log("Raw Notifications:", res.data);
-      const mappedNotifications: Notification[] = res.data.map((n) => ({
-        id: n.id?.toString() || Math.random().toString(),
-        message: n.testo || 'No content',
-        date: n.dataCreazione ? new Date(n.dataCreazione).toISOString() : new Date().toISOString(),
-        isRead: !!n.letto,
-        type: n.tipo_notifica === 'ASSEGNATA' ? 'assignment' : (n.tipo_notifica === 'PROGETTO' ? 'project' : 'mention'),
-        issueId: n.idIssue ? n.idIssue.toString() : undefined,
-        recipientId: currentUser.id // Added explicit recipientId to match type
-      }));
+      const mappedNotifications: Notification[] = res.data.map((n) =>
+        mapBackendNotificationToNotification(n, currentUser.id)
+      );
       dispatch({ type: 'SET_NOTIFICATIONS', payload: mappedNotifications });
     } catch (error) {
       console.error("Failed to fetch notifications", error);
@@ -123,58 +120,10 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
       console.log("Raw Issues Data:", allIssues);
 
       const mappedIssues: Issue[] = allIssues
-        .filter((i) => i && i.id && i.titolo && i.autore) // Filter out clearly broken records
-        .map((i) => ({
-          id: i.id.toString(),
-          title: i.titolo || 'Untitled',
-          description: i.descrizione || '',
-          status: mapStatusFromBackend(i.statoIssue),
-          priority: mapPriorityFromBackend(i.prioritaIssue),
-          type: mapTypeFromBackend(i.tipoIssue),
-          createdAt: i.dataCreazione,
-          updatedAt: i.dataUltimoAggiornamento,
-          reporter: {
-            id: i.autore?.email || 'unknown',
-            email: i.autore?.email || 'unknown',
-            name: i.autore?.nome || 'Unknown',
-            surname: i.autore?.cognome || '',
-            role: mapRoleFromBackend(i.autore?.ruolo),
-            avatarUrl: `https://ui-avatars.com/api/?name=${i.autore?.nome || '?'}+${i.autore?.cognome || '?'}&background=random`
-          },
-          assignee: i.assegnatario ? {
-            id: i.assegnatario.email,
-            email: i.assegnatario.email,
-            name: i.assegnatario.nome,
-            surname: i.assegnatario.cognome,
-            role: mapRoleFromBackend(i.assegnatario.ruolo),
-            avatarUrl: `https://ui-avatars.com/api/?name=${i.assegnatario.nome}+${i.assegnatario.cognome}&background=random`
-          } : undefined,
-          projectId: i.progetto ? i.progetto.id.toString() : '',
-          comments: i.commenti ? i.commenti.map((c) => ({
-            id: c.id.toString(),
-            content: c.testo || 'No content',
-            timestamp: c.data_creazione || new Date().toISOString(),
-            author: {
-              id: 'unknown',
-              email: 'unknown',
-              name: c.autore?.nome || 'Unknown',
-              surname: c.autore?.cognome || '',
-              role: 'UTENTE',
-              avatarUrl: `https://ui-avatars.com/api/?name=${c.autore?.nome || '?'}+${c.autore?.cognome || '?'}&background=random`
-            }
-          })) : [],
-          labels: i.labels || [],
-          attachments: i.allegati || []
-        }));
+        .filter((i) => i && i.id && i.titolo && i.autore)
+        .map(mapBackendIssueToIssue);
 
-      const mappedUsers: User[] = usersRes.data.map((u) => ({
-        id: u.email,
-        email: u.email,
-        name: u.nome,
-        surname: u.cognome,
-        role: mapRoleFromBackend(u.ruolo),
-        avatarUrl: `https://ui-avatars.com/api/?name=${u.nome}+${u.cognome}&background=random`
-      }));
+      const mappedUsers: User[] = usersRes.data.map(mapBackendUserToUser);
 
       dispatch({ type: 'SET_ISSUES', payload: mappedIssues });
       dispatch({ type: 'SET_USERS', payload: mappedUsers });
