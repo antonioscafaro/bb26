@@ -53,6 +53,7 @@ const M3_COLORS = {
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
+    NESSUNA: M3_COLORS.neutral,
     BASSA: M3_COLORS.success,
     MEDIA: M3_COLORS.warning,
     ALTA: M3_COLORS.secondary,
@@ -62,8 +63,8 @@ const PRIORITY_COLORS: Record<string, string> = {
 const TYPE_COLORS: Record<string, string> = {
     BUG: M3_COLORS.error,
     FEATURE: M3_COLORS.primary,
-    DOCUMENTAZIONE: M3_COLORS.tertiary,
-    DOMANDA: M3_COLORS.warning
+    DOCUMENTATION: M3_COLORS.tertiary,
+    QUESTION: M3_COLORS.warning
 };
 
 export const Reports = () => {
