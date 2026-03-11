@@ -30,7 +30,7 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
                 id: p.id.toString(),
                 name: p.nome,
                 description: p.descrizione,
-                createdAt: p.dataCreazione,
+                createdAt: p.data_creazione,
                 members: [] // Members are fetched separately if needed
             }));
             setProjects(mappedProjects);
