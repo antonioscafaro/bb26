@@ -115,7 +115,7 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
                 id: newProject.id.toString(),
                 name: newProject.nome,
                 description: newProject.descrizione,
-                createdAt: newProject.dataCreazione,
+                createdAt: newProject.data_creazione,
                 members: []
             };
             setProjects(prev => [...prev, mappedProject]);
