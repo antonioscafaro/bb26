@@ -1,4 +1,4 @@
-import type { IssueStatus, IssuePriority, IssueType, UserRole, BackendIssue, Issue, BackendUser, User, BackendComment, Comment, BackendNotification, Notification } from '../types';
+import type { IssueStatus, IssuePriority, IssueType, UserRole, BackendIssue, Issue, BackendUser, User, BackendComment, Comment, BackendNotification, Notification, NotificationType } from '../types';
 
 export const mapStatusToBackend = (status: IssueStatus): string => {
     switch (status) {
@@ -89,8 +89,8 @@ export const mapBackendCommentToComment = (c: BackendComment): Comment => ({
     content: c.testo || 'No content',
     timestamp: c.data_creazione || new Date().toISOString(),
     author: {
-        id: 'unknown',
-        email: 'unknown',
+        id: c.autore?.email || 'unknown',
+        email: c.autore?.email || 'unknown',
         name: c.autore?.nome || 'Unknown',
         surname: c.autore?.cognome || '',
         role: 'UTENTE',
@@ -121,12 +121,24 @@ export const mapBackendIssueToIssue = (i: BackendIssue): Issue => ({
     attachments: i.allegati || []
 });
 
+const mapNotificationType = (tipo: string): NotificationType => {
+    switch (tipo) {
+        case 'ASSEGNATA': return 'assignment';
+        case 'PROGETTO': return 'project';
+        case 'MENZIONE': return 'mention';
+        case 'COMMENTO': return 'comment';
+        case 'CRITICA': return 'critical';
+        case 'RISOLTA': return 'resolved';
+        default: return 'mention';
+    }
+};
+
 export const mapBackendNotificationToNotification = (n: BackendNotification, currentUserId: string): Notification => ({
     id: n.id?.toString() || Math.random().toString(),
     message: n.testo || 'No content',
     date: n.dataCreazione ? new Date(n.dataCreazione).toISOString() : new Date().toISOString(),
     isRead: !!n.letto,
-    type: n.tipo_notifica === 'ASSEGNATA' ? 'assignment' : (n.tipo_notifica === 'PROGETTO' ? 'project' : 'mention'),
+    type: mapNotificationType(n.tipo_notifica),
     issueId: n.idIssue ? n.idIssue.toString() : undefined,
     recipientId: currentUserId
 });
