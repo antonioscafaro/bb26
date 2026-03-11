@@ -20,7 +20,7 @@ import type { Notification } from '../../types';
  * @param {NotificationDrawerProps} props - Le props del componente.
  */
 export const NotificationDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void; }) => {
-  const { state, markNotificationAsRead } = useIssues();
+  const { state, markNotificationAsRead, markAllNotificationsAsRead } = useIssues();
   const { notifications } = state;
   const isMobile = useIsMobile();
 
@@ -41,9 +41,7 @@ export const NotificationDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClo
   };
 
   const handleMarkAllAsRead = () => {
-    unreadNotifications.forEach(n => {
-      markNotificationAsRead(n.id);
-    });
+    markAllNotificationsAsRead();
   };
 
   // --- Animazioni ---

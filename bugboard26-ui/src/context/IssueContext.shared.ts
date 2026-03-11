@@ -32,6 +32,7 @@ export type IssueContextType = {
     updateUser: (userId: string, userData: Partial<User>) => Promise<void>;
     deleteUser: (userId: string) => Promise<void>;
     markNotificationAsRead: (notificationId: string) => Promise<void>;
+    markAllNotificationsAsRead: () => Promise<void>;
     fetchNotifications: () => Promise<void>;
 };
 
