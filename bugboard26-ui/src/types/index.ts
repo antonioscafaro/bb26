@@ -52,13 +52,15 @@ export interface Project {
   createdAt?: string;
 }
 
+export type NotificationType = 'assignment' | 'mention' | 'project' | 'comment' | 'critical' | 'resolved';
+
 export interface Notification {
   id: string;
   message: string;
   isRead: boolean;
   date: string;
   recipientId: string;
-  type?: 'assignment' | 'mention' | 'project';
+  type?: NotificationType;
   issueId?: string;
 }
 
@@ -77,11 +79,17 @@ export interface BackendUser {
   ruolo: string;
 }
 
+export interface BackendCommentAuthor {
+  email?: string;
+  nome: string;
+  cognome?: string;
+}
+
 export interface BackendComment {
   id: number;
   testo: string;
   data_creazione: string;
-  autore: BackendUser;
+  autore: BackendCommentAuthor;
   idIssue?: number;
 }
 
@@ -106,7 +114,7 @@ export interface BackendProject {
   id: number;
   nome: string;
   descrizione: string;
-  dataCreazione: string;
+  data_creazione: string;
   creatore?: string | BackendUser;
 }
 
