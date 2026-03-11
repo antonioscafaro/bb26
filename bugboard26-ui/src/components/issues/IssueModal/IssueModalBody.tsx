@@ -49,7 +49,7 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, i
                         {issue.attachments.map((att) => (
                             <div key={att.id} className="relative group">
                                 <a
-                                    href={`http://localhost:8080/api/allegati/download/${att.id}`}
+                                    href="#"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block"
