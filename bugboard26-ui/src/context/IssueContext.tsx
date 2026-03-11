@@ -321,7 +321,6 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
   const updateUser = async (userId: string, userData: Partial<User>) => {
     try {
       const response = await api.put(`/utenti/${userId}`, {
-        email: userData.email,
         nome: userData.name,
         cognome: userData.surname,
         ruolo: mapRoleToBackend(userData.role || 'UTENTE')
@@ -361,6 +360,17 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
     }
   };
 
+  const markAllNotificationsAsRead = async () => {
+    if (!currentUser?.email) return;
+    try {
+      await api.put(`/notifiche/destinatario/${currentUser.email}`);
+      // Re-fetch notifications to get the updated state from backend
+      await fetchNotifications();
+    } catch (error) {
+      console.error("Failed to mark all notifications as read", error);
+    }
+  };
+
   return (
     <IssueContext.Provider value={{
       state,
@@ -373,6 +383,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
       updateUser,
       deleteUser,
       markNotificationAsRead,
+      markAllNotificationsAsRead,
       fetchNotifications
     }}>
       {children}
