@@ -265,8 +265,9 @@ public class IssueService {
                 // Verify assignee is member of the project
                 com.bugboard25.entity.ComposedPrimaryKeys.Progetto_MembriPrimaryKey pk = 
                     new com.bugboard25.entity.ComposedPrimaryKeys.Progetto_MembriPrimaryKey(issue.getIdProgetto().getId(), assegnatario.getEmail());
-                
-                if (!progetto_MembriRepository.existsById(pk)) {
+
+
+                if (!progetto_MembriRepository.existsById(pk) && assegnatario.getRuolo() != tipo_ruolo.AMMINISTRATORE) {
                     throw new RuntimeException("L'utente selezionato non è membro del progetto");
                 }
                 
