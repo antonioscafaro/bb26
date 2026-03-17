@@ -1,0 +1,59 @@
+% ---------------------------------------------------------------------
+\subsection{System Design}
+\label{sec:system-design}
+% ---------------------------------------------------------------------
+
+Il sistema \productname{} è stato progettato seguendo un'architettura distribuita a tre livelli (three-tier), in cui ciascun componente (front-end, back-end e database) è sviluppato, distribuito e scalato in modo indipendente. Questa scelta architetturale è motivata dalla necessità di garantire \textbf{separazione delle responsabilità}, \textbf{manutenibilità} e \textbf{scalabilità} del sistema nel tempo.
+
+% ---------------------------------------------------------------------
+\subsubsection{Criteri di progettazione}
+\label{subsec:criteri-progettazione}
+% ---------------------------------------------------------------------
+
+Le decisioni architetturali e implementative sono state guidate dai seguenti criteri di design:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Separazione delle responsabilità (Separation of Concerns)}: ogni componente del sistema ha un ruolo ben definito. Il front-end si occupa esclusivamente della presentazione e dell'interazione con l'utente; il back-end gestisce la logica di business, la validazione e l'accesso ai dati; il database garantisce la persistenza. All'interno del back-end, la logica è ulteriormente stratificata in livelli distinti (Controller, Service, Repository), ciascuno con responsabilità specifiche e non sovrapposte.
+
+\item \textbf{Architettura a livelli (Layered Architecture)}: il back-end adotta un'architettura a livelli conforme ai principi di Spring Boot, in cui ogni strato comunica esclusivamente con quello immediatamente adiacente:
+  \begin{itemize}
+  \item \textbf{Controller}: riceve le richieste HTTP, effettua la deserializzazione dei parametri e delega l'elaborazione al livello Service. Non contiene logica di business.
+  \item \textbf{Service}: implementa la logica applicativa, coordina le operazioni tra più repository e gestisce le regole di business (es.\ controllo permessi, notifiche, validazioni trasversali).
+  \item \textbf{Repository}: astrae l'accesso al database tramite il pattern Repository di Spring Data JPA, esponendo metodi di query dichiarativi.
+  \item \textbf{Entity}: modella le tabelle del database come classi Java annotate con JPA, definendo relazioni, vincoli e mapping object-relational.
+  \end{itemize}
+
+\item \textbf{Data Transfer Objects (DTO)}: la comunicazione tra i livelli e verso il client avviene tramite oggetti DTO dedicati, distinti dalle entity di persistenza. Questo pattern garantisce il \textbf{disaccoppiamento} tra la rappresentazione interna dei dati e la loro esposizione tramite API, consentendo di controllare quali informazioni vengono esposte, evitare dipendenze circolari nella serializzazione e favorire l'evoluzione indipendente del modello dati e delle interfacce REST.
+
+\item \textbf{Architettura component-based (Front-end)}: il front-end è strutturato secondo il paradigma a componenti di React, in cui ogni elemento dell'interfaccia è un componente riutilizzabile e auto-contenuto. L'organizzazione delle directory riflette questa filosofia:
+  \begin{itemize}
+  \item \texttt{pages/}: componenti di alto livello che rappresentano le viste dell'applicazione (Kanban Board, Progetti, Report, ecc.)
+  \item \texttt{components/}: componenti riutilizzabili organizzati per dominio funzionale (\texttt{issues/}, \texttt{projects/}, \texttt{layout/}, \texttt{common/})
+  \item \texttt{hooks/}: custom hooks per incapsulare logica riutilizzabile (drag \& drop, responsive detection, theming)
+  \item \texttt{context/}: gestione dello stato globale tramite React Context API per autenticazione, progetto corrente e issue
+  \item \texttt{api/}: livello centralizzato per le chiamate HTTP tramite Axios, con interceptor per la gestione automatica dei token JWT
+  \item \texttt{types/}: definizioni TypeScript per la type safety end-to-end
+  \end{itemize}
+
+\item \textbf{Comunicazione REST stateless}: l'interazione tra front-end e back-end avviene tramite API RESTful stateless. Ogni richiesta contiene tutte le informazioni necessarie per essere elaborata (incluso il token JWT di autenticazione), senza che il server mantenga stato di sessione. Questo approccio favorisce la scalabilità orizzontale del back-end.
+
+\end{itemize}
+\newpage
+% ---------------------------------------------------------------------
+\subsubsection{Motivazioni architetturali}
+\label{subsec:motivazioni-architetturali}
+% ---------------------------------------------------------------------
+
+La scelta di un'architettura three-tier con separazione netta tra i componenti è motivata da diverse considerazioni:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Manutenibilità}: la stratificazione del codice consente di modificare un livello (ad esempio la logica di business) senza impattare gli altri (presentazione o persistenza), in accordo con il requisito REQ-NFR-05.
+
+\item \textbf{Testabilità}: la separazione in livelli facilita il testing unitario di ciascuno strato in isolamento, grazie alla possibilità di sostituire le dipendenze con mock o stub.
+
+\item \textbf{Riusabilità}: l'organizzazione a componenti (sia lato back-end con i Service che lato front-end con i componenti React) favorisce il riuso della logica in diversi contesti applicativi.
+
+\item \textbf{Sicurezza}: la centralizzazione dell'autenticazione e dell'autorizzazione nel livello back-end, tramite Spring Security, garantisce che le regole di accesso siano applicate uniformemente a tutte le operazioni, indipendentemente dal client che le invoca.
+
+\item \textbf{Evoluzione indipendente}: l'utilizzo di DTO e API REST come contratto tra front-end e back-end consente ai due componenti di evolvere in modo indipendente, purché il contratto venga rispettato.
+\end{itemize}

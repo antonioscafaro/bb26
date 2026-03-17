@@ -1,0 +1,164 @@
+% ---------------------------------------------------------------------
+\subsection{Descrizione Dettagliata Casi d'Uso (Template Cockburn)}
+\label{sec:cockburn}
+% ---------------------------------------------------------------------
+
+Questa sezione fornisce la formalizzazione testuale strutturata di un caso d'uso significativo secondo il template di Alistair Cockburn. Il caso d'uso selezionatp è rappresentativo delle funzionalità core del sistema ed è stato scelto per dimostrare la completezza della specifica.
+
+% ---------------------------------------------------------------------
+\subsubsection{Caso d'Uso \#5: Segnalazione Issue}
+\label{subsec:cockburn-segnala-issue}
+% ---------------------------------------------------------------------
+
+\begin{longtable}{|p{0.28\linewidth}|p{0.65\linewidth}|}
+\hline
+\textbf{Use Case \#5} & \textbf{Segnalazione Issue} \\ \hline
+\endfirsthead
+
+\hline
+\textbf{Use Case \#5} & \textbf{Segnalazione Issue} \\ \hline
+\endhead
+
+\hline
+\endfoot
+
+\textbf{Goal in Context} & Un utente autenticato oppure un amministratore vogliono segnalare una nuova issue per tracciare un problema, richiedere una funzionalità, porre una domanda o segnalare un problema di documentazione. \\ \hline
+
+\textbf{Preconditions} & \\ \hline
+
+\textbf{Success End Conditions} & La issue viene creata con successo e aggiunta alla lista delle issue del progetto con stato "ToDo". L'utente può visualizzare la issue appena creata e riceve conferma dell'operazione. \\ \hline
+
+\textbf{Failed End Conditions} & Nessun cambiamento viene effettuato al sistema. La issue non viene creata se i dati obbligatori sono incompleti o non validi. \\ \hline
+
+\textbf{Primary Actor} & Utente Autenticato oppure Amministratore \\ \hline
+
+\textbf{Trigger} & L'utente clicca sul pulsante "Crea Nuova Issue" o "Segnala Issue" dalla dashboard o dalla lista issues. \\ \hline
+
+\end{longtable}
+
+\newpage
+
+\paragraph*{Main Scenario}
+
+\begin{longtable}{|c|p{0.38\linewidth}|p{0.48\linewidth}|}
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endfirsthead
+
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endhead
+
+\hline
+\endfoot
+
+1 & Clicca su "Segnala nuova issue" dalla dashboard & \\ \hline
+
+2 & & Mostra il form di creazione issue vuoto (M1) \\ \hline
+
+3 & Compila i campi obbligatori: 
+\newline $\bullet$ Titolo,
+\newline $\bullet$ Descrizione,
+\newline $\bullet$ Tipo,
+\newline Opzionalmente, sceglie priorità e/o aggiunge etichette e/o immagini
+\newline Clicca sul pulsante "Crea Issue" & \\ \hline
+
+4 & & Reindirizza alla pagina di vista Kanban (M6) e mostra il messaggio di successo "Issue creata con successo" (M2) \\ \hline
+
+\end{longtable}
+
+\newpage
+\subsubsection*{Estensione A: Campo Titolo mancante}
+
+\begin{longtable}{|c|p{0.38\linewidth}|p{0.48\linewidth}|}
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endfirsthead
+
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endhead
+
+\hline
+\endfoot
+
+3.1a & Compila tutti i campi tranne il \textbf{Titolo} e clicca "Crea Issue" & \\ \hline
+
+3.2a & & Mostra messaggio di errore (M3) \\ \hline
+
+3.3a & Clicca "OK" o chiude il messaggio di errore & \\ \hline
+
+3.4a & & Il form rimane visualizzato con i dati già inseriti preservati e ritorna allo step 3 dello scenario principale \\ \hline
+
+\end{longtable}
+
+\subsubsection*{Estensione B: Campo Descrizione mancante}
+
+\begin{longtable}{|c|p{0.38\linewidth}|p{0.48\linewidth}|}
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endfirsthead
+
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endhead
+
+\hline
+\endfoot
+
+3.1b & Compila tutti i campi tranne la \textbf{Descrizione} e clicca "Crea Issue" & \\ \hline
+
+3.2b & & Mostra messaggio di errore (M4) \\ \hline
+
+3.3b & Clicca "OK" o chiude il messaggio di errore & \\ \hline
+
+3.4b & & Il form rimane visualizzato con i dati già inseriti preservati e ritorna allo step 3 dello scenario principale \\ \hline
+
+\end{longtable}
+
+\newpage
+\subsubsection*{Estensione C: Campo Tipo mancante}
+
+\begin{longtable}{|c|p{0.38\linewidth}|p{0.48\linewidth}|}
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endfirsthead
+
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endhead
+
+\hline
+\endfoot
+
+3.1c & Compila tutti i campi tranne il \textbf{Tipo} e clicca "Crea Issue" & \\ \hline
+
+3.2c & & Mostra messaggio di errore (M5) \\ \hline
+
+3.3c & Clicca "OK" o chiude il messaggio di errore & \\ \hline
+
+3.4c & & Il form rimane visualizzato con i dati già inseriti preservati e ritorna allo step 3 dello scenario principale \\ \hline
+
+\end{longtable}
+
+\subsubsection*{Estensione D: Annullamento operazione}
+
+\begin{longtable}{|c|p{0.38\linewidth}|p{0.48\linewidth}|}
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endfirsthead
+
+\hline
+\textbf{Step} & \textbf{User Action} & \textbf{System Response} \\ \hline
+\endhead
+
+\hline
+\endfoot
+
+3.1d & Durante la compilazione del form, clicca su "Annulla" oppure sulla "X" per chiudere & \\ \hline
+
+3.2d & & Chiude il form senza salvare, reindirizza alla pagina precedente con vista Kanban (M6)\\ \hline
+
+\end{longtable}
+
+\newpage

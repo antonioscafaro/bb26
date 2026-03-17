@@ -1,0 +1,169 @@
+\newpage
+% ---------------------------------------------------------------------
+\subsubsection{Vincoli di Progettazione}
+\label{subsec:vincoli-progettazione}
+% ---------------------------------------------------------------------
+
+Questa sezione descrive i vincoli di progettazione e le scelte architetturali e tecnologiche imposte dal committente o definite dal team per garantire il rispetto dei requisiti non funzionali, in particolare quelli di manutenibilità (REQ-NFR-05) e performance (REQ-NFR-01).
+
+% ---------------------------------------------------------------------
+\paragraph{Architettura Distribuita}
+\label{subsubsec:architettura-distribuita}
+% ---------------------------------------------------------------------
+
+Il sistema \productname{} adotta un'architettura distribuita client-server con separazione netta tra presentazione e logica di business:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Front-end}: applicazione web Single Page Application (SPA) responsabile dell'interfaccia utente e dell'interazione
+\item \textbf{Back-end}: server applicativo che gestisce logica di business, autenticazione, validazione dati e persistenza
+\item \textbf{Database}: PostgreSQL per persistenza dati relazionali
+\end{itemize}
+
+La comunicazione tra front-end e back-end avviene esclusivamente tramite \textbf{API REST} su protocollo HTTP/HTTPS. Il front-end non ha accesso diretto al database; tutte le operazioni sui dati sono gestite dal back-end.
+
+% ---------------------------------------------------------------------
+\paragraph{Stack Tecnologico Back-end}
+\label{subsubsec:stack-backend}
+% ---------------------------------------------------------------------
+
+\subparagraph{Tecnologie Core}
+
+Il back-end utilizza il seguente stack tecnologico:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Linguaggio}: Java
+\item \textbf{Framework}: Spring Boot
+\item \textbf{Build Tool}: Apache Maven per gestione dipendenze e build automation
+\item \textbf{Database Access}: Spring Data JPA
+\item \textbf{Migrations}: Flyway per versioning dello schema database
+\end{itemize}
+
+\subparagraph{Moduli Spring Boot}
+
+Il progetto integra i seguenti moduli dell'ecosistema Spring:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Spring Web}: per sviluppo API REST con annotazioni \texttt{@RestController} e serializzazione JSON automatica
+\item \textbf{Spring Security}: per autenticazione JWT, password hashing con BCrypt, autorizzazione basata su ruoli
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\paragraph{Stack Tecnologico Front-end}
+\label{subsubsec:stack-frontend}
+% ---------------------------------------------------------------------
+
+\subparagraph{Tecnologie Core}
+
+Il front-end utilizza tecnologie moderne per lo sviluppo di applicazioni web:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Linguaggio}: TypeScript per type safety e migliore developer experience
+\item \textbf{Framework UI}: React con architettura component-based
+\item \textbf{Build Tool}: Vite per sviluppo rapido e build ottimizzate
+\end{itemize}
+
+\subparagraph{Styling e Animazioni}
+
+L'interfaccia utente combina:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Tailwind CSS 3.x}: framework utility-first per styling rapido e consistente
+\item \textbf{Framer Motion}: libreria per animazioni e transizioni fluide
+\end{itemize}
+
+Questa combinazione permette di creare un design system custom che emula esteticamente Material Design 3 pur mantenendo piena flessibilità di personalizzazione.
+
+\subparagraph{HTTP Client e Gestione Stato}
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Axios}: per chiamate API REST con interceptors per gestione automatica JWT
+\item \textbf{Context API / Zustand}: per gestione stato globale dell'applicazione
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\paragraph{Database}
+\label{subsubsec:database}
+% ---------------------------------------------------------------------
+
+\subparagraph{Sistema di Gestione Database}
+
+Il sistema utilizza \textbf{PostgreSQL} come database relazionale per:
+\begin{itemize}[leftmargin=1.1em]
+\item Conformità ACID completa
+\item Supporto transazioni e integrità referenziale
+\end{itemize}
+
+\subparagraph{Accesso ai Dati}
+
+L'accesso al database avviene tramite:
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Spring Data JPA}: per astrazione dell'accesso dati con repository pattern
+\item \textbf{Hibernate}: come provider JPA per mapping object-relational
+\item \textbf{Flyway}: per gestione evolution schema database tramite migration SQL versionate
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\paragraph{Deployment e Containerizzazione}
+\label{subsubsec:deployment}
+% ---------------------------------------------------------------------
+
+\subparagraph{Docker}
+
+Tutti i componenti del sistema sono containerizzati tramite \textbf{Docker} per garantire:
+\begin{itemize}[leftmargin=1.1em]
+\item Isolamento delle dipendenze
+\item Portabilità tra ambienti (sviluppo, testing, produzione)
+\item Riproducibilità delle configurazioni
+\end{itemize}
+
+Ogni componente ha un \textbf{Dockerfile} dedicato:
+\begin{itemize}[leftmargin=1.1em]
+\item Back-end: build multi-stage con Maven e runtime Java 17
+\item Front-end: build con Node.js e serving con Nginx
+\item Database: immagine ufficiale PostgreSQL
+\end{itemize}
+
+\subparagraph{Docker Compose}
+
+L'orchestrazione dei container in ambiente di sviluppo è gestita tramite \textbf{Docker Compose}, che coordina:
+\begin{itemize}[leftmargin=1.1em]
+\item Container PostgreSQL con volume persistente
+\item Container back-end con dipendenza dal database
+\item Container front-end con dipendenza dal back-end
+\item Network condivisa per comunicazione inter-container
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\paragraph{Sicurezza}
+\label{subsubsec:sicurezza-sistema}
+% ---------------------------------------------------------------------
+
+\subparagraph{Autenticazione e Password}
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Password hashing}: BCrypt tramite Spring Security
+\item \textbf{Autenticazione}: JSON Web Tokens (JWT) con algoritmo HMAC SHA-26
+\item \textbf{Protezione brute force}: blocco account per 15 minuti dopo 5 tentativi falliti
+\end{itemize}
+
+\subparagraph{Validazione}
+
+\begin{itemize}[leftmargin=1.1em]
+\item Validazione lato server obbligatoria per tutti gli input
+\item Sanitizzazione dati per prevenzione SQL injection
+\item Autorizzazione basata su ruoli verificata ad ogni richiesta API
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\paragraph{Ambiente di Sviluppo}
+\label{subsubsec:ambiente-sviluppo}
+% ---------------------------------------------------------------------
+
+\subparagraph{Strumenti Consigliati}
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{IDE Backend}: IntelliJ IDEA o Eclipse con Spring Tools
+\item \textbf{IDE Frontend}: Visual Studio Code con estensioni TypeScript, ESLint, Tailwind CSS IntelliSense
+\item \textbf{Database Client}: pgAdmin o DBeaver per gestione PostgreSQL
+\item \textbf{Version Control}: Git con hosting su GitHub o GitLab
+\end{itemize}

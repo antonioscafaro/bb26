@@ -1,0 +1,147 @@
+% ---------------------------------------------------------------------
+\subsection{Glossario}
+\label{sec:glossario}
+% ---------------------------------------------------------------------
+
+\subsubsection{Termini del dominio}
+\label{subsec:termini-dominio}
+
+\begin{ucbox}[title=Glossario dei Termini]
+\begin{longtable}{p{0.25\linewidth} p{0.68\linewidth}}
+\toprule
+\textbf{Termine} & \textbf{Descrizione} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+
+\textbf{Account} & Insieme di informazioni e credenziali (email, password) che identificano univocamente un utente e ne regolano l'accesso al sistema. \\
+\addlinespace
+
+\textbf{Amministratore} & Utente con ruolo privilegiato che possiede tutti i permessi di un utente autenticato, più funzionalità aggiuntive di gestione del sistema (creazione utenze, assegnazione issue, archiviazione, accesso ai report). \\
+\addlinespace
+
+\textbf{Archiviazione} & Operazione riservata agli Amministratori che sposta una issue in una sezione di archivio, rimuovendola dalle liste principali ma mantenendone l'accessibilità da una vista dedicata. \\
+\addlinespace
+
+\textbf{Assegnazione} & Operazione con cui un Amministratore associa una issue a un membro specifico del team, rendendolo responsabile della sua gestione. \\
+\addlinespace
+
+\textbf{Autenticazione} & Processo di verifica dell'identità di un utente tramite credenziali (email e password) per consentire l'accesso alle funzionalità del sistema. \\
+\addlinespace
+
+\textbf{Bug} & Tipo di issue che descrive un errore, difetto o malfunzionamento del software rispetto al comportamento atteso. \\
+\addlinespace
+
+\textbf{Commento} & Messaggio testuale lasciato da un utente autenticato all'interno della sezione di discussione di una issue specifica. \\
+\addlinespace
+
+\textbf{Dashboard} & Pagina principale visualizzata dopo il login, che fornisce una panoramica delle issue e delle attività rilevanti per l'utente. \\
+\addlinespace
+
+\textbf{Documentation} & Tipo di issue che segnala problemi, mancanze o necessità di chiarimenti nella documentazione del progetto. \\
+\addlinespace
+
+\textbf{Etichetta (Label)} & Marcatore testuale personalizzabile associabile a una issue per facilitarne la categorizzazione, il filtraggio e la ricerca (es. "frontend", "urgente", "sicurezza"). \\
+\addlinespace
+
+\textbf{Feature} & Tipo di issue che rappresenta la richiesta di una nuova funzionalità o un miglioramento del sistema esistente. \\
+\addlinespace
+
+\textbf{Filtro} & Criterio di selezione applicabile alla lista delle issue per visualizzare solo quelle che soddisfano specifiche condizioni (es. tipo, stato, priorità). \\
+\addlinespace
+
+\textbf{Issue} & Segnalazione relativa al progetto; entità fondamentale del sistema. Può essere di quattro tipi: Bug, Feature, Question, Documentation. Ogni issue ha attributi obbligatori (titolo, descrizione, tipo, priorità, stato) e opzionali (etichette, immagini, assegnatario). \\
+\addlinespace
+
+\textbf{Metrica} & Misura quantitativa aggregata utilizzata nei report mensili per valutare performance e attività del team (es. numero di issue aperte, tempo medio di risoluzione). \\
+\addlinespace
+
+\textbf{Notifica} & Messaggio informativo inviato automaticamente dal sistema a un utente in seguito a eventi specifici (es. assegnazione di una issue). \\
+\addlinespace
+
+\textbf{Ordinamento} & Operazione che modifica la sequenza di visualizzazione delle issue secondo un criterio specificato (es. data di creazione, priorità) e una direzione (crescente o decrescente). \\
+\addlinespace
+
+\textbf{Priorità} & Attributo opzionale che definisce il livello di urgenza di una issue. Valori ammessi: Nessuna, Bassa, Media, Alta, Critica. \\
+\addlinespace
+
+\textbf{Progetto} & Spazio di lavoro organizzativo che raggruppa un insieme di issue relative a uno specifico prodotto software. \\
+\addlinespace
+
+\textbf{Question} & Tipo di issue utilizzato per porre domande o richiedere chiarimenti sul progetto. \\
+\addlinespace
+
+\textbf{Report Mensile} & Documento riepilogativo generato automaticamente dal sistema, contenente metriche aggregate sull'attività del team in un intervallo temporale di un mese. Accessibile solo agli Amministratori. \\
+\addlinespace
+
+\textbf{Ruolo} & Attributo associato a un account utente che determina l'insieme di permessi e funzionalità accessibili. Valori possibili: Utente (standard) o Amministratore. \\
+\addlinespace
+
+\textbf{Stato} & Fase corrente nel ciclo di vita di una issue. Stato iniziale: "ToDo". Altri stati possibili includono: In Lavorazione, Risolta, Chiusa, Archiviata. \\
+\addlinespace
+
+\textbf{Team} & Insieme degli utenti che collaborano al progetto utilizzando la piattaforma \productname. \\
+\addlinespace
+
+\textbf{ToDo} & Stato iniziale di una issue appena creata, che indica che non è ancora stata presa in carico da alcun membro del team. \\
+\addlinespace
+
+\textbf{Utente} & Individuo che interagisce con il sistema. Prima dell'autenticazione, può accedere solo alla schermata di login. \\
+\addlinespace
+
+\textbf{Utente Autenticato} & Utente che ha completato con successo il processo di autenticazione e ha accesso alle funzionalità di base del sistema (creazione, visualizzazione e modifica issue, commenti). \\
+
+\end{longtable}
+\end{ucbox}
+
+\subsubsection{Acronimi e abbreviazioni}
+\label{subsec:acronimi}
+
+\begin{longtable}{p{0.15\linewidth} p{0.78\linewidth}}
+\toprule
+\textbf{Acronimo} & \textbf{Significato} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+
+API & \textit{Application Programming Interface} -- Interfaccia di programmazione che definisce le modalità di interazione tra componenti software. \\
+\addlinespace
+
+BE & \textit{Back-end} -- Componente server-side del sistema, responsabile della logica di business, gestione dati e persistenza. \\
+\addlinespace
+
+FE & \textit{Front-end} -- Componente client-side del sistema, responsabile dell'interfaccia utente e dell'interazione con l'utente finale. \\
+\addlinespace
+
+HTTPS & \textit{HyperText Transfer Protocol Secure} -- Protocollo di comunicazione sicuro per il trasferimento di dati su Internet. \\
+\addlinespace
+
+IEEE & \textit{Institute of Electrical and Electronics Engineers} -- Organizzazione professionale che pubblica standard internazionali. \\
+\addlinespace
+
+JSON & \textit{JavaScript Object Notation} -- Formato leggero per lo scambio di dati strutturati. \\
+\addlinespace
+
+JWT & \textit{JSON Web Token} -- Standard per la creazione di token di accesso che consentono l'autenticazione stateless. \\
+\addlinespace
+
+NFR & \textit{Non-Functional Requirement} -- Requisito non funzionale, che specifica criteri di qualità del sistema. \\
+\addlinespace
+
+REST & \textit{Representational State Transfer} -- Stile architetturale per la progettazione di API basate su HTTP. \\
+\addlinespace
+
+SRS & \textit{Software Requirements Specification} -- Documento di specifica dei requisiti software. \\
+\addlinespace
+
+UC & \textit{Use Case} -- Caso d'uso, descrizione di un'interazione tra un attore e il sistema per raggiungere un obiettivo specifico. \\
+\addlinespace
+
+UML & \textit{Unified Modeling Language} -- Linguaggio di modellazione visuale standard per sistemi software. \\
+\addlinespace
+
+URL & \textit{Uniform Resource Locator} -- Indirizzo che specifica la posizione di una risorsa su Internet. \\
+
+\end{longtable}

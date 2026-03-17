@@ -1,0 +1,48 @@
+% ---------------------------------------------------------------------
+\subsubsection{Requisiti di Sistema}
+\label{subsec:requisiti-sistema}
+% ---------------------------------------------------------------------
+
+Questa sezione dettaglia i requisiti specifici che il sistema \productname{} deve soddisfare. 
+I requisiti sono definiti da una prospettiva esterna, descrivendo le interazioni del sistema con i suoi utenti e con altri sistemi.
+
+% ---------------------------------------------------------------------
+\paragraph{Requisiti delle Interfacce Esterne}
+\label{subsubsec:interfacce-esterne}
+% ---------------------------------------------------------------------
+
+\subparagraph{Interfaccia Utente (User Interface)}
+Il sistema dovrà fornire un'interfaccia utente grafica (GUI) web-based, accessibile tramite i browser moderni. 
+L'interfaccia dovrà essere responsive, garantendo l'usabilità su schermi di diverse dimensioni, dai dispositivi mobili
+(minimo 320px di larghezza) ai desktop. 
+Tutte le funzionalità esposte agli utenti dovranno essere accessibili tramite tale interfaccia.
+
+\subparagraph{Interfaccia Software (Software Interface)}
+Il sistema dovrà esporre un'interfaccia di programmazione (API) basata sullo stile architetturale REST 
+per consentire la comunicazione tra il componente front-end e il back-end. 
+Queste API dovranno utilizzare il formato JSON per lo scambio di dati e seguire 
+le convenzioni standard del protocollo HTTP per le operazioni (GET, POST, PUT, DELETE). 
+Questo garantirà l'interoperabilità e la possibilità di sviluppare client alternativi in futuro.
+
+\subparagraph{Interfaccia di Comunicazione (Communications Interface)}
+Tutta la comunicazione tra il client e il server che trasporta dati sensibili 
+(incluse le credenziali di autenticazione e i dati delle issue) 
+dovrà avvenire tramite protocolli di comunicazione sicuri (HTTPS).
+
+% ---------------------------------------------------------------------
+\paragraph{Requisiti Prestazionali}
+\label{subsubsec:requisiti-prestazionali}
+% ---------------------------------------------------------------------
+Il sistema dovrà rispettare i requisiti di performance specificati nella sezione dei 
+Requisiti Non Funzionali (REQ-NFR-01), garantendo tempi di risposta rapidi per le operazioni interattive.
+
+% ---------------------------------------------------------------------
+\paragraph{Requisiti del Database Logico}
+\label{subsubsec:database-logico}
+% ---------------------------------------------------------------------
+Il sistema dovrà garantire la persistenza, la consistenza e l'integrità dei dati. 
+Dovrà gestire le seguenti entità logiche principali e le loro relazioni: 
+Utenti, Progetti, Issue, Commenti, Etichette, Allegati e le associazioni tra di esse 
+(es. Utenti membri di Progetti, Issue appartenenti a Progetti). 
+Il sistema dovrà garantire che le operazioni sul database siano transazionali per prevenire la corruzione dei dati in caso di fallimenti.
+\newpage

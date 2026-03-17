@@ -1,0 +1,228 @@
+% ---------------------------------------------------------------------
+\subsubsection{Requisiti Non Funzionali}
+\label{subsec:requisiti-non-funzionali}
+% ---------------------------------------------------------------------
+
+Questa sottosezione descrive i requisiti non funzionali del sistema \productname{} secondo lo standard IEEE 830-1998 e il modello di qualità ISO/IEC 25002. I requisiti non funzionali specificano attributi di qualità del sistema, vincoli sulle modalità implementative e proprietà che il sistema deve soddisfare indipendentemente dalle sue funzionalità specifiche.
+
+\vspace{0.3cm}
+
+I requisiti non funzionali sono spesso più critici dei requisiti funzionali: mentre gli utenti possono trovare soluzioni alternative a una funzionalità sub-ottimale, il mancato rispetto di un requisito non funzionale può rendere il sistema completamente inutilizzabile.
+
+\vspace{0.3cm}
+
+I requisiti sono organizzati secondo la classificazione:
+
+\begin{itemize}[leftmargin=1.1em]
+\item \textbf{Product Requirements}: requisiti che specificano caratteristiche intrinseche del prodotto software (performance, usabilità, affidabilità, sicurezza)
+\item \textbf{Organizational Requirements}: requisiti derivanti da politiche e procedure dell'organizzazione (linguaggi obbligatori, standard da rispettare, processi operativi)
+\item \textbf{External Requirements}: requisiti derivanti da fonti esterne (conformità normativa, requisiti etici, requisiti legali)
+\end{itemize}
+
+% =====================================================================
+% PRODUCT REQUIREMENTS
+% =====================================================================
+
+\paragraph{Product Requirements}
+\label{subsubsec:product-requirements}
+
+I Product Requirements definiscono le caratteristiche di qualità intrinseche del sistema \productname, basate sul modello ISO/IEC 25002.
+
+\vspace{0.5cm}
+
+\newpage
+% =====================================================================
+% REQ-NFR-01: PERFORMANCE
+% =====================================================================
+
+\begin{reqbox}[title=REQ-NFR-01: Performance]
+\label{subsubsec:req-nfr-performance}
+
+\subparagraph{Descrizione}
+Il sistema deve garantire tempi di risposta rapidi per le operazioni più comuni.
+
+\subparagraph{Requisiti}
+\begin{itemize}[leftmargin=1.1em]
+\item Le operazioni di visualizzazione (dashboard, lista issue, dettagli) devono completarsi entro \textbf{1 secondo}
+\item Le operazioni di creazione e modifica (nuova issue, commento) devono completarsi entro \textbf{2 secondi}
+\item La generazione di report mensili deve completarsi entro \textbf{5 secondi}
+\item Il caricamento iniziale dell'applicazione deve completarsi entro \textbf{3 secondi}
+\end{itemize}
+
+\end{reqbox}
+
+\vspace{0.5cm}
+
+% =====================================================================
+% REQ-NFR-02: USABILITÀ
+% =====================================================================
+
+\begin{reqbox}[title=REQ-NFR-02: Usabilità]
+\label{subsubsec:req-nfr-usability}
+
+\subparagraph{Descrizione}
+Il sistema deve essere facile da usare e intuitivo per ridurre il tempo di apprendimento.
+
+\subparagraph{Requisiti}
+\begin{itemize}[leftmargin=1.1em]
+\item L'interfaccia deve essere chiara e auto-esplicativa senza necessità di manuale utente
+\item Le operazioni più comuni (crea issue, visualizza lista, commenta) devono essere accessibili in massimo \textbf{3 click}
+\item I form devono mostrare messaggi di errore chiari quando l'input non è valido
+\item Le azioni distruttive (elimina progetto, elimina utente) devono richiedere conferma esplicita
+\end{itemize}
+
+\end{reqbox}
+
+\vspace{0.5cm}
+
+\newpage
+
+% =====================================================================
+% REQ-NFR-03: AFFIDABILITÀ
+% =====================================================================
+
+\begin{reqbox}[title=REQ-NFR-03: Affidabilità]
+\label{subsubsec:req-nfr-reliability}
+
+\paragraph{Descrizione}
+Il sistema deve funzionare in modo stabile senza crash o perdita di dati.
+
+\paragraph{Requisiti}
+\begin{itemize}[leftmargin=1.1em]
+\item Il sistema non deve presentare crash durante l'uso normale
+\item Eventuali errori del server devono essere gestiti mostrando messaggi chiari all'utente invece di bloccare l'applicazione
+\item I dati inseriti dall'utente non devono mai essere persi (ogni operazione deve essere persistita nel database)
+\end{itemize}
+
+\end{reqbox}
+
+\vspace{0.5cm}
+
+% =====================================================================
+% REQ-NFR-04: SICUREZZA
+% =====================================================================
+
+\begin{reqbox}[title=REQ-NFR-04: Sicurezza]
+\label{subsubsec:req-nfr-security}
+
+\paragraph{Descrizione}
+Il sistema deve proteggere i dati degli utenti e impedire accessi non autorizzati.
+
+\paragraph{Requisiti}
+\begin{itemize}[leftmargin=1.1em]
+\item Le password devono essere salvate come hash, mai in chiaro
+\item Le sessioni devono essere gestite con durata limitata
+\item Ogni richiesta API deve verificare che l'utente sia autenticato e autorizzato
+\item Gli utenti possono accedere solo ai progetti di cui fanno parte
+\item Solo gli amministratori possono creare progetti, gestire utenti e assegnare issue
+\item La comunicazione in produzione deve avvenire su HTTPS
+\item Gli input utente devono essere validati per prevenire SQL Injection
+\end{itemize}
+
+\end{reqbox}
+
+\vspace{0.5cm}
+
+\newpage
+
+% =====================================================================
+% REQ-NFR-05: MANUTENIBILITÀ
+% =====================================================================
+
+\begin{reqbox}[title=REQ-NFR-05: Manutenibilità]
+\label{subsubsec:req-nfr-maintainability}
+
+\paragraph{Descrizione}
+Il codice deve essere organizzato in modo chiaro per facilitare manutenzione e modifiche future.
+
+\paragraph{Requisiti}
+\begin{itemize}[leftmargin=1.1em]
+\item Il backend deve essere organizzato in layer separati: Controller, Service
+\item Il frontend deve utilizzare componenti React riusabili e ben organizzati
+\item Il codice deve seguire convenzioni di naming consistenti
+\item Devono essere presenti commenti per spiegare logiche complesse
+\item Il progetto deve avere un README con istruzioni per setup e deployment
+\item Il codice deve essere formattato automaticamente (Prettier per TypeScript, formatter Java)
+\end{itemize}
+
+\end{reqbox}
+
+\vspace{0.5cm}
+
+\newpage
+
+% =====================================================================
+% REQ-NFR-06: COMPATIBILITÀ
+% =====================================================================
+
+\begin{reqbox}[title=REQ-NFR-06: Compatibilità]
+\label{subsubsec:req-nfr-compatibility}
+
+\paragraph{Descrizione}
+Il sistema deve funzionare correttamente sui browser più comuni.
+
+\paragraph{Requisiti}
+\begin{itemize}[leftmargin=1.1em]
+\item L'applicazione deve funzionare su Chrome, Firefox, Edge e Safari versioni recenti
+\item L'interfaccia deve essere responsive e utilizzabile su qualsiasi schermo da 320px in su
+\item Le API REST devono restituire JSON strutturato con status code HTTP corretti
+\end{itemize}
+
+\end{reqbox}
+
+\vspace{0.5cm}
+
+% =====================================================================
+% REQ-NFR-07: CONFORMITÀ NORMATIVA
+% =====================================================================
+
+\begin{reqbox}[title=REQ-NFR-07: Conformità Normativa]
+\label{subsubsec:req-nfr-legal}
+
+\paragraph{Descrizione}
+Il sistema deve rispettare le normative di base sulla protezione dei dati.
+
+\paragraph{Requisiti}
+\begin{itemize}[leftmargin=1.1em]
+\item Il sistema deve raccogliere solo i dati necessari (nome, cognome, email, password)
+\item I dati personali devono essere protetti e accessibili solo agli utenti autorizzati
+\item Gli amministratori possono eliminare account utente quando richiesto
+\item Le dipendenze open-source devono avere licenze compatibili (MIT, Apache 2.0)
+\end{itemize}
+
+\end{reqbox}
+
+\vspace{0.5cm}
+
+\newpage
+
+% =====================================================================
+% RIEPILOGO
+% =====================================================================
+
+\subsubsection{Riepilogo}
+\label{subsubsec:riepilogo-nfr}
+
+La seguente tabella riassume i requisiti non funzionali con priorità:
+
+\begin{longtable}{|p{0.20\linewidth}|p{0.50\linewidth}|p{0.20\linewidth}|}
+\hline
+\textbf{ID} & \textbf{Requisito} & \textbf{Priorità} \\ \hline
+\endfirsthead
+
+\hline
+\textbf{ID} & \textbf{Requisito} & \textbf{Priorità} \\ \hline
+\endhead
+
+\hline
+\endfoot
+
+REQ-NFR-01 & Performance & Alta \\ \hline
+REQ-NFR-02 & Usabilità & Alta \\ \hline
+REQ-NFR-03 & Affidabilità & Media \\ \hline
+REQ-NFR-04 & Sicurezza & Critica \\ \hline
+REQ-NFR-05 & Manutenibilità & Media \\ \hline
+REQ-NFR-06 & Compatibilità & Media \\ \hline
+REQ-NFR-07 & Conformità Normativa & Alta \\ \hline
+
+\end{longtable}
