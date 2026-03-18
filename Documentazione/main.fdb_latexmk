@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1773857316.8246 "c:/Users/aless/Documents/bb26/Documentazione/main.tex" "main.pdf" "main" 1773857320.20959 0
+["pdflatex"] 1773858754.63149 "c:/Users/aless/Documents/bb26/Documentazione/main.tex" "main.pdf" "main" 1773858758.14118 0
   "DB.pdf" 1773774456 67681 9f587ee92ab862b283aeed075330e093 ""
   "DBVECCHIO.pdf" 1773774456 60520 ece52cb0fe0c0fad530466aa655db3b4 ""
   "MOCK.png" 1773747069 150985 0c0c6ff4cb9bd9268478f39f40dce1d0 ""
@@ -233,10 +233,10 @@
   "c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1758659244 5574153 af86687748baf417d9e7d549313527be ""
   "c:/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1758659387 3621636 a74145fabcff4689976e6f1f6def17a0 ""
   "c:/texlive/2025/texmf.cnf" 1758659229 713 e69b156964470283e0530f5060668171 ""
-  "main.aux" 1773857320 39896 75084d28d62cc4030ce6a3bccb89c08a "pdflatex"
-  "main.out" 1773857320 4482 12380b901dff7c57642cfe0f26abbc8b "pdflatex"
+  "main.aux" 1773858757 39896 75084d28d62cc4030ce6a3bccb89c08a "pdflatex"
+  "main.out" 1773858757 4482 12380b901dff7c57642cfe0f26abbc8b "pdflatex"
   "main.tex" 1773857276 7673 6fbb3625e8dd53782aa4930ab95b0580 ""
-  "main.toc" 1773857320 19651 c0c08146617e3e17698577fae2a4c2c0 "pdflatex"
+  "main.toc" 1773858757 19651 c0c08146617e3e17698577fae2a4c2c0 "pdflatex"
   "package config.png" 1773752424 60811 6a81408e0e718b80a64ac69abec2318a ""
   "package controller.png" 1773752350 832925 9c08175f11ddf2319b5564583bd10708 ""
   "package dto.png" 1773752467 2489615 423b2e5913dbad75d40274fc0b30da7e ""
@@ -259,7 +259,7 @@
   "sections/12-design-classes.tex" 1773857276 10656 8299ce5b9faf4b1581ba0b720fca7ad4 ""
   "sections/13-versioning.tex" 1773857316 291 455e610924d639eaa3f61bba2fe36902 ""
   "ui_completo_bb26.png" 1773829902 1951109 6207a15d20c5c51c873a4cc3fe5a104d ""
-  "versioning.png" 1773857173 71259 e864e933909a3d83dd11585f5c9e4064 ""
+  "versioning.png" 1773858754 71269 0733b1c48b37833084514e9350fca9ba ""
   (generated)
   "main.aux"
   "main.log"

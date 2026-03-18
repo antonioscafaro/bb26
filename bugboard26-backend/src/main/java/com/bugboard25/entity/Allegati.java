@@ -14,17 +14,18 @@ public class Allegati {
     @JoinColumn(name = "id_issue")
     private Issue issue;
 
-    @Column(nullable = true, length = 1024)
-    private String url_file;
+    @Column(nullable = true, length = 1024, name = "url_file")
+    private String urlFile;
 
-    @Column(nullable = true, length = 255)
-    private String nome_file;
+    @Column(nullable = true, length = 255, name = "nome_file")
+    private String nomeFile;
 
-    @Column(nullable = true, length = 50)
-    private String tipo_file;
+    @Column(nullable = true, length = 50, name = "tipo_file")
+    private String tipoFile;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date data_caricamento;
+    @Column(name = "data_caricamento")
+    private Date dataCaricamento;
 
     public void setId(int id) {
         this.id = id;
@@ -34,40 +35,40 @@ public class Allegati {
         this.issue = issue;
     }
 
-    public void setUrl_file(String url_file) {
-        this.url_file = url_file;
+    public void setUrlFile(String urlFile) {
+        this.urlFile = urlFile;
     }
 
-    public void setNome_file(String nome_file) {
-        this.nome_file = nome_file;
+    public void setNomeFile(String nomeFile) {
+        this.nomeFile = nomeFile;
     }
 
-    public void setTipo_file(String tipo_file) {
-        this.tipo_file = tipo_file;
+    public void setTipoFile(String tipoFile) {
+        this.tipoFile = tipoFile;
     }
 
-    public void setData_caricamento(Date data_caricamento) {
-        this.data_caricamento = data_caricamento;
+    public void setDataCaricamento(Date dataCaricamento) {
+        this.dataCaricamento = dataCaricamento;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getUrl_file() {
-        return url_file;
+    public String getUrlFile() {
+        return urlFile;
     }
 
-    public String getNome_file() {
-        return nome_file;
+    public String getNomeFile() {
+        return nomeFile;
     }
 
-    public String getTipo_file() {
-        return tipo_file;
+    public String getTipoFile() {
+        return tipoFile;
     }
 
-    public Date getData_caricamento() {
-        return data_caricamento;
+    public Date getDataCaricamento() {
+        return dataCaricamento;
     }
 
     public Issue getIssue() {

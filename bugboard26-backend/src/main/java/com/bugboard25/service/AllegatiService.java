@@ -63,11 +63,11 @@ public class AllegatiService {
 
         Allegati allegato = new Allegati();
         allegato.setIssue(issue);
-        allegato.setNome_file(nomeOriginale);
-        allegato.setTipo_file(file.getContentType());
-        allegato.setData_caricamento(new Date());
+        allegato.setNomeFile(nomeOriginale);
+        allegato.setTipoFile(file.getContentType());
+        allegato.setDataCaricamento(new Date());
 
-        allegato.setUrl_file(nomeFileUnico);
+        allegato.setUrlFile(nomeFileUnico);
 
         allegato = allegatiRepository.save(allegato);
         return new AllegatoDTO(allegato);

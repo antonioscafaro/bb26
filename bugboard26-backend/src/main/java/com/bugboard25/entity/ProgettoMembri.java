@@ -10,7 +10,7 @@ public class ProgettoMembri {
     private ProgettoMembriPrimaryKey id;
 
     @ManyToOne
-    @MapsId("id_progetto")
+    @MapsId("idProgetto")
     @JoinColumn(name = "id_progetto")
     private Progetti progetto;
 

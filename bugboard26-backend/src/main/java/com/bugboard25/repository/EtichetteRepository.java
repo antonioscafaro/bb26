@@ -19,7 +19,7 @@ public interface EtichetteRepository extends JpaRepository<Etichette, Integer> {
      * Questo cerca tutte le Etichette dove l'ID dell'oggetto id_progetto
      * corrisponde al parametro.
      */
-    @Query("SELECT e FROM Etichette e WHERE e.id_progetto.id = :progettoId")
+    @Query("SELECT e FROM Etichette e WHERE e.idProgetto.id = :progettoId")
     List<Etichette> findByProgettoIdQuery(@Param("progettoId") int progettoId);
 
     @Query("SELECT ir.etichetta FROM IssueEtichette ir WHERE ir.issue = :issue")

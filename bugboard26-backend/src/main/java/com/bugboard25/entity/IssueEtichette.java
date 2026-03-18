@@ -10,12 +10,12 @@ public class IssueEtichette {
     private IssueEtichettePrimaryKey id;
 
     @ManyToOne
-    @MapsId("id_issue")
+    @MapsId("idIssue")
     @JoinColumn(name = "id_issue")
     private Issue issue;
 
     @ManyToOne
-    @MapsId("id_etichetta")
+    @MapsId("idEtichetta")
     @JoinColumn(name = "id_etichetta")
     private Etichette etichetta;
 

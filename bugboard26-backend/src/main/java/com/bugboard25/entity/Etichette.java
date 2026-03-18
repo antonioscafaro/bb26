@@ -10,7 +10,7 @@ public class Etichette {
 
     @ManyToOne
     @JoinColumn(name = "id_progetto")
-    private Progetti id_progetto;
+    private Progetti idProgetto;
 
     @Column(nullable = false, length = 50)
     private String nome;
@@ -22,8 +22,8 @@ public class Etichette {
         this.id = id;
     }
 
-    public void setId_progetto(Progetti id_progetto) {
-        this.id_progetto = id_progetto;
+    public void setIdProgetto(Progetti idProgetto) {
+        this.idProgetto = idProgetto;
     }
 
     public void setNome(String nome) {
@@ -42,8 +42,8 @@ public class Etichette {
         return colore;
     }
 
-    public Progetti getId_progetto() {
-        return id_progetto;
+    public Progetti getIdProgetto() {
+        return idProgetto;
     }
 
     public String getNome() {

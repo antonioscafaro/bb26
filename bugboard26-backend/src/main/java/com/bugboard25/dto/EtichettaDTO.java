@@ -13,8 +13,8 @@ public class EtichettaDTO {
         this.nome = etichetta.getNome();
         this.colore = etichetta.getColore();
 
-        if (etichetta.getId_progetto() != null) {
-            this.idProgetto = etichetta.getId_progetto().getId();
+        if (etichetta.getIdProgetto() != null) {
+            this.idProgetto = etichetta.getIdProgetto().getId();
         }
     }
 

@@ -63,7 +63,7 @@ public class EtichetteService {
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
         Etichette etichetta = new Etichette();
 
-        etichetta.setId_progetto(progetto);
+        etichetta.setIdProgetto(progetto);
         etichetta.setNome(requestDTO.getNome());
         etichetta.setColore(requestDTO.getColore());
 
@@ -76,7 +76,7 @@ public class EtichetteService {
         List<Etichette> etichetteTrovate = etichetteRepository.findByNome(nomeEtichetta);
 
         for (Etichette et : etichetteTrovate) {
-            if (et.getId_progetto().getId() == progetto.getId()) {
+            if (et.getIdProgetto().getId() == progetto.getId()) {
                 return et;
             }
         }
@@ -84,7 +84,7 @@ public class EtichetteService {
         Etichette nuovaEtichetta = new Etichette();
         nuovaEtichetta.setNome(nomeEtichetta);
         nuovaEtichetta.setColore(coloreDefault);
-        nuovaEtichetta.setId_progetto(progetto);
+        nuovaEtichetta.setIdProgetto(progetto);
 
         return etichetteRepository.save(nuovaEtichetta);
     }

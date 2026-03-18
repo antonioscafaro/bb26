@@ -51,14 +51,14 @@ public class AllegatiController {
     @GetMapping("/download/{idAllegato}")
     public ResponseEntity<Resource> scaricaAllegato(@PathVariable int idAllegato) {
         Allegati allegato = allegatiService.getAllegatoById(idAllegato);
-        Resource resource = allegatiService.loadFileAsResource(allegato.getUrl_file());
+        Resource resource = allegatiService.loadFileAsResource(allegato.getUrlFile());
 
-        String contentType = allegato.getTipo_file();
+        String contentType = allegato.getTipoFile();
         if (contentType == null || contentType.isBlank()) {
             contentType = "application/octet-stream";
         }
 
-        String headerValue = "attachment; filename=\"" + allegato.getNome_file() + "\"";
+        String headerValue = "attachment; filename=\"" + allegato.getNomeFile() + "\"";
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
