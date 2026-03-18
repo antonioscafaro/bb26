@@ -22,7 +22,7 @@ public interface EtichetteRepository extends JpaRepository<Etichette, Integer> {
     @Query("SELECT e FROM Etichette e WHERE e.id_progetto.id = :progettoId")
     List<Etichette> findByProgettoIdQuery(@Param("progettoId") int progettoId);
 
-    @Query("SELECT ir.etichetta FROM Issue_Etichette ir WHERE ir.issue = :issue")
+    @Query("SELECT ir.etichetta FROM IssueEtichette ir WHERE ir.issue = :issue")
     List<Etichette> findEtichetteByIssue(@Param("issue") Issue issue);
 
     // Il metodo "Integer id(int id);" è stato RIMOSSO perché non è valido

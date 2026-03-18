@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ProgettiRepository extends JpaRepository<Progetti, Integer> {
-    @Query("SELECT pm.progetto FROM Progetto_Membri pm WHERE pm.utente.email = :emailUtente")
+    @Query("SELECT pm.progetto FROM ProgettoMembri pm WHERE pm.utente.email = :emailUtente")
     List<Progetti> findProgettiByMembroEmail(@Param("emailUtente") String emailUtente);
 
     boolean existsByNome(String nome);

@@ -34,6 +34,12 @@ public class IssueController {
         this.commentiService = commentiService;
     }
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<IssueDTO> getIssueById(@PathVariable int id) {
+        IssueDTO issue = issueService.getIssueById(id);
+        return ResponseEntity.ok(issue);
+    }
+
     @GetMapping("/stato/{stato_issue}")
     public ResponseEntity<List<IssueDTO>> getIssueByStato(@PathVariable stato_issue stato_issue, java.security.Principal principal) {
         Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);

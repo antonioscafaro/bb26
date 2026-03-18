@@ -23,34 +23,27 @@ public interface IssueRepository extends JpaRepository<Issue, Integer> {
     List<Issue> findAllByAutore(Utenti autore, Sort sort);
     List<Issue> findAllByIdProgetto(Progetti idProgetto, Sort sort);
     List<Issue> findAllByTipoIssue(tipo_issue tipoIssue, Sort sort);
-    @Query("SELECT ie.issue FROM Issue_Etichette ie WHERE ie.etichetta = :etichetta")
+    @Query("SELECT ie.issue FROM IssueEtichette ie WHERE ie.etichetta = :etichetta")
     List<Issue> findByEtichetta(@Param("etichetta") Etichette etichetta, Sort sort);
 
-    // Optimized Report Queries using JPQL
-    
-    // 1. Created in interval
     List<Issue> findByDataCreazioneBetween(Date start, Date end);
     List<Issue> findByIdProgettoAndDataCreazioneBetween(Progetti progetto, Date start, Date end);
 
-    // 2. Resolved in interval (using LastUpdate as proxy for resolution date)
     List<Issue> findByStatoIssueAndDataUltimoAggiornamentoBetween(stato_issue stato, Date start, Date end);
     List<Issue> findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(Progetti progetto, stato_issue stato, Date start, Date end);
 
-    // Currently open issues (not RISOLTA, CHIUSA, or ARCHIVIATA)
     @Query("SELECT COUNT(i) FROM Issue i WHERE i.statoIssue NOT IN ('RISOLTA', 'CHIUSA', 'ARCHIVIATA')")
     long countCurrentlyOpen();
 
     @Query("SELECT COUNT(i) FROM Issue i WHERE i.idProgetto = :progetto AND i.statoIssue NOT IN ('RISOLTA', 'CHIUSA', 'ARCHIVIATA')")
     long countCurrentlyOpenByProject(@Param("progetto") Progetti progetto);
 
-    // 4. Critical Alerts (Critical, Open, Created > 7 days ago)
     @Query("SELECT i FROM Issue i WHERE i.prioritaIssue = 'CRITICA' AND i.statoIssue NOT IN ('RISOLTA', 'CHIUSA') AND i.dataCreazione < :dateLimit")
     List<Issue> findCriticalAlerts(@Param("dateLimit") Date dateLimit);
 
     @Query("SELECT i FROM Issue i WHERE i.idProgetto = :progetto AND i.prioritaIssue = 'CRITICA' AND i.statoIssue NOT IN ('RISOLTA', 'CHIUSA') AND i.dataCreazione < :dateLimit")
     List<Issue> findCriticalAlertsByProject(@Param("progetto") Progetti progetto, @Param("dateLimit") Date dateLimit);
 
-    // User Specific Counts
     long countByAssegnatario(Utenti assegnatario);
     long countByAssegnatarioAndIdProgetto(Utenti assegnatario, Progetti idProgetto);
 

@@ -164,6 +164,8 @@ INPUT c:/texlive/2025/texmf-dist/tex/latex/figureversions/figureversions.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/figureversions/figureversions.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/setspace/setspace.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/setspace/setspace.sty
+INPUT c:/texlive/2025/texmf-dist/tex/latex/needspace/needspace.sty
+INPUT c:/texlive/2025/texmf-dist/tex/latex/needspace/needspace.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/psnfss/pifont.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/psnfss/pifont.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/psnfss/upzd.fd
@@ -489,6 +491,62 @@ INPUT ./MOCK.png
 INPUT ./sections/10-system-design.tex
 INPUT ./sections/10-system-design.tex
 INPUT sections/10-system-design.tex
+INPUT ./sections/11-database.tex
+INPUT ./sections/11-database.tex
+INPUT sections/11-database.tex
+INPUT ./DBVECCHIO.pdf
+INPUT ./DBVECCHIO.pdf
+INPUT ./DBVECCHIO.pdf
+INPUT ./DBVECCHIO.pdf
+INPUT ./DBVECCHIO.pdf
+INPUT ./DB.pdf
+INPUT ./DB.pdf
+INPUT ./DB.pdf
+INPUT ./DB.pdf
+INPUT ./DB.pdf
+INPUT ./sections/12-design-classes.tex
+INPUT ./sections/12-design-classes.tex
+INPUT sections/12-design-classes.tex
+INPUT ./package config.png
+INPUT ./package config.png
+INPUT ./package config.png
+INPUT ./package config.png
+INPUT ./package config.png
+INPUT ./package controller.png
+INPUT ./package controller.png
+INPUT ./package controller.png
+INPUT ./package controller.png
+INPUT ./package controller.png
+INPUT ./package dto.png
+INPUT ./package dto.png
+INPUT ./package dto.png
+INPUT ./package dto.png
+INPUT ./package dto.png
+INPUT ./package entity.png
+INPUT ./package entity.png
+INPUT ./package entity.png
+INPUT ./package entity.png
+INPUT ./package entity.png
+INPUT ./package extensions.png
+INPUT ./package extensions.png
+INPUT ./package extensions.png
+INPUT ./package extensions.png
+INPUT ./package extensions.png
+INPUT ./package repository.png
+INPUT ./package repository.png
+INPUT ./package repository.png
+INPUT ./package repository.png
+INPUT ./package repository.png
+INPUT ./package service.png
+INPUT ./package service.png
+INPUT ./package service.png
+INPUT ./package service.png
+INPUT ./package service.png
+INPUT ./ui_completo_bb26.png
+INPUT ./ui_completo_bb26.png
+INPUT ./ui_completo_bb26.png
+INPUT ./ui_completo_bb26.png
+INPUT ./ui_completo_bb26.png
 INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out
