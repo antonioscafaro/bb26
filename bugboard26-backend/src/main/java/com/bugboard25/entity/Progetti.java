@@ -17,10 +17,11 @@ public class Progetti {
 
     @ManyToOne
     @JoinColumn(name = "id_creatore")
-    private Utenti id_creatore;
+    private Utenti idCreatore;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date data_creazione;
+    @Column(name = "data_creazione")
+    private Date dataCreazione;
 
     public int getId() {
         return id;
@@ -38,12 +39,12 @@ public class Progetti {
         this.descrizione = descrizione;
     }
 
-    public void setId_creatore(Utenti id_creatore) {
-        this.id_creatore = id_creatore;
+    public void setIdCreatore(Utenti idCreatore) {
+        this.idCreatore = idCreatore;
     }
 
-    public void setData_creazione(Date data_creazione) {
-        this.data_creazione = data_creazione;
+    public void setDataCreazione(Date dataCreazione) {
+        this.dataCreazione = dataCreazione;
     }
 
     public String getNome() {
@@ -54,11 +55,11 @@ public class Progetti {
         return descrizione;
     }
 
-    public Utenti getId_creatore() {
-        return id_creatore;
+    public Utenti getIdCreatore() {
+        return idCreatore;
     }
 
-    public Date getData_creazione() {
-        return data_creazione;
+    public Date getDataCreazione() {
+        return dataCreazione;
     }
 }

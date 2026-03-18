@@ -22,23 +22,23 @@ public class ProgettiDTO {
         this.creatore = creatore;
     }
 
-    public void setData_creazione(Date data_creazione) {
-        this.data_creazione = data_creazione;
+    public void setDataCreazione(Date dataCreazione) {
+        this.dataCreazione = dataCreazione;
     }
 
     private String nome;
     private String descrizione;
     private UtentiDTO creatore;
-    private Date data_creazione;
+    private Date dataCreazione;
 
     public ProgettiDTO(Progetti progetto) {
         this.id = progetto.getId();
         this.nome = progetto.getNome();
         this.descrizione = progetto.getDescrizione();
-        this.data_creazione = progetto.getData_creazione();
+        this.dataCreazione = progetto.getDataCreazione();
 
-        if (progetto.getId_creatore() != null) {
-            this.creatore = new UtentiDTO(progetto.getId_creatore());
+        if (progetto.getIdCreatore() != null) {
+            this.creatore = new UtentiDTO(progetto.getIdCreatore());
         }
     }
 
@@ -46,5 +46,5 @@ public class ProgettiDTO {
     public String getNome() { return nome; }
     public String getDescrizione() { return descrizione; }
     public UtentiDTO getCreatore() { return creatore; }
-    public Date getData_creazione() { return data_creazione; }
+    public Date getDataCreazione() { return dataCreazione; }
 }

@@ -62,14 +62,14 @@ public class ReportService {
         if (progetto != null) {
             return new ReportDataHolder(
                     issueRepository.findByIdProgettoAndDataCreazioneBetween(progetto, dataInizio, dataFine),
-                    issueRepository.findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(progetto, stato_issue.RISOLTA, dataInizio, dataFine),
+                    issueRepository.findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(progetto, StatoIssue.RISOLTA, dataInizio, dataFine),
                     issueRepository.findCriticalAlertsByProject(progetto, dateCriticalLimit).stream().map(IssueDTO::new).toList(),
                     issueRepository.countCurrentlyOpenByProject(progetto)
             );
         }
         return new ReportDataHolder(
                 issueRepository.findByDataCreazioneBetween(dataInizio, dataFine),
-                issueRepository.findByStatoIssueAndDataUltimoAggiornamentoBetween(stato_issue.RISOLTA, dataInizio, dataFine),
+                issueRepository.findByStatoIssueAndDataUltimoAggiornamentoBetween(StatoIssue.RISOLTA, dataInizio, dataFine),
                 issueRepository.findCriticalAlerts(dateCriticalLimit).stream().map(IssueDTO::new).toList(),
                 issueRepository.countCurrentlyOpen()
         );
@@ -173,7 +173,7 @@ public class ReportService {
         if (issues.isEmpty()) return map;
         double totale = issues.size();
 
-        for (tipo_issue tipo : tipo_issue.values()) {
+        for (TipoIssue tipo : TipoIssue.values()) {
             long count = issues.stream().filter(i -> i.getTipoIssue() == tipo).count();
             map.put(tipo.name(), Math.round((count / totale) * 1000.0) / 10.0);
         }
@@ -185,7 +185,7 @@ public class ReportService {
         if (issues.isEmpty()) return map;
         double totale = issues.size();
 
-        for (priorita_issue priorita : priorita_issue.values()) {
+        for (PrioritaIssue priorita : PrioritaIssue.values()) {
             long count = issues.stream().filter(i -> i.getPrioritaIssue() == priorita).count();
             map.put(priorita.name(), Math.round((count / totale) * 1000.0) / 10.0);
         }

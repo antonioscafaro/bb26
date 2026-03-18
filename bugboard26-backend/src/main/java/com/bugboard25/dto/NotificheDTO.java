@@ -1,14 +1,14 @@
 package com.bugboard25.dto;
 
 import com.bugboard25.entity.Notifiche;
-import com.bugboard25.entity.enumerations.tipo_notifica;
+import com.bugboard25.entity.enumerations.TipoNotifica;
 import java.util.Date;
 
 public class NotificheDTO {
     private int id;
     private String destinatarioEmail;
     private Integer idIssue; // Può essere nullo se la notifica non è legata a una issue
-    private tipo_notifica tipo_notifica;
+    private TipoNotifica tipoNotifica;
     private String testo;
     private boolean letto;
     private Date dataCreazione;
@@ -16,7 +16,7 @@ public class NotificheDTO {
     public NotificheDTO(Notifiche notifica) {
         this.id = notifica.getId();
         this.testo = notifica.getTesto();
-        this.tipo_notifica = notifica.getTipo_notifica();
+        this.tipoNotifica = notifica.getTipoNotifica();
         this.letto = notifica.isLetto();
         this.dataCreazione = notifica.getDataCreazione();
 
@@ -31,7 +31,7 @@ public class NotificheDTO {
     public int getId() { return id; }
     public String getDestinatarioEmail() { return destinatarioEmail; }
     public Integer getIdIssue() { return idIssue; }
-    public tipo_notifica getTipo_notifica() { return tipo_notifica; }
+    public TipoNotifica getTipoNotifica() { return tipoNotifica; }
     public String getTesto() { return testo; }
     public boolean isLetto() { return letto; }
     public Date getDataCreazione() { return dataCreazione; }

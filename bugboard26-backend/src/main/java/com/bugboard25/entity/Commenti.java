@@ -22,7 +22,8 @@ public class Commenti {
     private String testo;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date data_creazione;
+    @Column(name = "data_creazione")
+    private Date dataCreazione;
 
     public void setId(int id) {
         this.id = id;
@@ -40,8 +41,8 @@ public class Commenti {
         this.testo = testo;
     }
 
-    public void setData_creazione(Date data_creazione) {
-        this.data_creazione = data_creazione;
+    public void setDataCreazione(Date dataCreazione) {
+        this.dataCreazione = dataCreazione;
     }
 
     public Issue getIssue() {
@@ -60,7 +61,7 @@ public class Commenti {
         return testo;
     }
 
-    public Date getData_creazione() {
-        return data_creazione;
+    public Date getDataCreazione() {
+        return dataCreazione;
     }
 }

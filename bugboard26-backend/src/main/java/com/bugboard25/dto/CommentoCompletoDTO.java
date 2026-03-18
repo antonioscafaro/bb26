@@ -7,13 +7,13 @@ import java.util.Date;
 public class CommentoCompletoDTO {
     private int id;
     private String testo;
-    private Date data_creazione;
+    private Date dataCreazione;
     private AutoreCommentoDTO autore;
 
     public CommentoCompletoDTO(Commenti commento) {
         this.id = commento.getId();
         this.testo = commento.getTesto();
-        this.data_creazione = commento.getData_creazione();
+        this.dataCreazione = commento.getDataCreazione();
         this.autore = new AutoreCommentoDTO(commento.getAutore());
     }
 
@@ -25,12 +25,12 @@ public class CommentoCompletoDTO {
         this.autore = autore;
     }
 
-    public Date getData_creazione() {
-        return data_creazione;
+    public Date getDataCreazione() {
+        return dataCreazione;
     }
 
-    public void setData_creazione(Date data_creazione) {
-        this.data_creazione = data_creazione;
+    public void setDataCreazione(Date dataCreazione) {
+        this.dataCreazione = dataCreazione;
     }
 
     public String getTesto() {

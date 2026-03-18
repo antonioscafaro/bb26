@@ -547,6 +547,14 @@ INPUT ./ui_completo_bb26.png
 INPUT ./ui_completo_bb26.png
 INPUT ./ui_completo_bb26.png
 INPUT ./ui_completo_bb26.png
+INPUT ./sections/13-versioning.tex
+INPUT ./sections/13-versioning.tex
+INPUT sections/13-versioning.tex
+INPUT ./versioning.png
+INPUT ./versioning.png
+INPUT ./versioning.png
+INPUT ./versioning.png
+INPUT ./versioning.png
 INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out

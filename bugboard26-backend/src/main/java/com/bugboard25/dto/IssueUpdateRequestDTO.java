@@ -1,16 +1,16 @@
 package com.bugboard25.dto;
 
-import com.bugboard25.entity.enumerations.priorita_issue;
-import com.bugboard25.entity.enumerations.stato_issue;
-import com.bugboard25.entity.enumerations.tipo_issue;
+import com.bugboard25.entity.enumerations.PrioritaIssue;
+import com.bugboard25.entity.enumerations.StatoIssue;
+import com.bugboard25.entity.enumerations.TipoIssue;
 
 public class IssueUpdateRequestDTO {
     private int id;
     private String titolo;
     private String descrizione;
-    private tipo_issue tipoIssue;
-    private stato_issue statoIssue;
-    private priorita_issue prioritaIssue;
+    private TipoIssue tipoIssue;
+    private StatoIssue statoIssue;
+    private PrioritaIssue prioritaIssue;
     private String assegnatario;
     private java.util.List<String> etichette;
 
@@ -26,7 +26,7 @@ public class IssueUpdateRequestDTO {
         return id;
     }
 
-    public stato_issue getStatoIssue() {
+    public StatoIssue getStatoIssue() {
         return statoIssue;
     }
 
@@ -38,11 +38,11 @@ public class IssueUpdateRequestDTO {
         return descrizione;
     }
 
-    public tipo_issue getTipoIssue() {
+    public TipoIssue getTipoIssue() {
         return tipoIssue;
     }
 
-    public priorita_issue getPrioritaIssue() {
+    public PrioritaIssue getPrioritaIssue() {
         return prioritaIssue;
     }
 
@@ -62,15 +62,15 @@ public class IssueUpdateRequestDTO {
         this.descrizione = descrizione;
     }
 
-    public void setTipoIssue(tipo_issue tipoIssue) {
+    public void setTipoIssue(TipoIssue tipoIssue) {
         this.tipoIssue = tipoIssue;
     }
 
-    public void setStatoIssue(stato_issue statoIssue) {
+    public void setStatoIssue(StatoIssue statoIssue) {
         this.statoIssue = statoIssue;
     }
 
-    public void setPrioritaIssue(priorita_issue prioritaIssue) {
+    public void setPrioritaIssue(PrioritaIssue prioritaIssue) {
         this.prioritaIssue = prioritaIssue;
     }
 

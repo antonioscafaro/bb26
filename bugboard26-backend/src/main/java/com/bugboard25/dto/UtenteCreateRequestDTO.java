@@ -1,13 +1,13 @@
 package com.bugboard25.dto;
 
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 
 public class UtenteCreateRequestDTO {
     private String email;
     private String password;
     private String nome;
     private String cognome;
-    private tipo_ruolo ruolo;
+    private TipoRuolo ruolo;
 
     public String getEmail() {
         return email;
@@ -25,7 +25,7 @@ public class UtenteCreateRequestDTO {
         return cognome;
     }
 
-    public tipo_ruolo getRuolo() {
+    public TipoRuolo getRuolo() {
         return ruolo;
     }
 
@@ -45,7 +45,7 @@ public class UtenteCreateRequestDTO {
         this.cognome = cognome;
     }
 
-    public void setRuolo(tipo_ruolo ruolo) {
+    public void setRuolo(TipoRuolo ruolo) {
         this.ruolo = ruolo;
     }
 }

@@ -6,7 +6,7 @@ import com.bugboard25.dto.ProgettoCreateRequestDTO;
 import com.bugboard25.entity.Progetti;
 import com.bugboard25.entity.ProgettoMembri;
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.exception.ErrorMessages;
 import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.ProgettiRepository;
@@ -83,7 +83,7 @@ public class ProgettiService {
                      sseService.sendUpdateSignal(membro.getUtente().getEmail(), ErrorMessages.PROJECT_UPDATE);
                  }
             }
-            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE);
+            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
             for (UtentiDTO amministratore : amministratori) {
                 sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.PROJECT_UPDATE);
             }
@@ -99,8 +99,8 @@ public class ProgettiService {
         Progetti progetto = new Progetti();
         progetto.setNome(requestDTO.getNome());
         progetto.setDescrizione(requestDTO.getDescrizione());
-        progetto.setData_creazione(new Date());
-        progetto.setId_creatore(creatore);
+        progetto.setDataCreazione(new Date());
+        progetto.setIdCreatore(creatore);
 
         progetto = progettiRepository.save(progetto);
 

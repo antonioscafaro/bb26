@@ -7,7 +7,7 @@ import com.bugboard25.entity.Commenti;
 import com.bugboard25.entity.Issue;
 import com.bugboard25.entity.Notifiche;
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.tipo_notifica;
+import com.bugboard25.entity.enumerations.TipoNotifica;
 import com.bugboard25.exception.ErrorMessages;
 import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.CommentiRepository;
@@ -66,7 +66,7 @@ public class NotificheService {
         Notifiche notifica = new Notifiche();
         notifica.setDestinatario(utente);
         notifica.setTesto(dto.getTesto());
-        notifica.setTipo_notifica(tipo_notifica.ASSEGNATA);
+        notifica.setTipoNotifica(TipoNotifica.ASSEGNATA);
         notifica.setDataCreazione(new Date());
         notifica.setLetto(false);
         notifica.setIssue(issue);
@@ -88,7 +88,7 @@ public class NotificheService {
         Notifiche notifica = new Notifiche();
         notifica.setDestinatario(utente);
         notifica.setTesto(dto.getTesto());
-        notifica.setTipo_notifica(tipo_notifica.MENZIONE);
+        notifica.setTipoNotifica(TipoNotifica.MENZIONE);
         notifica.setDataCreazione(new Date());
         notifica.setLetto(false);
         notifica.setIssue(issue);
@@ -133,7 +133,7 @@ public class NotificheService {
         Notifiche notifica = new Notifiche();
         notifica.setDestinatario(destinatario);
         notifica.setTesto(testo);
-        notifica.setTipo_notifica(tipo_notifica.PROGETTO);
+        notifica.setTipoNotifica(TipoNotifica.PROGETTO);
         notifica.setDataCreazione(new Date());
         notifica.setLetto(false);
 

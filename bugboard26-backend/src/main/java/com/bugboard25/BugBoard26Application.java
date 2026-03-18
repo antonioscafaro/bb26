@@ -1,7 +1,7 @@
 package com.bugboard25;
 
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.repository.UtentiRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class BugBoard26Application {
 					adminPassword = "admin123";
 				}
 				admin.setPasswordHash(passwordEncoder.encode(adminPassword));
-				admin.setRuolo(tipo_ruolo.AMMINISTRATORE);
+				admin.setRuolo(TipoRuolo.AMMINISTRATORE);
 
 				repository.save(admin);
 				logger.info("Utente Admin generato con successo!");

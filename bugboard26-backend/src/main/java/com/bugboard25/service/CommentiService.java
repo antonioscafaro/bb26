@@ -7,7 +7,7 @@ import com.bugboard25.dto.NotificheMenzioneCreateRequestDTO;
 import com.bugboard25.entity.Commenti;
 import com.bugboard25.entity.Issue;
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.exception.ErrorMessages;
 import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.CommentiRepository;
@@ -81,7 +81,7 @@ public class CommentiService {
         commenti.setAutore(autore);
         commenti.setIssue(issue);
         Date data = new Date();
-        commenti.setData_creazione(data);
+        commenti.setDataCreazione(data);
         commenti = commentiRepository.save(commenti);
 
         List<String> utentiMenzionati = estraiMenzioni(commenti.getTesto());
@@ -105,7 +105,7 @@ public class CommentiService {
         for (UtentiDTO member : members) {
             sseService.sendEvent(member.getEmail(), ErrorMessages.ISSUE_UPDATE, "Issue updated in project " + projectId);
         }
-        List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE);
+        List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
         for (UtentiDTO amministratore : amministratori) {
             sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.ISSUE_UPDATE);
         }

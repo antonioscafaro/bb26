@@ -55,7 +55,7 @@ public class UtentiController {
     @GetMapping("/{email}/issuesCreate")
     public ResponseEntity<List<IssueDTO>> getIssuesCreate(@PathVariable String email,
             java.security.Principal principal) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "data_creazione");
+        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
         List<IssueDTO> issues = issueService.getIssueByAutore(email, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }

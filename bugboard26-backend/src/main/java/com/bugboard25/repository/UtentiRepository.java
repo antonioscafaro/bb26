@@ -1,7 +1,7 @@
 package com.bugboard25.repository;
 
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +15,5 @@ public interface UtentiRepository extends JpaRepository<Utenti, String> {
 
     List<Utenti> findByEmail(String email);
 
-    List<Utenti> findByRuolo(tipo_ruolo ruolo);
+    List<Utenti> findByRuolo(TipoRuolo ruolo);
 }

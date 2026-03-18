@@ -1,8 +1,8 @@
 package com.bugboard25.entity;
 
-import com.bugboard25.entity.enumerations.stato_issue;
-import com.bugboard25.entity.enumerations.tipo_issue;
-import com.bugboard25.entity.enumerations.priorita_issue;
+import com.bugboard25.entity.enumerations.StatoIssue;
+import com.bugboard25.entity.enumerations.TipoIssue;
+import com.bugboard25.entity.enumerations.PrioritaIssue;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -32,15 +32,15 @@ public class Issue {
     private String descrizione;
 
     @Enumerated(EnumType.STRING)
-    private tipo_issue tipoIssue;
+    private TipoIssue tipoIssue;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stato_issue")
-    private stato_issue statoIssue;
+    private StatoIssue statoIssue;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "priorita_issue")
-    private priorita_issue prioritaIssue;
+    private PrioritaIssue prioritaIssue;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_creazione")
@@ -83,15 +83,15 @@ public class Issue {
         this.descrizione = descrizione;
     }
 
-    public void setTipoIssue(tipo_issue tipoIssue) {
+    public void setTipoIssue(TipoIssue tipoIssue) {
         this.tipoIssue = tipoIssue;
     }
 
-    public void setStatoIssue(stato_issue statoIssue) {
+    public void setStatoIssue(StatoIssue statoIssue) {
         this.statoIssue = statoIssue;
     }
 
-    public void setPrioritaIssue(priorita_issue prioritaIssue) {
+    public void setPrioritaIssue(PrioritaIssue prioritaIssue) {
         this.prioritaIssue = prioritaIssue;
     }
 
@@ -111,15 +111,15 @@ public class Issue {
         return dataCreazione;
     }
 
-    public priorita_issue getPrioritaIssue() {
+    public PrioritaIssue getPrioritaIssue() {
         return prioritaIssue;
     }
 
-    public stato_issue getStatoIssue() {
+    public StatoIssue getStatoIssue() {
         return statoIssue;
     }
 
-    public tipo_issue getTipoIssue() {
+    public TipoIssue getTipoIssue() {
         return tipoIssue;
     }
 

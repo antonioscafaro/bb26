@@ -9,10 +9,10 @@ import com.bugboard25.entity.Etichette;
 import com.bugboard25.entity.Issue;
 import com.bugboard25.entity.Progetti;
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.priorita_issue;
-import com.bugboard25.entity.enumerations.stato_issue;
-import com.bugboard25.entity.enumerations.tipo_issue;
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.PrioritaIssue;
+import com.bugboard25.entity.enumerations.StatoIssue;
+import com.bugboard25.entity.enumerations.TipoIssue;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.exception.BadRequestException;
 import com.bugboard25.exception.FileUploadException;
 import com.bugboard25.exception.ForbiddenException;
@@ -77,15 +77,15 @@ class IssueServiceTest {
 
         author = new Utenti();
         author.setEmail("author@test.com");
-        author.setRuolo(tipo_ruolo.UTENTE);
+        author.setRuolo(TipoRuolo.UTENTE);
 
         admin = new Utenti();
         admin.setEmail("admin@test.com");
-        admin.setRuolo(tipo_ruolo.AMMINISTRATORE);
+        admin.setRuolo(TipoRuolo.AMMINISTRATORE);
 
         intruder = new Utenti();
         intruder.setEmail("intruder@test.com");
-        intruder.setRuolo(tipo_ruolo.UTENTE);
+        intruder.setRuolo(TipoRuolo.UTENTE);
 
         issue = new Issue();
         issue.setId(100);
@@ -98,11 +98,11 @@ class IssueServiceTest {
     void testUpdateIssueById_AdminSetsFields(){
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
         dto.setTitolo("New Title");
-        dto.setStatoIssue(stato_issue.IN_LAVORAZIONE);
+        dto.setStatoIssue(StatoIssue.IN_LAVORAZIONE);
         dto.setAssegnatario("admin@test.com");
         dto.setDescrizione("Test Description");
-        dto.setPrioritaIssue(priorita_issue.CRITICA);
-        dto.setTipoIssue(tipo_issue.BUG);
+        dto.setPrioritaIssue(PrioritaIssue.CRITICA);
+        dto.setTipoIssue(TipoIssue.BUG);
         dto.setEtichette(new ArrayList<>());
 
         when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
@@ -115,11 +115,11 @@ class IssueServiceTest {
 
         assertNotNull(result);
         assertEquals("New Title", result.getTitolo());
-        assertEquals(stato_issue.IN_LAVORAZIONE, result.getStatoIssue());
+        assertEquals(StatoIssue.IN_LAVORAZIONE, result.getStatoIssue());
         assertEquals("admin@test.com", result.getAssegnatario().getEmail());
         assertEquals("Test Description", result.getDescrizione());
-        assertEquals(priorita_issue.CRITICA, result.getPrioritaIssue());
-        assertEquals(tipo_issue.BUG, result.getTipoIssue());
+        assertEquals(PrioritaIssue.CRITICA, result.getPrioritaIssue());
+        assertEquals(TipoIssue.BUG, result.getTipoIssue());
 
         verify(etichetteService, never()).findOrCreate(anyString(), any());
         verify(issueRepository, times(1)).save(any(Issue.class));
@@ -251,9 +251,9 @@ class IssueServiceTest {
     void testCreaIssue_NoFileOneLabel() throws IOException {
         IssueCreateRequestDTO dto = new IssueCreateRequestDTO();
         dto.setDescrizione("Test Description");
-        dto.setPrioritaIssue(priorita_issue.CRITICA);
+        dto.setPrioritaIssue(PrioritaIssue.CRITICA);
         dto.setTitolo("Test Issue");
-        dto.setTipoIssue(tipo_issue.BUG);
+        dto.setTipoIssue(TipoIssue.BUG);
         dto.setEmailAutore(author.getEmail());
         dto.setIdProgetto(1);
         dto.setEtichette(Arrays.asList("Label 1"));
@@ -268,7 +268,7 @@ class IssueServiceTest {
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         when(progettoMembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
-        when(utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
+        when(utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
 
         when(etichetteService.findOrCreate(eq("Label 1"), any())).thenReturn(label1);
 
@@ -292,7 +292,7 @@ class IssueServiceTest {
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         when(progettoMembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
-        when(utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
+        when(utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
 
         MultipartFile file = mock(MultipartFile.class);
         when(file.isEmpty()).thenReturn(false);

@@ -1,9 +1,9 @@
 package com.bugboard25.dto;
 
 import com.bugboard25.entity.Issue;
-import com.bugboard25.entity.enumerations.priorita_issue;
-import com.bugboard25.entity.enumerations.stato_issue;
-import com.bugboard25.entity.enumerations.tipo_issue;
+import com.bugboard25.entity.enumerations.PrioritaIssue;
+import com.bugboard25.entity.enumerations.StatoIssue;
+import com.bugboard25.entity.enumerations.TipoIssue;
 
 import java.util.Date;
 import java.util.List;
@@ -15,9 +15,9 @@ public class IssueDTO {
     private UtentiDTO assegnatario;
     private String titolo;
     private String descrizione;
-    private tipo_issue tipoIssue;
-    private stato_issue statoIssue;
-    private priorita_issue prioritaIssue;
+    private TipoIssue tipoIssue;
+    private StatoIssue statoIssue;
+    private PrioritaIssue prioritaIssue;
     private Date dataCreazione;
     private Date dataUltimoAggiornamento;
     private List<AllegatoDTO> allegati;
@@ -71,9 +71,9 @@ public class IssueDTO {
     public UtentiDTO getAssegnatario() { return assegnatario; }
     public String getTitolo() { return titolo; }
     public String getDescrizione() { return descrizione; }
-    public tipo_issue getTipoIssue() { return tipoIssue; }
-    public stato_issue getStatoIssue() { return statoIssue; }
-    public priorita_issue getPrioritaIssue() { return prioritaIssue; }
+    public TipoIssue getTipoIssue() { return tipoIssue; }
+    public StatoIssue getStatoIssue() { return statoIssue; }
+    public PrioritaIssue getPrioritaIssue() { return prioritaIssue; }
     public Date getDataCreazione() { return dataCreazione; }
     public Date getDataUltimoAggiornamento() { return dataUltimoAggiornamento; }
     public List<AllegatoDTO> getAllegati() { return allegati; }

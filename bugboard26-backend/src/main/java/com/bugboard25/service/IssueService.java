@@ -2,10 +2,10 @@ package com.bugboard25.service;
 
 import com.bugboard25.dto.*;
 import com.bugboard25.entity.*;
-import com.bugboard25.entity.enumerations.priorita_issue;
-import com.bugboard25.entity.enumerations.stato_issue;
-import com.bugboard25.entity.enumerations.tipo_issue;
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.PrioritaIssue;
+import com.bugboard25.entity.enumerations.StatoIssue;
+import com.bugboard25.entity.enumerations.TipoIssue;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.exception.*;
 import com.bugboard25.repository.*;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class IssueService {
                  }
              }
 
-             List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE);
+             List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
              for (UtentiDTO amministratore : amministratori) {
                  sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.ISSUE_UPDATE);
              }
@@ -86,13 +86,13 @@ public class IssueService {
         Utenti richiedente = utentiRepository.findById(emailRichiedente).orElse(null);
         if (richiedente == null) return issues;
 
-        if (richiedente.getRuolo() == tipo_ruolo.AMMINISTRATORE) {
+        if (richiedente.getRuolo() == TipoRuolo.AMMINISTRATORE) {
             return issues;
         }
 
         return issues.stream()
                 .filter(i -> {
-                    if (i.getStatoIssue() == stato_issue.CHIUSA) {
+                    if (i.getStatoIssue() == StatoIssue.CHIUSA) {
                         boolean isAssignee = i.getAssegnatario() != null && i.getAssegnatario().getEmail().equals(emailRichiedente);
                         boolean isAuthor = i.getAutore() != null && i.getAutore().getEmail().equals(emailRichiedente);
                         return isAssignee || isAuthor;
@@ -126,7 +126,7 @@ public class IssueService {
                 .toList();
     }
 
-    public List<IssueDTO> getIssueByStato(stato_issue statoIssue, String emailRichiedente, Sort sort) {
+    public List<IssueDTO> getIssueByStato(StatoIssue statoIssue, String emailRichiedente, Sort sort) {
         List<Issue> issues = issueRepository.findAllByStatoIssue(statoIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
@@ -134,7 +134,7 @@ public class IssueService {
                 .toList();
     }
 
-    public List<IssueDTO> getIssueByPriorita(priorita_issue prioritaIssue, String emailRichiedente, Sort sort) {
+    public List<IssueDTO> getIssueByPriorita(PrioritaIssue prioritaIssue, String emailRichiedente, Sort sort) {
         List<Issue> issues = issueRepository.findAllByPrioritaIssue(prioritaIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
@@ -160,7 +160,7 @@ public class IssueService {
                 .toList();
     }
 
-    public List<IssueDTO> getIssueByTipo(tipo_issue tipoIssue, String emailRichiedente, Sort sort) {
+    public List<IssueDTO> getIssueByTipo(TipoIssue tipoIssue, String emailRichiedente, Sort sort) {
         List<Issue> issues = issueRepository.findAllByTipoIssue(tipoIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
@@ -188,8 +188,8 @@ public class IssueService {
         issue.setTitolo(requestDTO.getTitolo());
         issue.setDescrizione(requestDTO.getDescrizione());
         issue.setTipoIssue(requestDTO.getTipoIssue());
-        issue.setPrioritaIssue(priorita_issue.NESSUNA);
-        issue.setStatoIssue(stato_issue.TODO);
+        issue.setPrioritaIssue(PrioritaIssue.NESSUNA);
+        issue.setStatoIssue(StatoIssue.TODO);
         issue.setAutore(autore);
         issue.setIdProgetto(progetto);
         issue.setDataCreazione(new Date());
@@ -263,7 +263,7 @@ public class IssueService {
     }
 
     private void validatePermissions(Issue issue, Utenti richiedente, String emailRichiedente) {
-        boolean isAdmin = richiedente.getRuolo() == tipo_ruolo.AMMINISTRATORE;
+        boolean isAdmin = richiedente.getRuolo() == TipoRuolo.AMMINISTRATORE;
         boolean isAssignee = issue.getAssegnatario() != null && issue.getAssegnatario().getEmail().equals(emailRichiedente);
         boolean isReporter = issue.getAutore() != null && issue.getAutore().getEmail().equals(emailRichiedente);
 
@@ -285,7 +285,7 @@ public class IssueService {
                 new com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey(
                         issue.getIdProgetto().getId(), assegnatario.getEmail());
 
-        if (!progettoMembriRepository.existsById(pk) && assegnatario.getRuolo() != tipo_ruolo.AMMINISTRATORE) {
+        if (!progettoMembriRepository.existsById(pk) && assegnatario.getRuolo() != TipoRuolo.AMMINISTRATORE) {
             throw new BadRequestException(ErrorMessages.UTENTE_NON_MEMBRO);
         }
 
@@ -303,7 +303,7 @@ public class IssueService {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
 
-        issue.setStatoIssue(stato_issue.ARCHIVIATA);
+        issue.setStatoIssue(StatoIssue.ARCHIVIATA);
         issue = issueRepository.save(issue);
         notifyProjectMembers(issue.getIdProgetto().getId());
         return new IssueDTO(issue);

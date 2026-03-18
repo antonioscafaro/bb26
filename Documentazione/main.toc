@@ -227,3 +227,4 @@
 \contentsline {subsubsection}{\numberline {3.4.2}Frontend}{80}{subsubsection.3.4.2}%
 \contentsline {paragraph}{\numberline {3.4.2.1}Principio di Singola Responsabilità (SRP)}{80}{paragraph.3.4.2.1}%
 \contentsline {paragraph}{\numberline {3.4.2.2}Design pattern applicati nel frontend}{80}{paragraph.3.4.2.2}%
+\contentsline {subsection}{\numberline {3.5}Utilizzo degli strumenti di versioning}{82}{subsection.3.5}%

@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -79,7 +79,7 @@ public class UtentiService implements UserDetailsService {
         utente.setPasswordHash(passwordHash);
 
         utente.setRuolo(requestDTO.getRuolo());
-        utente.setData_creazione(new Date());
+        utente.setDataCreazione(new Date());
 
         Utenti utenteSalvato = utentiRepository.save(utente);
         return new UtentiDTO(utenteSalvato);
@@ -106,7 +106,7 @@ public class UtentiService implements UserDetailsService {
         utentiRepository.delete(utente);
     }
 
-    public List<UtentiDTO> getUtentiByRuolo(tipo_ruolo ruolo) {
+    public List<UtentiDTO> getUtentiByRuolo(TipoRuolo ruolo) {
         return utentiRepository.findByRuolo(ruolo)
                 .stream()
                 .map(UtentiDTO::new)

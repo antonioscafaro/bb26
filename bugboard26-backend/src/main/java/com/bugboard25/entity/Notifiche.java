@@ -1,6 +1,6 @@
 package com.bugboard25.entity;
 
-import com.bugboard25.entity.enumerations.tipo_notifica;
+import com.bugboard25.entity.enumerations.TipoNotifica;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -33,8 +33,8 @@ public class Notifiche {
         this.issue = issue;
     }
 
-    public void setTipo_notifica(tipo_notifica tipo_notifica) {
-        this.tipo_notifica = tipo_notifica;
+    public void setTipoNotifica(TipoNotifica tipoNotifica) {
+        this.tipoNotifica = tipoNotifica;
     }
 
     public void setTesto(String testo) {
@@ -47,7 +47,8 @@ public class Notifiche {
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
-    private tipo_notifica tipo_notifica;
+    @Column(name = "tipo_notifica")
+    private TipoNotifica tipoNotifica;
 
     @Column(nullable = false)
     private String testo;
@@ -78,8 +79,8 @@ public class Notifiche {
         return issue;
     }
 
-    public tipo_notifica getTipo_notifica() {
-        return tipo_notifica;
+    public TipoNotifica getTipoNotifica() {
+        return tipoNotifica;
     }
 
     public String getTesto() {

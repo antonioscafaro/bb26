@@ -4,9 +4,9 @@ import com.bugboard25.entity.Etichette;
 import com.bugboard25.entity.Issue;
 import com.bugboard25.entity.Progetti;
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.priorita_issue;
-import com.bugboard25.entity.enumerations.stato_issue;
-import com.bugboard25.entity.enumerations.tipo_issue;
+import com.bugboard25.entity.enumerations.PrioritaIssue;
+import com.bugboard25.entity.enumerations.StatoIssue;
+import com.bugboard25.entity.enumerations.TipoIssue;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,20 +17,20 @@ import java.util.List;
 
 public interface IssueRepository extends JpaRepository<Issue, Integer> {
     List<Issue> findAllByAssegnatarioAndIdProgetto(Utenti assegnatario, Progetti idProgetto, Sort sort);
-    List<Issue> findAllByStatoIssue(stato_issue statoIssue, Sort sort);
-    List<Issue> findAllByPrioritaIssue(priorita_issue prioritaIssue, Sort sort);
+    List<Issue> findAllByStatoIssue(StatoIssue statoIssue, Sort sort);
+    List<Issue> findAllByPrioritaIssue(PrioritaIssue prioritaIssue, Sort sort);
     List<Issue> findAllByDataCreazioneBetween(Date dataInizio, Date dataFine, Sort sort);
     List<Issue> findAllByAutore(Utenti autore, Sort sort);
     List<Issue> findAllByIdProgetto(Progetti idProgetto, Sort sort);
-    List<Issue> findAllByTipoIssue(tipo_issue tipoIssue, Sort sort);
+    List<Issue> findAllByTipoIssue(TipoIssue tipoIssue, Sort sort);
     @Query("SELECT ie.issue FROM IssueEtichette ie WHERE ie.etichetta = :etichetta")
     List<Issue> findByEtichetta(@Param("etichetta") Etichette etichetta, Sort sort);
 
     List<Issue> findByDataCreazioneBetween(Date start, Date end);
     List<Issue> findByIdProgettoAndDataCreazioneBetween(Progetti progetto, Date start, Date end);
 
-    List<Issue> findByStatoIssueAndDataUltimoAggiornamentoBetween(stato_issue stato, Date start, Date end);
-    List<Issue> findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(Progetti progetto, stato_issue stato, Date start, Date end);
+    List<Issue> findByStatoIssueAndDataUltimoAggiornamentoBetween(StatoIssue stato, Date start, Date end);
+    List<Issue> findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(Progetti progetto, StatoIssue stato, Date start, Date end);
 
     @Query("SELECT COUNT(i) FROM Issue i WHERE i.statoIssue NOT IN ('RISOLTA', 'CHIUSA', 'ARCHIVIATA')")
     long countCurrentlyOpen();

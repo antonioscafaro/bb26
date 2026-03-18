@@ -1,6 +1,6 @@
 package com.bugboard25.config;
 
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import jakarta.servlet.http.HttpServletResponse; // NUOVO IMPORT
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +28,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/utenti/email/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/sse/subscribe/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/utenti").hasRole(String.valueOf(tipo_ruolo.AMMINISTRATORE))
-                        .requestMatchers(HttpMethod.DELETE, "/api/utenti/{email}").hasRole(String.valueOf(tipo_ruolo.AMMINISTRATORE))
+                        .requestMatchers(HttpMethod.POST, "/api/utenti").hasRole(String.valueOf(TipoRuolo.AMMINISTRATORE))
+                        .requestMatchers(HttpMethod.DELETE, "/api/utenti/{email}").hasRole(String.valueOf(TipoRuolo.AMMINISTRATORE))
                         .anyRequest().authenticated()
                 )
                 .httpBasic(basic -> basic.authenticationEntryPoint(

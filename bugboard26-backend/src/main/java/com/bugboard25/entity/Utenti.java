@@ -1,6 +1,6 @@
 package com.bugboard25.entity;
 
-import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.entity.enumerations.TipoRuolo;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -20,10 +20,11 @@ public class Utenti {
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
-    private tipo_ruolo ruolo;
+    private TipoRuolo ruolo;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date data_creazione;
+    @Column(name = "data_creazione")
+    private Date dataCreazione;
 
     public void setEmail(String email) {
         this.email = email;
@@ -41,12 +42,12 @@ public class Utenti {
         this.passwordHash = passwordHash;
     }
 
-    public void setRuolo(tipo_ruolo ruolo) {
+    public void setRuolo(TipoRuolo ruolo) {
         this.ruolo = ruolo;
     }
 
-    public void setData_creazione(Date data_creazione) {
-        this.data_creazione = data_creazione;
+    public void setDataCreazione(Date dataCreazione) {
+        this.dataCreazione = dataCreazione;
     }
 
     public String getEmail() {
@@ -65,11 +66,11 @@ public class Utenti {
         return passwordHash;
     }
 
-    public tipo_ruolo getRuolo() {
+    public TipoRuolo getRuolo() {
         return ruolo;
     }
 
-    public Date getData_creazione() {
-        return data_creazione;
+    public Date getDataCreazione() {
+        return dataCreazione;
     }
 }

@@ -1,9 +1,9 @@
 package com.bugboard25.controller;
 
 import com.bugboard25.dto.*;
-import com.bugboard25.entity.enumerations.priorita_issue;
-import com.bugboard25.entity.enumerations.stato_issue;
-import com.bugboard25.entity.enumerations.tipo_issue;
+import com.bugboard25.entity.enumerations.PrioritaIssue;
+import com.bugboard25.entity.enumerations.StatoIssue;
+import com.bugboard25.entity.enumerations.TipoIssue;
 import com.bugboard25.service.CommentiService;
 import com.bugboard25.service.EtichetteService;
 import com.bugboard25.service.IssueService;
@@ -40,24 +40,24 @@ public class IssueController {
         return ResponseEntity.ok(issue);
     }
 
-    @GetMapping("/stato/{stato_issue}")
-    public ResponseEntity<List<IssueDTO>> getIssueByStato(@PathVariable stato_issue stato_issue, java.security.Principal principal) {
+    @GetMapping("/stato/{statoIssue}")
+    public ResponseEntity<List<IssueDTO>> getIssueByStato(@PathVariable StatoIssue statoIssue, java.security.Principal principal) {
         Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);
-        List<IssueDTO> issues = issueService.getIssueByStato(stato_issue, principal.getName(), sort);
+        List<IssueDTO> issues = issueService.getIssueByStato(statoIssue, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }
 
-    @GetMapping("/priorita/{priorita_issue}")
-    public ResponseEntity<List<IssueDTO>> getIssuePriorita(@PathVariable priorita_issue priorita_issue, java.security.Principal principal) {
+    @GetMapping("/priorita/{prioritaIssue}")
+    public ResponseEntity<List<IssueDTO>> getIssuePriorita(@PathVariable PrioritaIssue prioritaIssue, java.security.Principal principal) {
         Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);
-        List<IssueDTO> issues = issueService.getIssueByPriorita(priorita_issue, principal.getName(), sort);
+        List<IssueDTO> issues = issueService.getIssueByPriorita(prioritaIssue, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }
 
-    @GetMapping("/tipo/{tipo_issue}")
-    public ResponseEntity<List<IssueDTO>> getIssueByTipo(@PathVariable tipo_issue tipo_issue, java.security.Principal principal) {
+    @GetMapping("/tipo/{tipoIssue}")
+    public ResponseEntity<List<IssueDTO>> getIssueByTipo(@PathVariable TipoIssue tipoIssue, java.security.Principal principal) {
         Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);
-        List<IssueDTO> issues = issueService.getIssueByTipo(tipo_issue, principal.getName(), sort);
+        List<IssueDTO> issues = issueService.getIssueByTipo(tipoIssue, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }
 
