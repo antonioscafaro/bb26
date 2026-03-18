@@ -19,19 +19,15 @@ public class SseService {
     public SseEmitter subscribe(String email) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
 
-        logger.info("SSE: Subscribing user {}", email);
         emitters.put(email, emitter);
 
         emitter.onCompletion(() -> {
-            logger.debug("SSE: Completed for user {}", email);
             emitters.remove(email);
         });
         emitter.onTimeout(() -> {
-            logger.debug("SSE: Timeout for user {}", email);
             emitters.remove(email);
         });
         emitter.onError(e -> {
-            logger.error("SSE: Error for user {}: {}", email, e.getMessage());
             emitters.remove(email);
         });
 
@@ -42,16 +38,12 @@ public class SseService {
         SseEmitter emitter = emitters.get(email);
         if (emitter != null) {
             try {
-                logger.debug("SSE: Sending {} to {}", eventName, email);
                 emitter.send(SseEmitter.event()
                         .name(eventName)
                         .data(data));
             } catch (IOException e) {
-                logger.error("SSE: Failed to send event to {}", email);
                 emitters.remove(email);
             }
-        } else {
-            logger.debug("SSE: No emitter found for user {}", email);
         }
     }
 
