@@ -3,11 +3,8 @@ package com.bugboard25.controller;
 import com.bugboard25.dto.EtichettaCreateRequestDTO;
 import com.bugboard25.dto.EtichettaDTO;
 import com.bugboard25.dto.IssueDTO;
-import com.bugboard25.entity.Etichette;
-import com.bugboard25.entity.Issue;
 import com.bugboard25.service.EtichetteService;
 import com.bugboard25.service.IssueService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +16,13 @@ import java.util.List;
 @RequestMapping("/api/etichette")
 public class EtichetteController {
 
-    @Autowired
-    private EtichetteService etichetteService;
+    private final EtichetteService etichetteService;
+    private final IssueService issueService;
 
-    @Autowired
-    private IssueService issueService;
+    public EtichetteController(EtichetteService etichetteService, IssueService issueService) {
+        this.etichetteService = etichetteService;
+        this.issueService = issueService;
+    }
 
     @GetMapping
     public ResponseEntity<List<EtichettaDTO>> getAllEtichette() {
@@ -38,7 +37,8 @@ public class EtichetteController {
     }
 
     @GetMapping("/{idEtichetta}/issues")
-    public ResponseEntity<List<IssueDTO>> getIssuesByEtichetta(@PathVariable int idEtichetta, java.security.Principal principal) {
+    public ResponseEntity<List<IssueDTO>> getIssuesByEtichetta(@PathVariable int idEtichetta,
+            java.security.Principal principal) {
         Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
         List<IssueDTO> issues = issueService.getIssueByEtichetta(idEtichetta, principal.getName(), sort);
         return ResponseEntity.ok(issues);

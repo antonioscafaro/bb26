@@ -1,17 +1,12 @@
 package com.bugboard25.controller;
 
-
-import com.bugboard25.dto.IssueDTO;
-import com.bugboard25.dto.NotificheDTO;
 import com.bugboard25.dto.UtenteCreateRequestDTO;
 import com.bugboard25.dto.UtentiDTO;
-import com.bugboard25.entity.Issue;
-import com.bugboard25.entity.Notifiche;
-import com.bugboard25.entity.Utenti;
+import com.bugboard25.dto.IssueDTO;
+import com.bugboard25.dto.NotificheDTO;
 import com.bugboard25.service.IssueService;
 import com.bugboard25.service.NotificheService;
 import com.bugboard25.service.UtentiService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +17,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/utenti")
 public class UtentiController {
-    @Autowired
-    private UtentiService utentiService;
 
-    @Autowired
-    private IssueService issueService;
+    private final UtentiService utentiService;
+    private final IssueService issueService;
+    private final NotificheService notificheService;
 
-    @Autowired
-    private NotificheService notificheService;
+    public UtentiController(UtentiService utentiService, IssueService issueService,
+                            NotificheService notificheService) {
+        this.utentiService = utentiService;
+        this.issueService = issueService;
+        this.notificheService = notificheService;
+    }
 
     @GetMapping
     public ResponseEntity<List<UtentiDTO>> getAllUtenti() {
         List<UtentiDTO> utenti = utentiService.getUtenti();
-
         return ResponseEntity.ok(utenti);
     }
 
@@ -43,7 +40,7 @@ public class UtentiController {
         UtentiDTO utente = utentiService.getUtentiByEmail(email);
         return ResponseEntity.ok(utente);
     }
-    
+
     @GetMapping("{email}/issues")
     public ResponseEntity<List<IssueDTO>> getIssuesAssegnate(
             @PathVariable String email,
@@ -56,7 +53,8 @@ public class UtentiController {
     }
 
     @GetMapping("/{email}/issuesCreate")
-    public ResponseEntity<List<IssueDTO>> getIssuesCreate(@PathVariable String email, java.security.Principal principal) {
+    public ResponseEntity<List<IssueDTO>> getIssuesCreate(@PathVariable String email,
+            java.security.Principal principal) {
         Sort sort = Sort.by(Sort.Direction.DESC, "data_creazione");
         List<IssueDTO> issues = issueService.getIssueByAutore(email, principal.getName(), sort);
         return ResponseEntity.ok(issues);

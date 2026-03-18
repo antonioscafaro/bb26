@@ -1,13 +1,16 @@
 package com.bugboard25.service;
 
-
 import com.bugboard25.dto.UtenteCreateRequestDTO;
 import com.bugboard25.dto.UtentiDTO;
 import com.bugboard25.entity.Progetti;
 import com.bugboard25.entity.Utenti;
+import com.bugboard25.exception.BadRequestException;
+import com.bugboard25.exception.ErrorMessages;
+import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.ProgettiRepository;
 import com.bugboard25.repository.UtentiRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,51 +18,56 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.bugboard25.entity.enumerations.tipo_ruolo;
 import org.springframework.stereotype.Service;
-import java.util.stream.Collectors;
+
 import java.util.List;
 import java.util.Date;
 
 @Service
 public class UtentiService implements UserDetailsService {
-    @Autowired
-    private UtentiRepository utentiRepository;
 
-    @Autowired
-    private ProgettiRepository progettiRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UtentiService.class);
+
+    private final UtentiRepository utentiRepository;
+    private final ProgettiRepository progettiRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UtentiService(UtentiRepository utentiRepository, ProgettiRepository progettiRepository,
+                         PasswordEncoder passwordEncoder) {
+        this.utentiRepository = utentiRepository;
+        this.progettiRepository = progettiRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public List<UtentiDTO> getUtenti() {
         return utentiRepository.findAll()
                 .stream()
                 .map(UtentiDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public List<UtentiDTO> getUtentiByProgettoId(int progettoId) {
         Progetti progetto = progettiRepository.findById(progettoId)
-                .orElseThrow(() -> new RuntimeException("Progetto non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
 
         return utentiRepository.findMembriByProgettoId(progetto.getId())
                 .stream()
                 .map(UtentiDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public UtentiDTO getUtentiByEmail(String email) {
-            System.out.println("Cercando utente con email: '" + email + "'");
+            logger.debug("Cercando utente con email: '{}'", email);
             Utenti utente = utentiRepository.findById(email)
                 .orElseThrow(() -> {
-                    System.out.println("Utente non trovato per email: '" + email + "'");
-                    return new RuntimeException("Utente non trovato");
+                    logger.debug("Utente non trovato per email: '{}'", email);
+                    return new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO);
                 });
             return new UtentiDTO(utente);
     }
 
     public UtentiDTO creaUtente(UtenteCreateRequestDTO requestDTO) {
         if (utentiRepository.existsByEmail(requestDTO.getEmail())) {
-            throw new RuntimeException("Email già registrata");
+            throw new BadRequestException(ErrorMessages.EMAIL_DUPLICATA);
         }
 
         Utenti utente = new Utenti();
@@ -73,15 +81,13 @@ public class UtentiService implements UserDetailsService {
         utente.setRuolo(requestDTO.getRuolo());
         utente.setData_creazione(new Date());
 
-
-
         Utenti utenteSalvato = utentiRepository.save(utente);
         return new UtentiDTO(utenteSalvato);
     }
 
     public UtentiDTO updateUtenteByEmail(String email, UtenteCreateRequestDTO requestDTO) {
         Utenti utente = utentiRepository.findById(email)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
 
         utente.setNome(requestDTO.getNome());
         utente.setCognome(requestDTO.getCognome());
@@ -96,7 +102,7 @@ public class UtentiService implements UserDetailsService {
 
     public void deleteUtenteByEmail(String email) {
         Utenti utente = utentiRepository.findById(email)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
         utentiRepository.delete(utente);
     }
 
@@ -104,13 +110,13 @@ public class UtentiService implements UserDetailsService {
         return utentiRepository.findByRuolo(ruolo)
                 .stream()
                 .map(UtentiDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Utenti utente = utentiRepository.findById(email)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
 
         return User.builder()
                 .username(utente.getEmail())

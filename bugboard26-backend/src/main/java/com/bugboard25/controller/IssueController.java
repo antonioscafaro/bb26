@@ -1,17 +1,12 @@
 package com.bugboard25.controller;
 
 import com.bugboard25.dto.*;
-import com.bugboard25.entity.Commenti;
-import com.bugboard25.entity.Etichette;
-import com.bugboard25.entity.Issue;
 import com.bugboard25.entity.enumerations.priorita_issue;
 import com.bugboard25.entity.enumerations.stato_issue;
 import com.bugboard25.entity.enumerations.tipo_issue;
 import com.bugboard25.service.CommentiService;
 import com.bugboard25.service.EtichetteService;
 import com.bugboard25.service.IssueService;
-import com.bugboard25.service.NotificheService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -25,33 +20,37 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/issues")
 public class IssueController {
-    @Autowired
-    private IssueService issueService;
 
-    @Autowired
-    private EtichetteService etichetteService;
-    @Autowired
-    private NotificheService notificheService;
-    @Autowired
-    private CommentiService commentiService;
+    private static final String SORT_DATA_CREAZIONE = "dataCreazione";
+
+    private final IssueService issueService;
+    private final EtichetteService etichetteService;
+    private final CommentiService commentiService;
+
+    public IssueController(IssueService issueService, EtichetteService etichetteService,
+                           CommentiService commentiService) {
+        this.issueService = issueService;
+        this.etichetteService = etichetteService;
+        this.commentiService = commentiService;
+    }
 
     @GetMapping("/stato/{stato_issue}")
     public ResponseEntity<List<IssueDTO>> getIssueByStato(@PathVariable stato_issue stato_issue, java.security.Principal principal) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);
         List<IssueDTO> issues = issueService.getIssueByStato(stato_issue, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }
 
     @GetMapping("/priorita/{priorita_issue}")
     public ResponseEntity<List<IssueDTO>> getIssuePriorita(@PathVariable priorita_issue priorita_issue, java.security.Principal principal) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);
         List<IssueDTO> issues = issueService.getIssueByPriorita(priorita_issue, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }
 
     @GetMapping("/tipo/{tipo_issue}")
     public ResponseEntity<List<IssueDTO>> getIssueByTipo(@PathVariable tipo_issue tipo_issue, java.security.Principal principal) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);
         List<IssueDTO> issues = issueService.getIssueByTipo(tipo_issue, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }
@@ -67,7 +66,7 @@ public class IssueController {
             @RequestParam("dataInizio") @DateTimeFormat(pattern = "dd-MM-yyyy") Date dataInizio,
             @RequestParam("dataFine") @DateTimeFormat(pattern = "dd-MM-yyyy") Date dataFine,
             java.security.Principal principal) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
+        Sort sort = Sort.by(Sort.Direction.DESC, SORT_DATA_CREAZIONE);
         List<IssueDTO> issues = issueService.getIssueByData(dataInizio, dataFine, principal.getName(), sort);
         return ResponseEntity.ok(issues);
     }

@@ -1,9 +1,7 @@
 package com.bugboard25.dto;
 
-import com.bugboard25.entity.Allegati;
 import com.bugboard25.entity.enumerations.priorita_issue;
 import com.bugboard25.entity.enumerations.tipo_issue;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

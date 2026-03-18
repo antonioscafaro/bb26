@@ -1,13 +1,13 @@
 package com.bugboard25.dto;
 
-import com.bugboard25.entity.Progetto_Membri;
+import com.bugboard25.entity.ProgettoMembri;
 
-public class Progetto_MembriDTO {
+public class ProgettoMembriDTO {
 
     private ProgettiDTO progetto;
     private UtentiDTO utente;
 
-    public Progetto_MembriDTO(Progetto_Membri associazione) {
+    public ProgettoMembriDTO(ProgettoMembri associazione) {
         if (associazione.getProgetto() != null) {
             this.progetto = new ProgettiDTO(associazione.getProgetto());
         }

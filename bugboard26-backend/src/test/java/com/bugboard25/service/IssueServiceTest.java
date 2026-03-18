@@ -13,6 +13,9 @@ import com.bugboard25.entity.enumerations.priorita_issue;
 import com.bugboard25.entity.enumerations.stato_issue;
 import com.bugboard25.entity.enumerations.tipo_issue;
 import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.exception.BadRequestException;
+import com.bugboard25.exception.FileUploadException;
+import com.bugboard25.exception.ForbiddenException;
 import com.bugboard25.repository.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,11 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class IssueService_Test {
+class IssueServiceTest {
     @Mock
     private IssueRepository issueRepository;
 
@@ -38,7 +40,7 @@ public class IssueService_Test {
     private ProgettiRepository progettiRepository;
 
     @Mock
-    private Progetto_MembriRepository progetto_MembriRepository;
+    private ProgettoMembriRepository progettoMembriRepository;
 
     @Mock
     private UtentiService utentiService;
@@ -53,7 +55,7 @@ public class IssueService_Test {
     private EtichetteService etichetteService;
 
     @Mock
-    private Issue_EtichetteService issue_EtichetteService;
+    private IssueEtichetteService issueEtichetteService;
 
     @Mock
     private AllegatiService allegatiService;
@@ -68,7 +70,7 @@ public class IssueService_Test {
     private Utenti intruder;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         progetto = new Progetti();
         progetto.setId(1);
         progetto.setNome("Test Project");
@@ -93,7 +95,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testUpdateIssueById_AdminSetsFields(){
+    void testUpdateIssueById_AdminSetsFields(){
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
         dto.setTitolo("New Title");
         dto.setStatoIssue(stato_issue.IN_LAVORAZIONE);
@@ -125,7 +127,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testUpdateIssueById_EmptyAssignee(){
+    void testUpdateIssueById_EmptyAssignee(){
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
         dto.setAssegnatario("");
 
@@ -143,7 +145,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testUpdateIssueById_AuthorAssignsIssue(){
+    void testUpdateIssueById_AuthorAssignsIssue(){
         Utenti oldAssignee = new Utenti();
         oldAssignee.setEmail("oldassignee@test.com");
         issue.setAssegnatario(oldAssignee);
@@ -159,7 +161,7 @@ public class IssueService_Test {
         when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
 
         when(utentiRepository.findById("assignee@test.com")).thenReturn(Optional.of(newAssignee));
-        when(progetto_MembriRepository.existsById(any())).thenReturn(true);
+        when(progettoMembriRepository.existsById(any())).thenReturn(true);
 
         when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -172,7 +174,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testUpdateIssueById_AdminSetsLabels(){
+    void testUpdateIssueById_AdminSetsLabels(){
         issue.setAssegnatario(admin);
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
         dto.setAssegnatario("admin@test.com");
@@ -203,7 +205,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testUpdateIssueById_AssigneeNotProjectMember() {
+    void testUpdateIssueById_AssigneeNotProjectMember() {
         Utenti newAssignee = new Utenti();
         newAssignee.setEmail("assignee@test.com");
 
@@ -216,9 +218,9 @@ public class IssueService_Test {
 
         when(utentiRepository.findById("assignee@test.com")).thenReturn(Optional.of(newAssignee));
 
-        when(progetto_MembriRepository.existsById(any())).thenReturn(false);
+        when(progettoMembriRepository.existsById(any())).thenReturn(false);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
             issueService.updateIssueById(100, dto, "author@test.com");
         });
 
@@ -229,7 +231,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testUpdateIssueById_IntruderUpdates(){
+    void testUpdateIssueById_IntruderUpdates(){
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
         dto.setTitolo("Intruder updated");
 
@@ -237,7 +239,7 @@ public class IssueService_Test {
         when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
         when(utentiRepository.findById("intruder@test.com")).thenReturn(Optional.of(intruder));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
            issueService.updateIssueById(100, dto, "intruder@test.com");
         });
 
@@ -246,7 +248,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testCreaIssue_NoFileOneLabel() throws IOException {
+    void testCreaIssue_NoFileOneLabel() throws IOException {
         IssueCreateRequestDTO dto = new IssueCreateRequestDTO();
         dto.setDescrizione("Test Description");
         dto.setPrioritaIssue(priorita_issue.CRITICA);
@@ -265,7 +267,7 @@ public class IssueService_Test {
 
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
-        when(progetto_MembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
+        when(progettoMembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
         when(utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
 
         when(etichetteService.findOrCreate(eq("Label 1"), any())).thenReturn(label1);
@@ -279,7 +281,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testCreaIssue_WithFileNoLabels() throws IOException {
+    void testCreaIssue_WithFileNoLabels() throws IOException {
         IssueCreateRequestDTO dto = new IssueCreateRequestDTO();
         dto.setIdProgetto(1);
         dto.setEmailAutore(author.getEmail());
@@ -287,11 +289,9 @@ public class IssueService_Test {
         when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
         when(utentiRepository.findById("author@test.com")).thenReturn(Optional.of(author));
 
-
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
-
-        when(progetto_MembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
+        when(progettoMembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
         when(utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
 
         MultipartFile file = mock(MultipartFile.class);
@@ -305,7 +305,7 @@ public class IssueService_Test {
     }
 
     @Test
-    public void testCreaIssue_WithFileAndError() throws IOException {
+    void testCreaIssue_WithFileAndError() throws IOException {
         IssueCreateRequestDTO dto = new IssueCreateRequestDTO();
         dto.setIdProgetto(1);
         dto.setEmailAutore(author.getEmail());
@@ -319,9 +319,9 @@ public class IssueService_Test {
         MultipartFile file = mock(MultipartFile.class);
         when(file.isEmpty()).thenReturn(false);
 
-        when(allegatiService.salvaFile(any(MultipartFile.class), eq(100))).thenThrow(new IOException("porco dio"));
+        when(allegatiService.salvaFile(any(MultipartFile.class), eq(100))).thenThrow(new IOException("file error"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        FileUploadException exception = assertThrows(FileUploadException.class, () -> {
            issueService.creaIssue(dto, file);
         });
 

@@ -6,12 +6,13 @@ import com.bugboard25.entity.enumerations.stato_issue;
 import com.bugboard25.entity.enumerations.tipo_issue;
 
 import java.util.Date;
+import java.util.List;
 
 public class IssueDTO {
     private int id;
-    private ProgettiDTO progetto; // DTO annidato
-    private UtentiDTO autore; // DTO annidato
-    private UtentiDTO assegnatario; // DTO annidato (può essere null)
+    private ProgettiDTO progetto;
+    private UtentiDTO autore;
+    private UtentiDTO assegnatario;
     private String titolo;
     private String descrizione;
     private tipo_issue tipoIssue;
@@ -19,10 +20,9 @@ public class IssueDTO {
     private priorita_issue prioritaIssue;
     private Date dataCreazione;
     private Date dataUltimoAggiornamento;
-    private java.util.List<AllegatoDTO> allegati;
-    private java.util.List<String> labels;
-    private java.util.List<CommentoCompletoDTO> commenti;
-
+    private List<AllegatoDTO> allegati;
+    private List<String> labels;
+    private List<CommentoCompletoDTO> commenti;
 
     public IssueDTO(Issue issue) {
         this.id = issue.getId();
@@ -49,19 +49,19 @@ public class IssueDTO {
         if (issue.getAllegati() != null) {
             this.allegati = issue.getAllegati().stream()
                     .map(AllegatoDTO::new)
-                    .collect(java.util.stream.Collectors.toList());
+                    .toList();
         }
 
         if (issue.getEtichette() != null) {
             this.labels = issue.getEtichette().stream()
                     .map(ie -> ie.getEtichetta().getNome())
-                    .collect(java.util.stream.Collectors.toList());
+                    .toList();
         }
 
         if (issue.getCommenti() != null) {
             this.commenti = issue.getCommenti().stream()
                     .map(CommentoCompletoDTO::new)
-                    .collect(java.util.stream.Collectors.toList());
+                    .toList();
         }
     }
 
@@ -76,7 +76,7 @@ public class IssueDTO {
     public priorita_issue getPrioritaIssue() { return prioritaIssue; }
     public Date getDataCreazione() { return dataCreazione; }
     public Date getDataUltimoAggiornamento() { return dataUltimoAggiornamento; }
-    public java.util.List<AllegatoDTO> getAllegati() { return allegati; }
-    public java.util.List<String> getLabels() { return labels; }
-    public java.util.List<CommentoCompletoDTO> getCommenti() { return commenti; }
+    public List<AllegatoDTO> getAllegati() { return allegati; }
+    public List<String> getLabels() { return labels; }
+    public List<CommentoCompletoDTO> getCommenti() { return commenti; }
 }

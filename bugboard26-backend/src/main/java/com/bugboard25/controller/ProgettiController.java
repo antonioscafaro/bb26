@@ -1,9 +1,7 @@
 package com.bugboard25.controller;
 
 import com.bugboard25.dto.*;
-import com.bugboard25.entity.*;
 import com.bugboard25.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,23 +13,24 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/progetti")
 public class ProgettiController {
-    @Autowired
-    private ProgettiService progettiService;
 
-    @Autowired
-    private UtentiService utentiService;
+    private final ProgettiService progettiService;
+    private final UtentiService utentiService;
+    private final IssueService issueService;
+    private final EtichetteService etichetteService;
+    private final ProgettoMembriService progettoMembriService;
+    private final ReportService reportService;
 
-    @Autowired
-    private IssueService issueService;
-
-    @Autowired
-    private EtichetteService etichetteService;
-
-    @Autowired
-    private Progetto_MembriService progetto_MembriService;
-
-    @Autowired
-    private ReportService reportService;
+    public ProgettiController(ProgettiService progettiService, UtentiService utentiService,
+                              IssueService issueService, EtichetteService etichetteService,
+                              ProgettoMembriService progettoMembriService, ReportService reportService) {
+        this.progettiService = progettiService;
+        this.utentiService = utentiService;
+        this.issueService = issueService;
+        this.etichetteService = etichetteService;
+        this.progettoMembriService = progettoMembriService;
+        this.reportService = reportService;
+    }
 
     @GetMapping("/{progettoId}/membri")
     public ResponseEntity<List<UtentiDTO>> getMembriDelProgetto(@PathVariable int progettoId) {
@@ -40,13 +39,13 @@ public class ProgettiController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProgettiDTO>> getAllProgetti(){
+    public ResponseEntity<List<ProgettiDTO>> getAllProgetti() {
         List<ProgettiDTO> progetti = progettiService.getProgetti();
         return ResponseEntity.ok(progetti);
     }
 
     @GetMapping("/membri/{email}")
-    public ResponseEntity<List<ProgettiDTO>> getProgettiByUtente(@PathVariable String email){
+    public ResponseEntity<List<ProgettiDTO>> getProgettiByUtente(@PathVariable String email) {
         List<ProgettiDTO> progetti = progettiService.getProgettiByMembro(email);
         return ResponseEntity.ok(progetti);
     }
@@ -57,28 +56,31 @@ public class ProgettiController {
             @RequestParam(defaultValue = "0") int mese,
             @RequestParam(defaultValue = "0") int anno,
             @RequestParam(required = false) String userId) {
-        
+
         if (mese == 0 || anno == 0) {
             LocalDate now = LocalDate.now();
-            if (mese == 0) mese = now.getMonthValue();
-            if (anno == 0) anno = now.getYear();
+            if (mese == 0)
+                mese = now.getMonthValue();
+            if (anno == 0)
+                anno = now.getYear();
         }
 
         ReportMensileDTO report = reportService.generaReport(id, mese, anno, userId);
         return ResponseEntity.ok(report);
     }
 
-    // Global report endpoint (all projects)
     @GetMapping("/report")
     public ResponseEntity<ReportMensileDTO> getReportGlobale(
             @RequestParam(defaultValue = "0") int mese,
             @RequestParam(defaultValue = "0") int anno,
             @RequestParam(required = false) String userId) {
-        
+
         if (mese == 0 || anno == 0) {
             LocalDate now = LocalDate.now();
-            if (mese == 0) mese = now.getMonthValue();
-            if (anno == 0) anno = now.getYear();
+            if (mese == 0)
+                mese = now.getMonthValue();
+            if (anno == 0)
+                anno = now.getYear();
         }
 
         ReportMensileDTO report = reportService.generaReport(0, mese, anno, userId);
@@ -86,22 +88,21 @@ public class ProgettiController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<ProgettiDTO> getProgettiById(@PathVariable int id){
+    public ResponseEntity<ProgettiDTO> getProgettiById(@PathVariable int id) {
         ProgettiDTO progetto = progettiService.getProgettiById(id);
         return ResponseEntity.ok(progetto);
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<ProgettiDTO>> getProgettiByNome(@PathVariable String nome){
+    public ResponseEntity<List<ProgettiDTO>> getProgettiByNome(@PathVariable String nome) {
         List<ProgettiDTO> progetti = progettiService.getProgettiByNome(nome);
-
         return ResponseEntity.ok(progetti);
     }
 
     @GetMapping("/{progettoId}/issues")
-    public ResponseEntity<List<IssueDTO>> getIssueDelProgetto(@PathVariable int progettoId, java.security.Principal principal) {
+    public ResponseEntity<List<IssueDTO>> getIssueDelProgetto(@PathVariable int progettoId,
+            java.security.Principal principal) {
         Sort sort = Sort.by(Sort.Direction.DESC, "dataCreazione");
-
         List<IssueDTO> issue = issueService.getIssuesByProgetto(progettoId, principal.getName(), sort);
         return ResponseEntity.ok(issue);
     }
@@ -116,21 +117,21 @@ public class ProgettiController {
     public ResponseEntity<Void> rimuoviMembroDalProgetto(
             @PathVariable int progettoId,
             @PathVariable String email) {
-        
-        progetto_MembriService.rimuoviUtente(progettoId, email);
+
+        progettoMembriService.rimuoviUtente(progettoId, email);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{progettoId}/membri")
-    public ResponseEntity<Progetto_MembriDTO> aggiungiMembroAlProgetto(
+    public ResponseEntity<ProgettoMembriDTO> aggiungiMembroAlProgetto(
             @PathVariable int progettoId,
-            @RequestBody Progetto_MembriCreateRequestDTO dto) {
+            @RequestBody ProgettoMembriCreateRequestDTO dto) {
 
         if (progettoId != dto.getIdProgetto()) {
             return ResponseEntity.badRequest().build();
         }
 
-        Progetto_MembriDTO associazione = progetto_MembriService.associaUtenti(dto);
+        ProgettoMembriDTO associazione = progettoMembriService.associaUtenti(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(associazione);
     }
 
@@ -151,5 +152,4 @@ public class ProgettiController {
         progettiService.deleteProgettoById(id);
         return ResponseEntity.noContent().build();
     }
-
 }

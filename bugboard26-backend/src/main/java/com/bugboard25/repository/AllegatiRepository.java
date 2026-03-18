@@ -3,7 +3,6 @@ package com.bugboard25.repository;
 import com.bugboard25.entity.Allegati;
 import com.bugboard25.entity.Issue;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

@@ -3,9 +3,12 @@ package com.bugboard25.service;
 import com.bugboard25.dto.AllegatoDTO;
 import com.bugboard25.entity.Allegati;
 import com.bugboard25.entity.Issue;
+import com.bugboard25.exception.ErrorMessages;
+import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.AllegatiRepository;
 import com.bugboard25.repository.IssueRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,28 +24,31 @@ import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AllegatiService {
-    @Autowired
-    private AllegatiRepository allegatiRepository;
 
-    @Autowired
-    private IssueRepository issueRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AllegatiService.class);
+
+    private final AllegatiRepository allegatiRepository;
+    private final IssueRepository issueRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    public AllegatiService(AllegatiRepository allegatiRepository, IssueRepository issueRepository) {
+        this.allegatiRepository = allegatiRepository;
+        this.issueRepository = issueRepository;
+    }
+
     public Allegati getAllegatoById(int id) {
-        Allegati allegato = allegatiRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Allegato non trovato"));
-        return allegato;
+        return allegatiRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ALLEGATO_NON_TROVATO));
     }
 
     public AllegatoDTO salvaFile(MultipartFile file, Integer idIssue) throws IOException {
         Issue issue = issueRepository.findById(idIssue)
-                .orElseThrow(() -> new RuntimeException("Issue non trovata con id: " + idIssue));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA + " con id: " + idIssue));
 
         String nomeOriginale = file.getOriginalFilename();
         String nomeFileUnico = UUID.randomUUID().toString() + "-" + nomeOriginale;
@@ -76,21 +82,21 @@ public class AllegatiService {
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Impossibile leggere il file: " + uniqueFileName);
+                throw new ResourceNotFoundException("Impossibile leggere il file: " + uniqueFileName);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Errore nel percorso del file: " + uniqueFileName, e);
+            logger.error("Errore nel percorso del file: {}", uniqueFileName, e);
+            throw new ResourceNotFoundException("Errore nel percorso del file: " + uniqueFileName);
         }
     }
 
-    public List<AllegatoDTO> getAllegatiByIssue(int idIssue){
+    public List<AllegatoDTO> getAllegatiByIssue(int idIssue) {
         Issue issue = issueRepository.findById(idIssue)
-                .orElseThrow(() -> new RuntimeException("Issue non trovata con"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
 
         return allegatiRepository.findAllegatiByIssue(issue)
                 .stream()
                 .map(AllegatoDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

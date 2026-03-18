@@ -1,12 +1,13 @@
 package com.bugboard25.entity;
 
-import com.bugboard25.entity.ComposedPrimaryKeys.Progetto_MembriPrimaryKey;
+import com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey;
 import jakarta.persistence.*;
 
 @Entity
-public class Progetto_Membri {
+@Table(name = "progetto_membri")
+public class ProgettoMembri {
     @EmbeddedId
-    private Progetto_MembriPrimaryKey id;
+    private ProgettoMembriPrimaryKey id;
 
     @ManyToOne
     @MapsId("id_progetto")
@@ -18,7 +19,7 @@ public class Progetto_Membri {
     @JoinColumn(name = "email_utente")
     private Utenti utente;
 
-    public void setId(Progetto_MembriPrimaryKey id) {
+    public void setId(ProgettoMembriPrimaryKey id) {
         this.id = id;
     }
 
@@ -30,7 +31,7 @@ public class Progetto_Membri {
         this.utente = utente;
     }
 
-    public Progetto_MembriPrimaryKey getId() {
+    public ProgettoMembriPrimaryKey getId() {
         return id;
     }
 

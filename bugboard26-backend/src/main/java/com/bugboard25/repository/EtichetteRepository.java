@@ -2,7 +2,6 @@ package com.bugboard25.repository;
 
 import com.bugboard25.entity.Etichette;
 import com.bugboard25.entity.Issue;
-import com.bugboard25.entity.Progetti;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

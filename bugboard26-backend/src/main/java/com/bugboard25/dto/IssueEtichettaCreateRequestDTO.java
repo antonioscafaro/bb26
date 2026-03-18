@@ -1,6 +1,6 @@
 package com.bugboard25.dto;
 
-public class Issue_EtichettaCreateRequestDTO {
+public class IssueEtichettaCreateRequestDTO {
     private int idIssue;
     private int idEtichetta;
 

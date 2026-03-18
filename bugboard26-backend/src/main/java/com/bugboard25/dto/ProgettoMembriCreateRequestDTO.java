@@ -1,6 +1,6 @@
 package com.bugboard25.dto;
 
-public class Progetto_MembriCreateRequestDTO {
+public class ProgettoMembriCreateRequestDTO {
     private int idProgetto;
     private String utente;
 

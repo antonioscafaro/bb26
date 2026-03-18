@@ -6,8 +6,10 @@ import com.bugboard25.entity.enumerations.priorita_issue;
 import com.bugboard25.entity.enumerations.stato_issue;
 import com.bugboard25.entity.enumerations.tipo_issue;
 import com.bugboard25.entity.enumerations.tipo_ruolo;
+import com.bugboard25.exception.*;
 import com.bugboard25.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,77 +18,70 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class IssueService {
-    @Autowired
-    private IssueRepository issueRepository;
 
-    @Autowired
-    private UtentiRepository utentiRepository;
+    private static final Logger logger = LoggerFactory.getLogger(IssueService.class);
 
-    @Autowired
-    private ProgettiRepository progettiRepository;
+    private final IssueRepository issueRepository;
+    private final UtentiRepository utentiRepository;
+    private final ProgettiRepository progettiRepository;
+    private final EtichetteRepository etichetteRepository;
+    private final NotificheService notificheService;
+    private final AllegatiService allegatiService;
+    private final IssueEtichetteService issueEtichetteService;
+    private final EtichetteService etichetteService;
+    private final ProgettoMembriRepository progettoMembriRepository;
+    private final UtentiService utentiService;
+    private final SseService sseService;
 
-    @Autowired
-    private EtichetteRepository etichetteRepository;
-
-    @Autowired
-    private NotificheService notificheService;
-
-    @Autowired
-    private AllegatiService allegatiService;
-
-    @Autowired
-    private Issue_EtichetteService issue_etichetteService;
-
-    @Autowired
-    private EtichetteService etichetteService;
-
-    @Autowired
-    private Progetto_MembriRepository progetto_MembriRepository;
-
-    @Autowired
-    private UtentiService utentiService;
-
-    @Autowired
-    private SseService sseService;
+    public IssueService(IssueRepository issueRepository, UtentiRepository utentiRepository,
+                        ProgettiRepository progettiRepository, EtichetteRepository etichetteRepository,
+                        NotificheService notificheService, AllegatiService allegatiService,
+                        IssueEtichetteService issueEtichetteService, EtichetteService etichetteService,
+                        ProgettoMembriRepository progettoMembriRepository, UtentiService utentiService,
+                        SseService sseService) {
+        this.issueRepository = issueRepository;
+        this.utentiRepository = utentiRepository;
+        this.progettiRepository = progettiRepository;
+        this.etichetteRepository = etichetteRepository;
+        this.notificheService = notificheService;
+        this.allegatiService = allegatiService;
+        this.issueEtichetteService = issueEtichetteService;
+        this.etichetteService = etichetteService;
+        this.progettoMembriRepository = progettoMembriRepository;
+        this.utentiService = utentiService;
+        this.sseService = sseService;
+    }
 
     private void notifyProjectMembers(int projectId) {
          try {
-             // Fix: Fetch existing project reference instead of new Progetti(id)
              Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
              if (progettoOpt.isPresent()) {
-                 List<Progetto_Membri> membri = progetto_MembriRepository.findByProgetto(progettoOpt.get());
-                 for (Progetto_Membri membro : membri) {
-                     sseService.sendUpdateSignal(membro.getUtente().getEmail(), "issue-update");
+                 List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
+                 for (ProgettoMembri membro : membri) {
+                     sseService.sendUpdateSignal(membro.getUtente().getEmail(), ErrorMessages.ISSUE_UPDATE);
                  }
              }
 
              List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(tipo_ruolo.AMMINISTRATORE);
              for (UtentiDTO amministratore : amministratori) {
-                 sseService.sendUpdateSignal(amministratore.getEmail(), "issue-update");
+                 sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.ISSUE_UPDATE);
              }
          } catch (Exception e) {
-             System.err.println("Failed to broadcast issue update: " + e.getMessage());
+             logger.error("Failed to broadcast issue update: {}", e.getMessage());
          }
     }
 
     public IssueDTO getIssueById(int id) {
-        Optional<Issue> issues = issueRepository.findById(id);
-        if (issues.isEmpty()) {
-            throw new RuntimeException("Issue non esistente");
-        }
-
-        return new IssueDTO(issues.get());
+        Issue issue = issueRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
+        return new IssueDTO(issue);
     }
 
-    // Helper per la visibilità:
-    // Admin: vede tutto.
-    // User: non vede le issue che sono nello stato CHIUSA (rejected) se non sono assegnate a lui o create da lui.
     private List<Issue> filterVisibleIssues(List<Issue> issues, String emailRichiedente) {
-        if (emailRichiedente == null) return issues; // Should not happen in secured loop
+        if (emailRichiedente == null) return issues;
 
         Utenti richiedente = utentiRepository.findById(emailRichiedente).orElse(null);
         if (richiedente == null) return issues;
@@ -97,7 +92,6 @@ public class IssueService {
 
         return issues.stream()
                 .filter(i -> {
-                    // Se lo stato è CHIUSA (Rejected), deve essere mio (Assegnatario o Autore)
                     if (i.getStatoIssue() == stato_issue.CHIUSA) {
                         boolean isAssignee = i.getAssegnatario() != null && i.getAssegnatario().getEmail().equals(emailRichiedente);
                         boolean isAuthor = i.getAutore() != null && i.getAutore().getEmail().equals(emailRichiedente);
@@ -105,96 +99,90 @@ public class IssueService {
                     }
                     return true;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<IssueDTO> getIssuesByProgetto(Integer idProgetto, String emailRichiedente, Sort sort){
-        Optional<Progetti> progetti = progettiRepository.findById(idProgetto);
-        if (progetti.isEmpty()){
-            throw new RuntimeException("Progetto non trovato");
-        }
-
-        List<Issue> issues = issueRepository.findAllByIdProgetto(progetti.get(), sort);
-        return filterVisibleIssues(issues, emailRichiedente)
-                .stream()
-                .map(IssueDTO::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<IssueDTO> getIssueAssegnate(String email, int idProgetto, String emailRichiedente, Sort sort){
-        Optional<Utenti> utenti = utentiRepository.findById(email);
+    public List<IssueDTO> getIssuesByProgetto(Integer idProgetto, String emailRichiedente, Sort sort) {
         Progetti progetto = progettiRepository.findById(idProgetto)
-                .orElseThrow(() -> new RuntimeException("Progetto non trovato"));
-        if (utenti.isEmpty()){
-            throw new RuntimeException("Utente non trovato");
-        }
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
 
-        List<Issue> issues = issueRepository.findAllByAssegnatarioAndIdProgetto(utenti.get(), progetto, sort);
+        List<Issue> issues = issueRepository.findAllByIdProgetto(progetto, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
                 .map(IssueDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<IssueDTO> getIssueByStato(stato_issue statoIssue, String emailRichiedente, Sort sort){
+    public List<IssueDTO> getIssueAssegnate(String email, int idProgetto, String emailRichiedente, Sort sort) {
+        Utenti utente = utentiRepository.findById(email)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
+        Progetti progetto = progettiRepository.findById(idProgetto)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
+
+        List<Issue> issues = issueRepository.findAllByAssegnatarioAndIdProgetto(utente, progetto, sort);
+        return filterVisibleIssues(issues, emailRichiedente)
+                .stream()
+                .map(IssueDTO::new)
+                .toList();
+    }
+
+    public List<IssueDTO> getIssueByStato(stato_issue statoIssue, String emailRichiedente, Sort sort) {
         List<Issue> issues = issueRepository.findAllByStatoIssue(statoIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
                 .map(IssueDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<IssueDTO> getIssueByPriorita(priorita_issue prioritaIssue, String emailRichiedente, Sort sort){
+    public List<IssueDTO> getIssueByPriorita(priorita_issue prioritaIssue, String emailRichiedente, Sort sort) {
         List<Issue> issues = issueRepository.findAllByPrioritaIssue(prioritaIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
                 .map(IssueDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<IssueDTO> getIssueByData(Date dataInizio, Date dataFine, String emailRichiedente, Sort sort){
+    public List<IssueDTO> getIssueByData(Date dataInizio, Date dataFine, String emailRichiedente, Sort sort) {
         List<Issue> issues = issueRepository.findAllByDataCreazioneBetween(dataInizio, dataFine, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
                 .map(IssueDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<IssueDTO> getIssueByAutore(String email, String emailRichiedente, Sort sort){
-        Optional<Utenti> utenti = utentiRepository.findById(email);
-        if (utenti.isEmpty()){
-            throw new RuntimeException("Utente non trovato");
-        }
-        List<Issue> issues = issueRepository.findAllByAutore(utenti.get(), sort);
+    public List<IssueDTO> getIssueByAutore(String email, String emailRichiedente, Sort sort) {
+        Utenti utente = utentiRepository.findById(email)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
+        List<Issue> issues = issueRepository.findAllByAutore(utente, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
                 .map(IssueDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<IssueDTO> getIssueByTipo(tipo_issue tipoIssue, String emailRichiedente, Sort sort){
+    public List<IssueDTO> getIssueByTipo(tipo_issue tipoIssue, String emailRichiedente, Sort sort) {
         List<Issue> issues = issueRepository.findAllByTipoIssue(tipoIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
                 .map(IssueDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<IssueDTO> getIssueByEtichetta(int idEtichetta, String emailRichiedente, Sort sort){
+    public List<IssueDTO> getIssueByEtichetta(int idEtichetta, String emailRichiedente, Sort sort) {
         Etichette etichetta = etichetteRepository.findById(idEtichetta)
-                .orElseThrow(() -> new RuntimeException("Etichetta non trovata"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ETICHETTA_NON_TROVATA));
         List<Issue> issues = issueRepository.findByEtichetta(etichetta, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
                 .map(IssueDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public IssueDTO creaIssue(IssueCreateRequestDTO requestDTO, MultipartFile file){
+    public IssueDTO creaIssue(IssueCreateRequestDTO requestDTO, MultipartFile file) {
         Progetti progetto = progettiRepository.findById(requestDTO.getIdProgetto())
-                .orElseThrow(() -> new RuntimeException("Progetto non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
         Utenti autore = utentiRepository.findById(requestDTO.getEmailAutore())
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
 
         Issue issue = new Issue();
         issue.setTitolo(requestDTO.getTitolo());
@@ -211,76 +199,43 @@ public class IssueService {
 
         if (file != null && !file.isEmpty()) {
             try {
-                AllegatoDTO allegato = allegatiService.salvaFile(file, issue.getId());
+                allegatiService.salvaFile(file, issue.getId());
             } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Upload file fallito. L'issue è stata creata (" + issue.getId() + ") ma l'allegato no.", e);
+                throw new FileUploadException("Upload file fallito. L'issue è stata creata (" + issue.getId() + ") ma l'allegato no.", e);
             }
         }
 
         if (requestDTO.getEtichette() != null && !requestDTO.getEtichette().isEmpty()) {
-
             for (String nomeEtichetta : requestDTO.getEtichette()) {
                 Etichette etichettaDaAssociare = etichetteService.findOrCreate(nomeEtichetta, progetto);
 
-                Issue_EtichettaCreateRequestDTO dtoAssociazione = new Issue_EtichettaCreateRequestDTO();
+                IssueEtichettaCreateRequestDTO dtoAssociazione = new IssueEtichettaCreateRequestDTO();
                 dtoAssociazione.setIdIssue(issue.getId());
                 dtoAssociazione.setIdEtichetta(etichettaDaAssociare.getId());
 
-                issue_etichetteService.associaEtichetta(dtoAssociazione);
+                issueEtichetteService.associaEtichetta(dtoAssociazione);
             }
         }
 
-         notifyProjectMembers(progetto.getId());
-         // Refresh issue to get the associated labels
-         Issue updatedIssue = issueRepository.findById(issue.getId()).orElse(issue);
-         return new IssueDTO(updatedIssue);
+        notifyProjectMembers(progetto.getId());
+        Issue updatedIssue = issueRepository.findById(issue.getId()).orElse(issue);
+        return new IssueDTO(updatedIssue);
     }
 
-    public IssueDTO updateIssueById(int id, IssueUpdateRequestDTO requestDTO, String emailRichiedente){
+    public IssueDTO updateIssueById(int id, IssueUpdateRequestDTO requestDTO, String emailRichiedente) {
         Issue issue = issueRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Issue non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
 
         Utenti richiedente = utentiRepository.findById(emailRichiedente)
-                .orElseThrow(() -> new RuntimeException("Utente richiedente non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
 
         Progetti progetto = progettiRepository.findById(issue.getIdProgetto().getId())
-                .orElseThrow(() -> new RuntimeException("Progetto non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
 
-        boolean isAdmin = richiedente.getRuolo() == com.bugboard25.entity.enumerations.tipo_ruolo.AMMINISTRATORE;
-        boolean isAssignee = issue.getAssegnatario() != null && issue.getAssegnatario().getEmail().equals(emailRichiedente);
-        boolean isReporter = issue.getAutore() != null && issue.getAutore().getEmail().equals(emailRichiedente);
-
-        if (!isAdmin && !isAssignee && !isReporter) {
-             throw new RuntimeException("Non hai i permessi per modificare questa issue.");
-        }
+        validatePermissions(issue, richiedente, emailRichiedente);
 
         if (requestDTO.getAssegnatario() != null) {
-            if (requestDTO.getAssegnatario().isEmpty()) {
-                issue.setAssegnatario(null);
-            } else {
-                Utenti assegnatario = utentiRepository.findById(requestDTO.getAssegnatario())
-                        .orElseThrow(() -> new RuntimeException("Assegnatario non trovato"));
-
-                // Verify assignee is member of the project
-                com.bugboard25.entity.ComposedPrimaryKeys.Progetto_MembriPrimaryKey pk = 
-                    new com.bugboard25.entity.ComposedPrimaryKeys.Progetto_MembriPrimaryKey(issue.getIdProgetto().getId(), assegnatario.getEmail());
-
-
-                if (!progetto_MembriRepository.existsById(pk) && assegnatario.getRuolo() != tipo_ruolo.AMMINISTRATORE) {
-                    throw new RuntimeException("L'utente selezionato non è membro del progetto");
-                }
-                
-                // Send notification only if assignee is different/new
-                if (issue.getAssegnatario() == null || !issue.getAssegnatario().getEmail().equals(assegnatario.getEmail())) {
-                     NotificheAssegnazioneCreateRequestDTO dtoNotifica = new NotificheAssegnazioneCreateRequestDTO();
-                     dtoNotifica.setDestinatario(assegnatario.getEmail());
-                     dtoNotifica.setIdIssue(issue.getId());
-                     dtoNotifica.setTesto("Ti è stata assegnata l'issue: " + issue.getTitolo());
-                     notificheService.creaNotificaAssegnazione(dtoNotifica);
-                }
-                issue.setAssegnatario(assegnatario);
-            }
+            handleAssignment(issue, requestDTO.getAssegnatario());
         }
 
         if (requestDTO.getDescrizione() != null) issue.setDescrizione(requestDTO.getDescrizione());
@@ -289,30 +244,64 @@ public class IssueService {
         if (requestDTO.getPrioritaIssue() != null) issue.setPrioritaIssue(requestDTO.getPrioritaIssue());
         if (requestDTO.getTitolo() != null) issue.setTitolo(requestDTO.getTitolo());
 
-        // Update Labels
         if (requestDTO.getEtichette() != null && !requestDTO.getEtichette().isEmpty()) {
-
             for (String nomeEtichetta : requestDTO.getEtichette()) {
                 Etichette etichettaDaAssociare = etichetteService.findOrCreate(nomeEtichetta, progetto);
 
-                Issue_EtichettaCreateRequestDTO dtoAssociazione = new Issue_EtichettaCreateRequestDTO();
+                IssueEtichettaCreateRequestDTO dtoAssociazione = new IssueEtichettaCreateRequestDTO();
                 dtoAssociazione.setIdIssue(issue.getId());
                 dtoAssociazione.setIdEtichetta(etichettaDaAssociare.getId());
 
-                issue_etichetteService.associaEtichetta(dtoAssociazione); 
+                issueEtichetteService.associaEtichetta(dtoAssociazione);
             }
         }
 
         issue.setDataUltimoAggiornamento(new Date());
-
         issue = issueRepository.save(issue);
         notifyProjectMembers(issue.getIdProgetto().getId());
         return new IssueDTO(issue);
     }
 
-    public IssueDTO archiviaIssueById(int id){
+    private void validatePermissions(Issue issue, Utenti richiedente, String emailRichiedente) {
+        boolean isAdmin = richiedente.getRuolo() == tipo_ruolo.AMMINISTRATORE;
+        boolean isAssignee = issue.getAssegnatario() != null && issue.getAssegnatario().getEmail().equals(emailRichiedente);
+        boolean isReporter = issue.getAutore() != null && issue.getAutore().getEmail().equals(emailRichiedente);
+
+        if (!isAdmin && !isAssignee && !isReporter) {
+            throw new ForbiddenException(ErrorMessages.PERMESSO_NEGATO);
+        }
+    }
+
+    private void handleAssignment(Issue issue, String assegnatarioEmail) {
+        if (assegnatarioEmail.isEmpty()) {
+            issue.setAssegnatario(null);
+            return;
+        }
+
+        Utenti assegnatario = utentiRepository.findById(assegnatarioEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Assegnatario non trovato"));
+
+        com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey pk =
+                new com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey(
+                        issue.getIdProgetto().getId(), assegnatario.getEmail());
+
+        if (!progettoMembriRepository.existsById(pk) && assegnatario.getRuolo() != tipo_ruolo.AMMINISTRATORE) {
+            throw new BadRequestException(ErrorMessages.UTENTE_NON_MEMBRO);
+        }
+
+        if (issue.getAssegnatario() == null || !issue.getAssegnatario().getEmail().equals(assegnatario.getEmail())) {
+            NotificheAssegnazioneCreateRequestDTO dtoNotifica = new NotificheAssegnazioneCreateRequestDTO();
+            dtoNotifica.setDestinatario(assegnatario.getEmail());
+            dtoNotifica.setIdIssue(issue.getId());
+            dtoNotifica.setTesto("Ti è stata assegnata l'issue: " + issue.getTitolo());
+            notificheService.creaNotificaAssegnazione(dtoNotifica);
+        }
+        issue.setAssegnatario(assegnatario);
+    }
+
+    public IssueDTO archiviaIssueById(int id) {
         Issue issue = issueRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Issue non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
 
         issue.setStatoIssue(stato_issue.ARCHIVIATA);
         issue = issueRepository.save(issue);

@@ -1,6 +1,5 @@
 package com.bugboard25.entity;
 
-import com.bugboard25.dto.IssueDTO;
 import com.bugboard25.entity.enumerations.stato_issue;
 import com.bugboard25.entity.enumerations.tipo_issue;
 import com.bugboard25.entity.enumerations.priorita_issue;
@@ -55,7 +54,7 @@ public class Issue {
     private java.util.List<Allegati> allegati;
 
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
-    private java.util.List<Issue_Etichette> etichette;
+    private java.util.List<IssueEtichette> etichette;
 
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Commenti> commenti;
@@ -156,11 +155,11 @@ public class Issue {
         this.allegati = allegati;
     }
 
-    public java.util.List<Issue_Etichette> getEtichette() {
+    public java.util.List<IssueEtichette> getEtichette() {
         return etichette;
     }
 
-    public void setEtichette(java.util.List<Issue_Etichette> etichette) {
+    public void setEtichette(java.util.List<IssueEtichette> etichette) {
         this.etichette = etichette;
     }
 

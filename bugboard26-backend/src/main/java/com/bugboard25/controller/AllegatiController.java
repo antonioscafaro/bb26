@@ -3,14 +3,15 @@ package com.bugboard25.controller;
 import com.bugboard25.dto.AllegatoDTO;
 import com.bugboard25.entity.Allegati;
 import com.bugboard25.service.AllegatiService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.core.io.Resource; // Importante
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,8 +20,13 @@ import java.util.List;
 @RequestMapping("/api/allegati")
 public class AllegatiController {
 
-    @Autowired
-    private AllegatiService allegatiService;
+    private static final Logger logger = LoggerFactory.getLogger(AllegatiController.class);
+
+    private final AllegatiService allegatiService;
+
+    public AllegatiController(AllegatiService allegatiService) {
+        this.allegatiService = allegatiService;
+    }
 
     @PostMapping("/{idIssue}")
     public ResponseEntity<AllegatoDTO> caricaAllegato(
@@ -31,7 +37,7 @@ public class AllegatiController {
             AllegatoDTO allegatoSalvato = allegatiService.salvaFile(file, idIssue);
             return ResponseEntity.status(HttpStatus.CREATED).body(allegatoSalvato);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Errore durante il caricamento del file per issue {}", idIssue, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -42,19 +48,14 @@ public class AllegatiController {
         return ResponseEntity.ok(allegati);
     }
 
-
     @GetMapping("/download/{idAllegato}")
     public ResponseEntity<Resource> scaricaAllegato(@PathVariable int idAllegato) {
-
-
-        Allegati allegato = allegatiService.getAllegatoById(idAllegato); // Metodo ipotetico
-
-
-        Resource resource = allegatiService.loadFileAsResource(allegato.getUrl_file()); // Metodo ipotetico
+        Allegati allegato = allegatiService.getAllegatoById(idAllegato);
+        Resource resource = allegatiService.loadFileAsResource(allegato.getUrl_file());
 
         String contentType = allegato.getTipo_file();
-        if(contentType == null || contentType.isBlank()) {
-            contentType = "application/octet-stream"; // Default
+        if (contentType == null || contentType.isBlank()) {
+            contentType = "application/octet-stream";
         }
 
         String headerValue = "attachment; filename=\"" + allegato.getNome_file() + "\"";
@@ -64,5 +65,4 @@ public class AllegatiController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                 .body(resource);
     }
-
 }

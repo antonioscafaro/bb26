@@ -2,7 +2,6 @@ package com.bugboard25.entity;
 
 import com.bugboard25.entity.enumerations.tipo_ruolo;
 import jakarta.persistence.*;
-import jakarta.persistence.*;
 
 import java.util.Date;
 

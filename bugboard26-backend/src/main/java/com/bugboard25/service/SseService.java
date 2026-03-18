@@ -1,5 +1,7 @@
 package com.bugboard25.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -10,25 +12,26 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SseService {
 
+    private static final Logger logger = LoggerFactory.getLogger(SseService.class);
+
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter subscribe(String email) {
-        // Timeout indefinito per connessione persistente
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        
-        System.out.println("SSE: Subscribing user " + email);
+
+        logger.info("SSE: Subscribing user {}", email);
         emitters.put(email, emitter);
 
         emitter.onCompletion(() -> {
-            System.out.println("SSE: Completed for user " + email);
+            logger.debug("SSE: Completed for user {}", email);
             emitters.remove(email);
         });
         emitter.onTimeout(() -> {
-            System.out.println("SSE: Timeout for user " + email);
+            logger.debug("SSE: Timeout for user {}", email);
             emitters.remove(email);
         });
-        emitter.onError((e) -> {
-            System.err.println("SSE: Error for user " + email + ": " + e.getMessage());
+        emitter.onError(e -> {
+            logger.error("SSE: Error for user {}: {}", email, e.getMessage());
             emitters.remove(email);
         });
 
@@ -39,20 +42,19 @@ public class SseService {
         SseEmitter emitter = emitters.get(email);
         if (emitter != null) {
             try {
-                System.out.println("SSE: Sending " + eventName + " to " + email);
+                logger.debug("SSE: Sending {} to {}", eventName, email);
                 emitter.send(SseEmitter.event()
                         .name(eventName)
                         .data(data));
             } catch (IOException e) {
-                System.err.println("SSE: Failed to send event to " + email);
+                logger.error("SSE: Failed to send event to {}", email);
                 emitters.remove(email);
             }
         } else {
-             System.out.println("SSE: No emitter found for user " + email);
+            logger.debug("SSE: No emitter found for user {}", email);
         }
     }
-    
-    // Metodo overload per inviare solo segnale di aggiornamento senza payload
+
     public void sendUpdateSignal(String email, String eventName) {
         sendEvent(email, eventName, "UPDATE");
     }

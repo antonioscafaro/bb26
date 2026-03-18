@@ -36,10 +36,7 @@ public interface IssueRepository extends JpaRepository<Issue, Integer> {
     List<Issue> findByStatoIssueAndDataUltimoAggiornamentoBetween(stato_issue stato, Date start, Date end);
     List<Issue> findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(Progetti progetto, stato_issue stato, Date start, Date end);
 
-    // 3. Open (Snapshot: not resolved, not closed, not archived)
-    // Note: 'Open' means currently open, regardless of creation date? 
-    // Usually reports show "Open at end of period" or "Currently Open". 
-    // Based on previous code: it was "tutteLeIssue.filter(!RISOLTA && !CHIUSA && !ARCHIVIATA)". So it's "Currently Open".
+    // Currently open issues (not RISOLTA, CHIUSA, or ARCHIVIATA)
     @Query("SELECT COUNT(i) FROM Issue i WHERE i.statoIssue NOT IN ('RISOLTA', 'CHIUSA', 'ARCHIVIATA')")
     long countCurrentlyOpen();
 

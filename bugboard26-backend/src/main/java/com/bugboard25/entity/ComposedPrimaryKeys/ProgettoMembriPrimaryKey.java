@@ -4,23 +4,22 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @jakarta.persistence.Embeddable
-public class Progetto_MembriPrimaryKey implements Serializable {
+public class ProgettoMembriPrimaryKey implements Serializable {
     private int id_progetto;
     private String utente;
 
-    public Progetto_MembriPrimaryKey() {
+    public ProgettoMembriPrimaryKey() {
     }
 
-    public Progetto_MembriPrimaryKey(int id_progetto, String utente) {
-        this.id_progetto = id_progetto;
+    public ProgettoMembriPrimaryKey(int idProgetto, String utente) {
+        this.id_progetto = idProgetto;
         this.utente = utente;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Progetto_MembriPrimaryKey)) return false;
-        Progetto_MembriPrimaryKey that = (Progetto_MembriPrimaryKey) o;
+        if (!(o instanceof ProgettoMembriPrimaryKey that)) return false;
         return Objects.equals(id_progetto, that.id_progetto) &&
                 Objects.equals(utente, that.utente);
     }
@@ -30,11 +29,11 @@ public class Progetto_MembriPrimaryKey implements Serializable {
         return Objects.hash(id_progetto, utente);
     }
 
-    public int getId_progetto() {
+    public int getIdProgetto() {
         return id_progetto;
     }
 
-    public String getId_utente() {
+    public String getIdUtente() {
         return utente;
     }
 }
