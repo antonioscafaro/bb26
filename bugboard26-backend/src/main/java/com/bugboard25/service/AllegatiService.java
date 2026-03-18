@@ -51,14 +51,26 @@ public class AllegatiService {
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA + " con id: " + idIssue));
 
         String nomeOriginale = file.getOriginalFilename();
-        String nomeFileUnico = UUID.randomUUID().toString() + "-" + nomeOriginale;
+        if (nomeOriginale == null || nomeOriginale.isBlank()) {
+            throw new IllegalArgumentException("Il nome del file non può essere vuoto.");
+        }
 
-        Path uploadPath = Paths.get(uploadDir);
+        // Sanitizza: rimuove qualsiasi componente di directory (previene path traversal)
+        String nomeSanitizzato = Paths.get(nomeOriginale).getFileName().toString();
+        String nomeFileUnico = UUID.randomUUID().toString() + "-" + nomeSanitizzato;
+
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        Path filePath = uploadPath.resolve(nomeFileUnico);
+        Path filePath = uploadPath.resolve(nomeFileUnico).normalize();
+
+        // Verifica che il file resti dentro la directory di upload
+        if (!filePath.startsWith(uploadPath)) {
+            throw new SecurityException("Tentativo di path traversal rilevato.");
+        }
+
         Files.copy(file.getInputStream(), filePath);
 
         Allegati allegato = new Allegati();
