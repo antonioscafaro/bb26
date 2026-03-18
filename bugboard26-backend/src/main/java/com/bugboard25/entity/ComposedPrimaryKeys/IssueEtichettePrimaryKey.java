@@ -1,4 +1,4 @@
-package com.bugboard25.entity.ComposedPrimaryKeys;
+package com.bugboard25.entity.composedprimarykeys;
 
 import java.io.Serializable;
 import java.util.Objects;

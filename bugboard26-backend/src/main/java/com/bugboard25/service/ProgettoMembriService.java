@@ -2,7 +2,7 @@ package com.bugboard25.service;
 
 import com.bugboard25.dto.ProgettoMembriCreateRequestDTO;
 import com.bugboard25.dto.ProgettoMembriDTO;
-import com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey;
+import com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey;
 import com.bugboard25.entity.Progetti;
 import com.bugboard25.entity.ProgettoMembri;
 import com.bugboard25.entity.Utenti;

@@ -1,7 +1,7 @@
 package com.bugboard25.service;
 
 import com.bugboard25.dto.IssueEtichettaCreateRequestDTO;
-import com.bugboard25.entity.ComposedPrimaryKeys.IssueEtichettePrimaryKey;
+import com.bugboard25.entity.composedprimarykeys.IssueEtichettePrimaryKey;
 import com.bugboard25.entity.Etichette;
 import com.bugboard25.entity.Issue;
 import com.bugboard25.entity.IssueEtichette;

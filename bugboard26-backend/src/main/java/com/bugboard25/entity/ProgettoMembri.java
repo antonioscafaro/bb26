@@ -1,6 +1,6 @@
 package com.bugboard25.entity;
 
-import com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey;
+import com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey;
 import jakarta.persistence.*;
 
 @Entity

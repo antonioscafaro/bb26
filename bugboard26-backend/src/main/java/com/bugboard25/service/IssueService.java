@@ -281,8 +281,8 @@ public class IssueService {
         Utenti assegnatario = utentiRepository.findById(assegnatarioEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Assegnatario non trovato"));
 
-        com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey pk =
-                new com.bugboard25.entity.ComposedPrimaryKeys.ProgettoMembriPrimaryKey(
+        com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey pk =
+                new com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey(
                         issue.getIdProgetto().getId(), assegnatario.getEmail());
 
         if (!progettoMembriRepository.existsById(pk) && assegnatario.getRuolo() != TipoRuolo.AMMINISTRATORE) {

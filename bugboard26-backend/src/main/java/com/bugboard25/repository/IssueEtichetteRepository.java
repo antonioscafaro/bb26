@@ -1,6 +1,6 @@
 package com.bugboard25.repository;
 
-import com.bugboard25.entity.ComposedPrimaryKeys.IssueEtichettePrimaryKey;
+import com.bugboard25.entity.composedprimarykeys.IssueEtichettePrimaryKey;
 import com.bugboard25.entity.IssueEtichette;
 import com.bugboard25.entity.Issue;
 import org.springframework.data.jpa.repository.JpaRepository;
