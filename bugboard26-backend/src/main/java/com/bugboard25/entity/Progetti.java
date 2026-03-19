@@ -23,6 +23,15 @@ public class Progetti {
     @Column(name = "data_creazione")
     private Date dataCreazione;
 
+    @OneToMany(mappedBy = "idProgetto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Issue> issues;
+
+    @OneToMany(mappedBy = "progetto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<ProgettoMembri> membri;
+
+    @OneToMany(mappedBy = "idProgetto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Etichette> etichette;
+
     public int getId() {
         return id;
     }

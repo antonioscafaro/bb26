@@ -59,6 +59,9 @@ public class Issue {
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Commenti> commenti;
 
+    @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Notifiche> notifiche;
+
     public void setId(int id) {
         this.id = id;
     }
