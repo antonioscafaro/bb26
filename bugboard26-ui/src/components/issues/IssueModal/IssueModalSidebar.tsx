@@ -9,6 +9,7 @@ import { ISSUE_STATUS } from '../../../constants';
 import { TagInput } from '../../common/TagInput';
 import { Icons } from '../../common/Icons';
 import { Select } from '../../common/Select';
+import { Calendar, Clock } from 'lucide-react';
 
 interface IssueModalSidebarProps {
     issue: Issue;
@@ -290,6 +291,38 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                         </div>
                     )}
                 </motion.div>
+            </div>
+
+            {/* Dates */}
+            <div className="border-t border-outline-variant pt-4 space-y-3">
+                <div className="flex items-center gap-3">
+                    <Calendar size={18} className="text-on-surface-variant flex-shrink-0" />
+                    <div>
+                        <h4 className="font-medium text-xs text-on-surface-variant">Creato il</h4>
+                        <p className="text-sm text-on-surface">
+                            {issue.createdAt
+                                ? new Date(issue.createdAt).toLocaleString('it-IT', {
+                                    day: '2-digit', month: '2-digit', year: 'numeric',
+                                    hour: '2-digit', minute: '2-digit'
+                                })
+                                : '—'}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Clock size={18} className="text-on-surface-variant flex-shrink-0" />
+                    <div>
+                        <h4 className="font-medium text-xs text-on-surface-variant">Ultimo aggiornamento</h4>
+                        <p className="text-sm text-on-surface">
+                            {issue.updatedAt
+                                ? new Date(issue.updatedAt).toLocaleString('it-IT', {
+                                    day: '2-digit', month: '2-digit', year: 'numeric',
+                                    hour: '2-digit', minute: '2-digit'
+                                })
+                                : '—'}
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );

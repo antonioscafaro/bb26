@@ -88,7 +88,7 @@ export interface BackendCommentAuthor {
 export interface BackendComment {
   id: number;
   testo: string;
-  data_creazione: string;
+  dataCreazione: string;
   autore: BackendCommentAuthor;
   idIssue?: number;
 }

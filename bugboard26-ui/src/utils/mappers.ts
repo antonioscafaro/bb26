@@ -87,7 +87,7 @@ export const mapBackendUserToUser = (u: BackendUser): User => ({
 export const mapBackendCommentToComment = (c: BackendComment): Comment => ({
     id: c.id.toString(),
     content: c.testo || 'No content',
-    timestamp: c.data_creazione || new Date().toISOString(),
+    timestamp: c.dataCreazione || new Date().toISOString(),
     author: {
         id: c.autore?.email || 'unknown',
         email: c.autore?.email || 'unknown',

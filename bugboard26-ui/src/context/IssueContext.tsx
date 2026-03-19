@@ -282,7 +282,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
       const mappedComment: Comment = {
         id: newComment.id.toString(),
         content: newComment.testo,
-        timestamp: newComment.data_creazione,
+        timestamp: newComment.dataCreazione,
         author: commentData.author // Use the author from input as response lacks details
       };
 
