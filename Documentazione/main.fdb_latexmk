@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1773921104.1912 "c:/Users/aless/Documents/bb26/Documentazione/main.tex" "main.pdf" "main" 1773921107.88296 0
+["pdflatex"] 1773925674.81844 "c:/Users/aless/Documents/bb26/Documentazione/main.tex" "main.pdf" "main" 1773925678.58432 0
   "DB.pdf" 1773774456 67681 9f587ee92ab862b283aeed075330e093 ""
   "DBVECCHIO.pdf" 1773774456 60520 ece52cb0fe0c0fad530466aa655db3b4 ""
   "MOCK.png" 1773747069 150985 0c0c6ff4cb9bd9268478f39f40dce1d0 ""
@@ -239,10 +239,10 @@
   "c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1758659244 5574153 af86687748baf417d9e7d549313527be ""
   "c:/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1758659387 3621636 a74145fabcff4689976e6f1f6def17a0 ""
   "c:/texlive/2025/texmf.cnf" 1758659229 713 e69b156964470283e0530f5060668171 ""
-  "main.aux" 1773921107 49033 2bbe13a83c793b246b25c20682934ee7 "pdflatex"
-  "main.out" 1773921107 6021 450639c9f5a363b0471fb528909f64c4 "pdflatex"
+  "main.aux" 1773925678 49033 ffddf42da3d8a1fb45d8ab772c697c5b "pdflatex"
+  "main.out" 1773925678 6021 450639c9f5a363b0471fb528909f64c4 "pdflatex"
   "main.tex" 1773865334 8305 641c82ab8b5e21809acc07046040052b ""
-  "main.toc" 1773921107 23377 91604d2c667dfff37325e5c6553e4416 "pdflatex"
+  "main.toc" 1773925678 23377 3fbb65ca62b1cc6075a705b3927e4e0c "pdflatex"
   "package config.png" 1773752424 60811 6a81408e0e718b80a64ac69abec2318a ""
   "package controller.png" 1773752350 832925 9c08175f11ddf2319b5564583bd10708 ""
   "package dto.png" 1773752467 2489615 423b2e5913dbad75d40274fc0b30da7e ""
@@ -265,9 +265,9 @@
   "sections/12-design-classes.tex" 1773918197 10010 89f37c97921fcc2dd4b36656a80d6ea6 ""
   "sections/13-versioning.tex" 1773857316 291 455e610924d639eaa3f61bba2fe36902 ""
   "sections/14-report-qualità.tex" 1773862392 800 da4a6ca5ff000c0c68aeba28870686fc ""
-  "sections/15-testing-plan.tex" 1773921098 26054 dc8e4cbba71b207056356858baeb7e8a ""
-  "sections/16-automatic-testing.tex" 1773865176 13598 39aa282d3de693f34cff30c728a3e290 ""
-  "sections/17-documentazione-testing.tex" 1773865489 7675 f21470055edef82b43d1e1d24fe06501 ""
+  "sections/15-testing-plan.tex" 1773925565 26702 dc8e4cbba71b207056356858baeb7e8a ""
+  "sections/16-automatic-testing.tex" 1773925670 15154 d1283ca851755d8b1c529f0f823796ae ""
+  "sections/17-documentazione-testing.tex" 1773925056 7675 f21470055edef82b43d1e1d24fe06501 ""
   "ui_completo_bb26.png" 1773829902 1951109 6207a15d20c5c51c873a4cc3fe5a104d ""
   "versioning.png" 1773862183 70526 4da3453db7de74bd643d01cdf93c996e ""
   (generated)
