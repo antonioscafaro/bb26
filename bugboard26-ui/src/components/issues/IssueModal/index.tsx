@@ -63,8 +63,11 @@ export const IssueModal: React.FC<IssueModalProps> = ({
 
   const isArchived = currentIssue?.status === 'archived';
   const isRejected = currentIssue?.status === 'rejected';
-  const canEdit = !isArchived && !isRejected && (currentUser.role === USER_ROLE.ADMIN || (currentIssue && currentUser.role === USER_ROLE.NORMAL && currentUser.id === currentIssue.assignee?.id));
   const isAdmin = currentUser.role === USER_ROLE.ADMIN;
+  const isAssignee = currentIssue?.assignee?.id === currentUser.id;
+  const isAuthor = currentIssue?.reporter?.id === currentUser.id;
+  const canEdit = !isArchived && !isRejected && (isAdmin || isAssignee || isAuthor);
+  const canEditDescription = !isArchived && !isRejected && (isAdmin || isAuthor);
 
   // Handle status change immediate blur removal
   const handleStatusChangeStart = () => {
@@ -126,7 +129,10 @@ export const IssueModal: React.FC<IssueModalProps> = ({
               currentUser={currentUser}
               setCurrentIssue={setCurrentIssue as React.Dispatch<React.SetStateAction<Issue>>}
               canEdit={canEdit}
+              canEditDescription={canEditDescription}
               isAdmin={isAdmin}
+              isAuthor={isAuthor}
+              isAssignee={isAssignee}
               onClose={onClose}
             >
               {children}
@@ -135,6 +141,8 @@ export const IssueModal: React.FC<IssueModalProps> = ({
               issue={currentIssue}
               canEdit={canEdit}
               isAdmin={isAdmin}
+              isAuthor={isAuthor}
+              isAssignee={isAssignee}
               setCurrentIssue={setCurrentIssue as React.Dispatch<React.SetStateAction<Issue>>}
               onClose={onClose}
               onStatusChangeStart={handleStatusChangeStart}

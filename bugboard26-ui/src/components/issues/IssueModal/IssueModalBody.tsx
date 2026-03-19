@@ -1,4 +1,4 @@
-import React, { useState, type ReactNode } from 'react';
+import React, { useState, useEffect, useRef, type ReactNode } from 'react';
 import type { Issue, User } from '../../../types';
 import { CommentSection } from './CommentSection';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,6 +6,8 @@ import { ChevronDown } from 'lucide-react';
 import { IssueModalSidebar } from './IssueModalSidebar';
 import { ProtectedImage } from '../../common/ProtectedImage';
 import api from '../../../api/axios';
+import { useIssues } from '../../../context/IssueContext.shared';
+import { Toast } from '../../common/Toast';
 
 /**
  * @typedef {Object} IssueModalBodyProps
@@ -13,33 +15,88 @@ import api from '../../../api/axios';
  * @property {User} currentUser - L'utente attualmente loggato, per la sezione commenti.
  * @property {React.Dispatch<React.SetStateAction<Issue>>} setCurrentIssue - Funzione per aggiornare lo stato dell'issue.
  * @property {boolean} canEdit - Flag che indica se l'utente può modificare i dettagli.
+ * @property {boolean} canEditDescription - Flag che indica se l'utente può modificare la descrizione.
  * @property {boolean} isAdmin - Flag che indica se l'utente è un amministratore.
+ * @property {boolean} isAuthor - Flag che indica se l'utente è l'autore della issue.
+ * @property {boolean} isAssignee - Flag che indica se l'utente è l'assegnatario della issue.
  * @property {ReactNode} [children] - Eventuali elementi figli.
  */
 
 /**
  * Componente che renderizza il corpo principale del modale di una Issue.
- * Include descrizione, allegati, commenti e una vista "accordion" dei dettagli per il mobile.
+ * Include descrizione (editabile per admin/autore), allegati, commenti e una vista "accordion" dei dettagli per il mobile.
  * @param {IssueModalBodyProps} props - Le props del componente.
  */
-export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, isAdmin, children, onClose }: {
+export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, canEditDescription, isAdmin, isAuthor, isAssignee, children, onClose }: {
     issue: Issue;
     currentUser: User;
     setCurrentIssue: React.Dispatch<React.SetStateAction<Issue>>;
     canEdit: boolean;
+    canEditDescription: boolean;
     isAdmin: boolean;
+    isAuthor: boolean;
+    isAssignee: boolean;
     children?: ReactNode;
     onClose?: () => void;
 }) => {
     const [isDetailsOpen, setDetailsOpen] = useState(false);
+    const { updateIssue: updateIssueApi } = useIssues();
+
+    // Editable description state with debounce
+    const [localDescription, setLocalDescription] = useState(issue.description);
+    const descriptionRef = useRef(localDescription);
+    const isFirstRender = useRef(true);
+
+    // Sync local description with issue prop when it changes (e.g., from SSE)
+    useEffect(() => {
+        setLocalDescription(issue.description);
+    }, [issue.description]);
+
+    useEffect(() => {
+        descriptionRef.current = localDescription;
+    }, [localDescription]);
+
+    // Debounced API call for description
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            const currentDesc = descriptionRef.current;
+            if (currentDesc !== issue.description) {
+                updateIssueApi(issue.id, { description: currentDesc })
+                    .then(() => {
+                        setCurrentIssue(prev => ({ ...prev, description: currentDesc }));
+                        Toast.success('Descrizione aggiornata');
+                    })
+                    .catch(() => {
+                        Toast.error('Errore durante l\'aggiornamento della descrizione');
+                        setLocalDescription(issue.description);
+                    });
+            }
+        }, 800);
+
+        return () => clearTimeout(timer);
+    }, [localDescription, issue.description, issue.id, updateIssueApi, setCurrentIssue]);
 
     return (
         <div className="lg:w-2/3 overflow-y-auto px-6">
             {/* // Descrizione */}
             <h3 className="font-medium text-on-surface mb-2">Descrizione</h3>
-            <p className="text-on-surface-variant whitespace-pre-wrap mb-6 text-sm">
-                {issue.description}
-            </p>
+            {canEditDescription ? (
+                <textarea
+                    value={localDescription}
+                    onChange={(e) => setLocalDescription(e.target.value)}
+                    className="w-full text-on-surface-variant whitespace-pre-wrap mb-6 text-sm bg-surface border border-outline rounded-m3-m focus:ring-2 focus:ring-primary focus:border-primary transition p-3 resize-y min-h-[80px]"
+                    placeholder="Aggiungi una descrizione..."
+                />
+            ) : (
+                <p className="text-on-surface-variant whitespace-pre-wrap mb-6 text-sm">
+                    {issue.description}
+                </p>
+            )}
 
             {/* // Allegati */}
             {issue.attachments && issue.attachments.length > 0 && (
@@ -109,6 +166,8 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, i
                                     issue={issue}
                                     canEdit={canEdit}
                                     isAdmin={isAdmin}
+                                    isAuthor={isAuthor}
+                                    isAssignee={isAssignee}
                                     setCurrentIssue={setCurrentIssue}
                                     isMobile
                                     onClose={onClose}

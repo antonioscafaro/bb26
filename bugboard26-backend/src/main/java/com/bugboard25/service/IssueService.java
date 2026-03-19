@@ -232,7 +232,7 @@ public class IssueService {
         Progetti progetto = progettiRepository.findById(issue.getIdProgetto().getId())
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
 
-        validatePermissions(issue, richiedente, emailRichiedente);
+        validatePermissions(issue, richiedente, emailRichiedente, requestDTO);
 
         if (requestDTO.getAssegnatario() != null) {
             handleAssignment(issue, requestDTO.getAssegnatario());
@@ -262,13 +262,24 @@ public class IssueService {
         return new IssueDTO(issue);
     }
 
-    private void validatePermissions(Issue issue, Utenti richiedente, String emailRichiedente) {
+    private void validatePermissions(Issue issue, Utenti richiedente, String emailRichiedente,
+                                     IssueUpdateRequestDTO requestDTO) {
         boolean isAdmin = richiedente.getRuolo() == TipoRuolo.AMMINISTRATORE;
         boolean isAssignee = issue.getAssegnatario() != null && issue.getAssegnatario().getEmail().equals(emailRichiedente);
         boolean isReporter = issue.getAutore() != null && issue.getAutore().getEmail().equals(emailRichiedente);
 
         if (!isAdmin && !isAssignee && !isReporter) {
             throw new ForbiddenException(ErrorMessages.PERMESSO_NEGATO);
+        }
+
+        // Autore: può modificare tutto TRANNE l'assegnatario
+        if (isReporter && !isAdmin && requestDTO.getAssegnatario() != null) {
+            throw new ForbiddenException(ErrorMessages.AUTORE_NO_ASSEGNATARIO);
+        }
+
+        // Assegnatario (non autore): NON può modificare la descrizione
+        if (isAssignee && !isAdmin && !isReporter && requestDTO.getDescrizione() != null) {
+            throw new ForbiddenException(ErrorMessages.ASSEGNATARIO_NO_DESCRIZIONE);
         }
     }
 

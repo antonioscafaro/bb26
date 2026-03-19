@@ -132,12 +132,12 @@ class IssueServiceTest {
         dto.setAssegnatario("");
 
         when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
-        when(utentiRepository.findById("author@test.com")).thenReturn(Optional.of(author));
+        when(utentiRepository.findById("admin@test.com")).thenReturn(Optional.of(admin));
         when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
 
         when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        IssueDTO result = issueService.updateIssueById(100, dto, "author@test.com");
+        IssueDTO result = issueService.updateIssueById(100, dto, "admin@test.com");
 
         assertNotNull(result);
         assertNull(result.getAssegnatario());
@@ -145,14 +145,7 @@ class IssueServiceTest {
     }
 
     @Test
-    void testUpdateIssueById_AuthorAssignsIssue(){
-        Utenti oldAssignee = new Utenti();
-        oldAssignee.setEmail("oldassignee@test.com");
-        issue.setAssegnatario(oldAssignee);
-
-        Utenti newAssignee = new Utenti();
-        newAssignee.setEmail("assignee@test.com");
-
+    void testUpdateIssueById_AuthorCannotAssignIssue(){
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
         dto.setAssegnatario("assignee@test.com");
 
@@ -160,17 +153,56 @@ class IssueServiceTest {
         when(utentiRepository.findById("author@test.com")).thenReturn(Optional.of(author));
         when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
 
-        when(utentiRepository.findById("assignee@test.com")).thenReturn(Optional.of(newAssignee));
-        when(progettoMembriRepository.existsById(any())).thenReturn(true);
+        ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
+            issueService.updateIssueById(100, dto, "author@test.com");
+        });
 
+        assertEquals("L'autore non può modificare l'assegnatario", exception.getMessage());
+        verify(issueRepository, never()).save(any());
+    }
+
+    @Test
+    void testUpdateIssueById_AuthorEditsAllowedFields(){
+        IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
+        dto.setTitolo("Author New Title");
+        dto.setDescrizione("Author New Description");
+        dto.setPrioritaIssue(PrioritaIssue.ALTA);
+        dto.setEtichette(new ArrayList<>());
+
+        when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
+        when(utentiRepository.findById("author@test.com")).thenReturn(Optional.of(author));
+        when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
         when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         IssueDTO result = issueService.updateIssueById(100, dto, "author@test.com");
 
         assertNotNull(result);
-        assertEquals("assignee@test.com", result.getAssegnatario().getEmail());
-        verify(notificheService, times(1)).creaNotificaAssegnazione(any());
-        verify(issueRepository, times(1)).save(any());
+        assertEquals("Author New Title", result.getTitolo());
+        assertEquals("Author New Description", result.getDescrizione());
+        assertEquals(PrioritaIssue.ALTA, result.getPrioritaIssue());
+        verify(issueRepository, times(1)).save(any(Issue.class));
+    }
+
+    @Test
+    void testUpdateIssueById_AssigneeCannotEditDescription(){
+        Utenti assignee = new Utenti();
+        assignee.setEmail("assignee@test.com");
+        assignee.setRuolo(TipoRuolo.UTENTE);
+        issue.setAssegnatario(assignee);
+
+        IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
+        dto.setDescrizione("Assignee tries to change description");
+
+        when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
+        when(utentiRepository.findById("assignee@test.com")).thenReturn(Optional.of(assignee));
+        when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
+
+        ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
+            issueService.updateIssueById(100, dto, "assignee@test.com");
+        });
+
+        assertEquals("L'assegnatario non può modificare la descrizione", exception.getMessage());
+        verify(issueRepository, never()).save(any());
     }
 
     @Test
@@ -213,7 +245,7 @@ class IssueServiceTest {
         dto.setAssegnatario("assignee@test.com");
 
         when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
-        when(utentiRepository.findById("author@test.com")).thenReturn(Optional.of(author));
+        when(utentiRepository.findById("admin@test.com")).thenReturn(Optional.of(admin));
         when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
 
         when(utentiRepository.findById("assignee@test.com")).thenReturn(Optional.of(newAssignee));
@@ -221,7 +253,7 @@ class IssueServiceTest {
         when(progettoMembriRepository.existsById(any())).thenReturn(false);
 
         BadRequestException exception = assertThrows(BadRequestException.class, () -> {
-            issueService.updateIssueById(100, dto, "author@test.com");
+            issueService.updateIssueById(100, dto, "admin@test.com");
         });
 
         assertEquals("L'utente selezionato non è membro del progetto", exception.getMessage());

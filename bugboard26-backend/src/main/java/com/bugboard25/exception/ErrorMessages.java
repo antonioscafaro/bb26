@@ -16,6 +16,8 @@ public final class ErrorMessages {
     public static final String NOTIFICA_NON_TROVATA = "Notifica non trovata";
     public static final String ALLEGATO_NON_TROVATO = "Allegato non trovato";
     public static final String PERMESSO_NEGATO = "Non hai i permessi per modificare questa issue.";
+    public static final String AUTORE_NO_ASSEGNATARIO = "L'autore non può modificare l'assegnatario";
+    public static final String ASSEGNATARIO_NO_DESCRIZIONE = "L'assegnatario non può modificare la descrizione";
     public static final String UTENTE_NON_MEMBRO = "L'utente selezionato non è membro del progetto";
     public static final String EMAIL_DUPLICATA = "Email già registrata";
     public static final String NOTIFICATION_UPDATE = "notification-update";

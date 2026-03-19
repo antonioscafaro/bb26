@@ -217,8 +217,8 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: Record<string, any> = { id: parseInt(issueId) };
-      if (issueData.title) payload.titolo = issueData.title;
-      if (issueData.description) payload.descrizione = issueData.description;
+      if (issueData.title !== undefined) payload.titolo = issueData.title;
+      if (issueData.description !== undefined) payload.descrizione = issueData.description;
       if (issueData.status) payload.statoIssue = mapStatusToBackend(issueData.status);
       if (issueData.priority) payload.prioritaIssue = mapPriorityToBackend(issueData.priority);
       if (issueData.type) payload.tipoIssue = mapTypeToBackend(issueData.type);

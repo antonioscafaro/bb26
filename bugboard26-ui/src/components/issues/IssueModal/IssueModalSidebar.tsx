@@ -15,6 +15,8 @@ interface IssueModalSidebarProps {
     issue: Issue;
     canEdit: boolean;
     isAdmin: boolean;
+    isAuthor: boolean;
+    isAssignee: boolean;
     setCurrentIssue: React.Dispatch<React.SetStateAction<Issue>>;
     onClose?: () => void;
     isMobile?: boolean;
@@ -25,6 +27,8 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
     issue,
     canEdit,
     isAdmin,
+    isAuthor,
+    isAssignee,
     setCurrentIssue,
     onClose,
     isMobile = false,
@@ -32,7 +36,6 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
 }) => {
     const { currentUser } = useAuth();
     const { state, updateIssue: updateIssueApi } = useIssues();
-    const isAssignedUser = currentUser?.id === issue.assignee?.id;
     const [projectMembers, setProjectMembers] = useState<User[]>([]);
 
     // Local labels state for debounced updates
@@ -169,10 +172,15 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
             options.push(<option key="archived" value="archived">Archived</option>);
         }
 
-        if (!isAdmin) {
+        // Admin can change to any status
+        if (isAdmin) {
+            return options;
+        }
+
+        // Assignee: limited transitions
+        if (isAssignee) {
             return options.filter(opt => {
                 const value = opt.key as string;
-                if (!isAssignedUser) return value === issue.status;
 
                 const allowedTransitions: string[] = [
                     ISSUE_STATUS.TODO,
@@ -188,8 +196,13 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
             });
         }
 
-        return options;
+        // Author (not assignee): cannot change status per permission matrix
+        // Other users: show current status only (read-only)
+        return options.filter(opt => opt.key === issue.status);
     };
+
+    // Status can be changed by admin or assignee, not by author-only
+    const canEditStatus = canEdit && (isAdmin || isAssignee);
 
     const containerClasses = isMobile
         ? "space-y-6"
@@ -205,7 +218,7 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                     <Select
                         value={issue.status}
                         onChange={(e) => handleStatusChange(e.target.value)}
-                        disabled={!canEdit}
+                        disabled={!canEditStatus}
                         className="py-2"
                     >
                         {renderStatusOptions()}
@@ -213,7 +226,7 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                 </div>
             </div>
 
-            {/* Assignee */}
+            {/* Assignee - only admin can change */}
             <div className="flex items-center gap-3">
                 <Icons.Assignee />
                 <div className="flex-1">
