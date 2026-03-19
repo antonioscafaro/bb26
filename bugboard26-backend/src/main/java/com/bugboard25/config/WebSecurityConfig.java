@@ -28,14 +28,14 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/utenti/email/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/sse/subscribe/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/utenti").hasRole(String.valueOf(TipoRuolo.AMMINISTRATORE))
-                        .requestMatchers(HttpMethod.DELETE, "/api/utenti/{email}").hasRole(String.valueOf(TipoRuolo.AMMINISTRATORE))
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers(HttpMethod.POST, "/api/utenti")
+                        .hasRole(String.valueOf(TipoRuolo.AMMINISTRATORE))
+                        .requestMatchers(HttpMethod.DELETE, "/api/utenti/{email}")
+                        .hasRole(String.valueOf(TipoRuolo.AMMINISTRATORE))
+                        .anyRequest().authenticated())
                 .httpBasic(basic -> basic.authenticationEntryPoint(
-                        (request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Credenziali non valide")
-                ));
+                        (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                "Credenziali non valide")));
 
         return http.build();
     }
@@ -43,7 +43,9 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "http://192.168.*.*:*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
