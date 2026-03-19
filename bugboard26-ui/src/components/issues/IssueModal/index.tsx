@@ -131,7 +131,6 @@ export const IssueModal: React.FC<IssueModalProps> = ({
               canEdit={canEdit}
               canEditDescription={canEditDescription}
               isAdmin={isAdmin}
-              isAuthor={isAuthor}
               isAssignee={isAssignee}
               onClose={onClose}
             >
@@ -141,7 +140,6 @@ export const IssueModal: React.FC<IssueModalProps> = ({
               issue={currentIssue}
               canEdit={canEdit}
               isAdmin={isAdmin}
-              isAuthor={isAuthor}
               isAssignee={isAssignee}
               setCurrentIssue={setCurrentIssue as React.Dispatch<React.SetStateAction<Issue>>}
               onClose={onClose}

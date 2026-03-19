@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import type { Issue, User, UserRole } from '../../../types';
 import api from '../../../api/axios';
-import { useAuth } from '../../../context/AuthContext.shared';
 import { useIssues } from '../../../context/IssueContext.shared';
 import { priorityConfig } from '../../../config/uiConstants';
 import { Toast } from '../../common/Toast';
@@ -15,7 +14,6 @@ interface IssueModalSidebarProps {
     issue: Issue;
     canEdit: boolean;
     isAdmin: boolean;
-    isAuthor: boolean;
     isAssignee: boolean;
     setCurrentIssue: React.Dispatch<React.SetStateAction<Issue>>;
     onClose?: () => void;
@@ -27,14 +25,12 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
     issue,
     canEdit,
     isAdmin,
-    isAuthor,
     isAssignee,
     setCurrentIssue,
     onClose,
     isMobile = false,
     onStatusChangeStart
 }) => {
-    const { currentUser } = useAuth();
     const { state, updateIssue: updateIssueApi } = useIssues();
     const [projectMembers, setProjectMembers] = useState<User[]>([]);
 

@@ -17,7 +17,6 @@ import { Toast } from '../../common/Toast';
  * @property {boolean} canEdit - Flag che indica se l'utente può modificare i dettagli.
  * @property {boolean} canEditDescription - Flag che indica se l'utente può modificare la descrizione.
  * @property {boolean} isAdmin - Flag che indica se l'utente è un amministratore.
- * @property {boolean} isAuthor - Flag che indica se l'utente è l'autore della issue.
  * @property {boolean} isAssignee - Flag che indica se l'utente è l'assegnatario della issue.
  * @property {ReactNode} [children] - Eventuali elementi figli.
  */
@@ -27,14 +26,13 @@ import { Toast } from '../../common/Toast';
  * Include descrizione (editabile per admin/autore), allegati, commenti e una vista "accordion" dei dettagli per il mobile.
  * @param {IssueModalBodyProps} props - Le props del componente.
  */
-export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, canEditDescription, isAdmin, isAuthor, isAssignee, children, onClose }: {
+export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, canEditDescription, isAdmin, isAssignee, children, onClose }: {
     issue: Issue;
     currentUser: User;
     setCurrentIssue: React.Dispatch<React.SetStateAction<Issue>>;
     canEdit: boolean;
     canEditDescription: boolean;
     isAdmin: boolean;
-    isAuthor: boolean;
     isAssignee: boolean;
     children?: ReactNode;
     onClose?: () => void;
@@ -166,7 +164,6 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, c
                                     issue={issue}
                                     canEdit={canEdit}
                                     isAdmin={isAdmin}
-                                    isAuthor={isAuthor}
                                     isAssignee={isAssignee}
                                     setCurrentIssue={setCurrentIssue}
                                     isMobile
