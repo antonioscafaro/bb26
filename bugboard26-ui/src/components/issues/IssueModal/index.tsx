@@ -120,6 +120,8 @@ export const IssueModal: React.FC<IssueModalProps> = ({
             onRestore={onRestore}
             onReopen={onReopen}
             isAdmin={isAdmin}
+            canEditTitle={canEditDescription}
+            setCurrentIssue={setCurrentIssue as React.Dispatch<React.SetStateAction<Issue>>}
           />
 
           {/* Body and Sidebar */}

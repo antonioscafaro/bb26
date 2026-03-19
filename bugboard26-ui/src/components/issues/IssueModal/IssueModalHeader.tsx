@@ -1,39 +1,83 @@
+import React, { useState, useEffect, useRef } from 'react';
 import type { Issue } from '../../../types';
 import { motion } from 'framer-motion';
 import { X, Archive, ArchiveRestore, RotateCcw } from 'lucide-react';
-
-/**
- * @typedef {Object} IssueModalHeaderProps
- * @property {Issue} issue - L'oggetto issue da cui estrarre i dati per l'header.
- * @property {() => void} onClose - Callback per chiudere il modale.
- * @property {() => void} [onArchive] - Callback opzionale per l'azione di archiviazione.
- * @property {() => void} [onRestore] - Callback opzionale per l'azione di ripristino.
- * @property {() => void} [onReopen] - Callback opzionale per l'azione di riapertura.
- * @property {boolean} isAdmin - Flag che indica se l'utente corrente è un amministratore.
- */
+import { useIssues } from '../../../context/IssueContext.shared';
+import { Toast } from '../../common/Toast';
 
 /**
  * Componente per l'header del modale di una Issue.
- * Mostra titolo, reporter e pulsanti di azione.
- * @param {IssueModalHeaderProps} props - Le props del componente.
+ * Mostra titolo (editabile per admin/autore), reporter e pulsanti di azione.
  */
-export const IssueModalHeader = ({ issue, onClose, onArchive, onRestore, onReopen, isAdmin }: {
+export const IssueModalHeader = ({ issue, onClose, onArchive, onRestore, onReopen, isAdmin, canEditTitle, setCurrentIssue }: {
     issue: Issue;
     onClose: () => void;
     onArchive?: () => void;
     onRestore?: () => void;
     onReopen?: () => void;
     isAdmin: boolean;
+    canEditTitle: boolean;
+    setCurrentIssue: React.Dispatch<React.SetStateAction<Issue>>;
 }) => {
     const isArchived = issue.status === 'archived';
     const isRejected = issue.status === 'rejected';
+    const { updateIssue: updateIssueApi } = useIssues();
+
+    // Editable title state with debounce
+    const [localTitle, setLocalTitle] = useState(issue.title);
+    const titleRef = useRef(localTitle);
+    const isFirstRender = useRef(true);
+
+    // Sync local title with issue prop when it changes (e.g., from SSE)
+    useEffect(() => {
+        setLocalTitle(issue.title);
+    }, [issue.title]);
+
+    useEffect(() => {
+        titleRef.current = localTitle;
+    }, [localTitle]);
+
+    // Debounced API call for title
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            const currentTitle = titleRef.current;
+            if (currentTitle !== issue.title && currentTitle.trim() !== '') {
+                updateIssueApi(issue.id, { title: currentTitle })
+                    .then(() => {
+                        setCurrentIssue(prev => ({ ...prev, title: currentTitle }));
+                        Toast.success('Titolo aggiornato');
+                    })
+                    .catch(() => {
+                        Toast.error('Errore durante l\'aggiornamento del titolo');
+                        setLocalTitle(issue.title);
+                    });
+            }
+        }, 800);
+
+        return () => clearTimeout(timer);
+    }, [localTitle, issue.title, issue.id, updateIssueApi, setCurrentIssue]);
 
     return (
         <div className="p-6 flex justify-between items-start flex-shrink-0">
-            <div>
-                <motion.h2 layoutId={`card-title-${issue.id}`} className="text-2xl font-medium text-on-surface">
-                    {issue.title}
-                </motion.h2>
+            <div className="flex-1 min-w-0 mr-4">
+                {canEditTitle ? (
+                    <motion.input
+                        layoutId={`card-title-${issue.id}`}
+                        value={localTitle}
+                        onChange={(e) => setLocalTitle(e.target.value)}
+                        className="text-2xl font-medium text-on-surface bg-transparent border-b-2 border-transparent focus:border-primary focus:outline-none transition w-full"
+                        placeholder="Titolo issue..."
+                    />
+                ) : (
+                    <motion.h2 layoutId={`card-title-${issue.id}`} className="text-2xl font-medium text-on-surface">
+                        {issue.title}
+                    </motion.h2>
+                )}
                 <p className="text-sm text-on-surface-variant mt-1">
                     Segnalato da <span className="font-medium">{issue.reporter.name}</span>
                 </p>
