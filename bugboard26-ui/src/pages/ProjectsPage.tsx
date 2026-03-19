@@ -10,6 +10,7 @@ import { Icons } from '../components/common/Icons';
 import { ProjectFormModal } from '../components/projects/ProjectFormModal';
 import { PasswordConfirmModal } from '../components/common/PasswordConfirmModal';
 import { Toast } from '../components/common/Toast';
+import api from '../api/axios';
 import type { Project } from '../types';
 import { ProjectUsersModal } from '../components/projects/ProjectUsersModal';
 import { ActionButton } from '../components/common/ActionButton';
@@ -112,7 +113,13 @@ export const ProjectsPage = () => {
 
     const confirmDelete = async (password: string) => {
         if (!selectedProject) return;
-        if (password !== 'admin') {
+        // Verify password via backend authentication
+        try {
+            const token = btoa(`${currentUser!.email}:${password}`);
+            await api.get(`/utenti/email/${currentUser!.email}`, {
+                headers: { Authorization: `Basic ${token}` }
+            });
+        } catch {
             throw new Error('Password non valida');
         }
         try {

@@ -2,8 +2,10 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useAuth } from '../context/AuthContext.shared';
 import { useIssues } from '../context/IssueContext.shared';
 import { Toast } from '../components/common/Toast';
+import api from '../api/axios';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { PasswordConfirmModal } from '../components/common/PasswordConfirmModal';
 import type { User } from '../types';
@@ -33,6 +35,7 @@ const itemVariants: Variants = {
 export const UserManagement = () => {
     const { onMenuClick } = useOutletContext<PageContext>();
     const { state, createUser, updateUser, deleteUser } = useIssues();
+    const { currentUser } = useAuth();
     const { users } = state;
     const isMobile = useIsMobile();
     const [isModalOpen, setModalOpen] = useState(false);
@@ -72,8 +75,13 @@ export const UserManagement = () => {
     const handlePasswordConfirm = async (password: string) => {
         if (!userToDelete) return;
 
-        // Mock password verification - replace with actual API call
-        if (password !== 'admin') {
+        // Verify password via backend authentication
+        try {
+            const token = btoa(`${currentUser!.email}:${password}`);
+            await api.get(`/utenti/email/${currentUser!.email}`, {
+                headers: { Authorization: `Basic ${token}` }
+            });
+        } catch {
             throw new Error('Password non valida');
         }
 
