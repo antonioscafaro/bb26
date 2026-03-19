@@ -222,9 +222,49 @@
 \contentsline {subsection}{\numberline {3.4}Scelte di design}{79}{subsection.3.4}%
 \contentsline {subsubsection}{\numberline {3.4.1}Backend}{79}{subsubsection.3.4.1}%
 \contentsline {paragraph}{\numberline {3.4.1.1}Principio di Singola Responsabilità (SRP)}{79}{paragraph.3.4.1.1}%
-\contentsline {paragraph}{\numberline {3.4.1.2}Dependency Inversion Principle (DIP)}{79}{paragraph.3.4.1.2}%
-\contentsline {paragraph}{\numberline {3.4.1.3}Design pattern applicati nel backend}{79}{paragraph.3.4.1.3}%
+\contentsline {paragraph}{\numberline {3.4.1.2}Design pattern applicati nel backend}{79}{paragraph.3.4.1.2}%
 \contentsline {subsubsection}{\numberline {3.4.2}Frontend}{80}{subsubsection.3.4.2}%
 \contentsline {paragraph}{\numberline {3.4.2.1}Principio di Singola Responsabilità (SRP)}{80}{paragraph.3.4.2.1}%
 \contentsline {paragraph}{\numberline {3.4.2.2}Design pattern applicati nel frontend}{80}{paragraph.3.4.2.2}%
-\contentsline {subsection}{\numberline {3.5}Utilizzo degli strumenti di versioning}{82}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.5}Utilizzo degli strumenti di versioning}{81}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Report di qualità del codice}{82}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Testing}{83}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Testing Plan: Modifica di una Issue}{83}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Modifica dello stato}{83}{subsubsection.4.1.1}%
+\contentsline {paragraph}{\numberline {4.1.1.1}Frontend}{83}{paragraph.4.1.1.1}%
+\contentsline {paragraph}{\numberline {4.1.1.2}Backend}{84}{paragraph.4.1.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.2}Modifica dell'assegnatario}{84}{subsubsection.4.1.2}%
+\contentsline {paragraph}{\numberline {4.1.2.1}Frontend}{85}{paragraph.4.1.2.1}%
+\contentsline {paragraph}{\numberline {4.1.2.2}Backend}{86}{paragraph.4.1.2.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Modifica della priorit\`a}{87}{subsubsection.4.1.3}%
+\contentsline {paragraph}{\numberline {4.1.3.1}Frontend}{87}{paragraph.4.1.3.1}%
+\contentsline {paragraph}{\numberline {4.1.3.2}Backend}{88}{paragraph.4.1.3.2}%
+\contentsline {subsubsection}{\numberline {4.1.4}Modifica delle etichette}{88}{subsubsection.4.1.4}%
+\contentsline {paragraph}{\numberline {4.1.4.1}Frontend}{88}{paragraph.4.1.4.1}%
+\contentsline {paragraph}{\numberline {4.1.4.2}Backend}{89}{paragraph.4.1.4.2}%
+\contentsline {subsubsection}{\numberline {4.1.5}Modifica del titolo}{90}{subsubsection.4.1.5}%
+\contentsline {paragraph}{\numberline {4.1.5.1}Frontend}{90}{paragraph.4.1.5.1}%
+\contentsline {paragraph}{\numberline {4.1.5.2}Backend}{90}{paragraph.4.1.5.2}%
+\contentsline {subsubsection}{\numberline {4.1.6}Modifica della descrizione}{91}{subsubsection.4.1.6}%
+\contentsline {paragraph}{\numberline {4.1.6.1}Frontend}{91}{paragraph.4.1.6.1}%
+\contentsline {paragraph}{\numberline {4.1.6.2}Backend}{91}{paragraph.4.1.6.2}%
+\contentsline {subsubsection}{\numberline {4.1.7}Modifica del tipo di issue}{92}{subsubsection.4.1.7}%
+\contentsline {paragraph}{\numberline {4.1.7.1}Frontend}{92}{paragraph.4.1.7.1}%
+\contentsline {paragraph}{\numberline {4.1.7.2}Backend}{92}{paragraph.4.1.7.2}%
+\contentsline {subsubsection}{\numberline {4.1.8}Modifica di pi\`u campi contemporaneamente}{93}{subsubsection.4.1.8}%
+\contentsline {paragraph}{\numberline {4.1.8.1}Frontend}{93}{paragraph.4.1.8.1}%
+\contentsline {paragraph}{\numberline {4.1.8.2}Backend}{93}{paragraph.4.1.8.2}%
+\contentsline {subsubsection}{\numberline {4.1.9}Notifiche dopo la modifica}{94}{subsubsection.4.1.9}%
+\contentsline {paragraph}{\numberline {4.1.9.1}Frontend}{94}{paragraph.4.1.9.1}%
+\contentsline {paragraph}{\numberline {4.1.9.2}Backend}{94}{paragraph.4.1.9.2}%
+\contentsline {subsection}{\numberline {4.2}Unit test automatici}{95}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Documentazione delle strategie di testing}{106}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Metodo sotto test: \texttt {updateIssueById}}{106}{subsubsection.4.3.1}%
+\contentsline {paragraph}{\numberline {4.3.1.1}Classi di equivalenza individuate}{106}{paragraph.4.3.1.1}%
+\contentsline {paragraph}{\numberline {4.3.1.2}Copertura delle classi di equivalenza nei test}{106}{paragraph.4.3.1.2}%
+\contentsline {paragraph}{\numberline {4.3.1.3}Criteri di copertura strutturale}{107}{paragraph.4.3.1.3}%
+\contentsline {subsubsection}{\numberline {4.3.2}Metodo sotto test: \texttt {creaIssue}}{108}{subsubsection.4.3.2}%
+\contentsline {paragraph}{\numberline {4.3.2.1}Classi di equivalenza individuate}{108}{paragraph.4.3.2.1}%
+\contentsline {paragraph}{\numberline {4.3.2.2}Copertura delle classi di equivalenza nei test}{108}{paragraph.4.3.2.2}%
+\contentsline {paragraph}{\numberline {4.3.2.3}Criteri di copertura strutturale}{108}{paragraph.4.3.2.3}%
+\contentsline {subsubsection}{\numberline {4.3.3}Tecniche utilizzate}{109}{subsubsection.4.3.3}%

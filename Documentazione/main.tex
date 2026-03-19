@@ -33,12 +33,26 @@
 \usepackage{FiraSans}
 \usepackage{setspace}
 \usepackage{needspace}
+\usepackage{listings}
 
 % --- SIMBOLI CHECK E CROCE PER TABELLE ---
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}  % checkmark
 \newcommand{\xmark}{\ding{55}}  % x mark
 \newcommand{\reqseparator}{\vspace{0.3cm}\noindent{\color{bb-outline}\rule{\textwidth}{0.5pt}}\vspace{0.3cm}}
+
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{green!70!black},
+    numbers=left, % Mostra i numeri di riga a sinistra
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    frame=single, % Mette un riquadro attorno al codice
+    breaklines=true
+}
 
 % --- FONT E INTERLINEA ---
 \renewcommand{\familydefault}{\sfdefault}
@@ -246,4 +260,18 @@
 
 \newpage
 \input{sections/13-versioning.tex}
+
+\newpage
+\input{sections/14-report-qualità.tex}
+
+\newpage
+\section{Testing}
+\input{sections/15-testing-plan.tex}
+
+\newpage
+\input{sections/16-automatic-testing.tex}
+
+\newpage
+\input{sections/17-documentazione-testing.tex}
+
 \end{document}

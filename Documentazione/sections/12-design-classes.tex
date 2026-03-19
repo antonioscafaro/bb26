@@ -80,7 +80,7 @@ Per evitare di avere componenti React enormi e illeggibili, abbiamo spostato il 
 \begin{itemize}
     \item \textbf{Servizi API:} file che fanno esclusivamente chiamate HTTP al backend, gestendo al loro interno gli URL e gli eventuali errori di rete.
     \item \textbf{Context React:} contenitori globali che tengono in memoria dati condivisi (ad esempio chi è l'utente connesso al momento), in modo che chiunque ne abbia bisogno nell'app possa accedervi direttamente.
-    \item \textbf{Hook personalizzati:} pezzi di logica legati allo stato che ci capita di riutilizzare in più punti, come ad esempio la gestione di un caricamento asincrono.
+    \item \textbf{Hook personalizzati:} pezzi di logica legati allo stato che ci capita di riutilizzare in più punti, come ad esempio rendere l'interfaccia responsive.
 \end{itemize}
 
 Così facendo, la maggior parte dei componenti React si preoccupa soltanto di mostrare i dati a schermo e di reagire ai click dell'utente, delegando tutto il recupero e l'aggiornamento dei dati ai context e ai service.
@@ -103,9 +103,6 @@ Il backend in Java e Spring Boot usa un'architettura a livelli (controller, serv
 \paragraph{Principio di Singola Responsabilità (SRP)}
 Abbiamo diviso i compiti rigidamente: i controller gestiscono solo le chiamate HTTP, i service contengono tutta la logica di business e le conversioni tra entità e DTO, mentre i repository dialogano esclusivamente col database. Questo evita di avere file enormi che fanno troppe cose.
 
-\paragraph{Dependency Inversion Principle (DIP)}
-Spring gestisce l'iniezione delle dipendenze (Dependency Injection) tramite l'annotazione \texttt{@Autowired}. Questo significa che controller, service e repository non istanziano direttamente le classi da cui dipendono, ma ricevono i componenti pronti all'uso. In questo modo è molto più facile effettuare test usando dei mock.
-
 \paragraph{Design pattern applicati nel backend}
 
 \begin{itemize}
@@ -116,8 +113,6 @@ Spring gestisce l'iniezione delle dipendenze (Dependency Injection) tramite l'an
     \item \textbf{Adapter:} Il package \texttt{dto} converte il formato delle entità JPA in quello atteso dai client REST e viceversa. Così evitiamo di esporre la struttura del database direttamente verso l'esterno.
 
     \item \textbf{Observer:} Attraverso i Server-Sent Events, i client si collegano all'endpoint \texttt{/api/sse/subscribe/\{email\}} in attesa di novità. Il \texttt{SseService} fa da \textit{subject} avvisando i vari client quando ci sono aggiornamenti interessanti, come una nuova issue o un'assegnazione.
-
-    \item \textbf{State:} Una issue può cambiare stato (aperta, chiusa, ecc.) usando i valori dell'enum \texttt{stato\_issue}. Il passaggio da uno stato all'altro viene preventivamente validato dal \texttt{IssueService} prima del salvataggio nel database.
 \end{itemize}
 
 \subsubsection{Frontend}
