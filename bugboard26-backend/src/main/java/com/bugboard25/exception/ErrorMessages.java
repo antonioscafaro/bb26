@@ -20,6 +20,7 @@ public final class ErrorMessages {
     public static final String ASSEGNATARIO_NO_DESCRIZIONE = "L'assegnatario non può modificare la descrizione";
     public static final String UTENTE_NON_MEMBRO = "L'utente selezionato non è membro del progetto";
     public static final String EMAIL_DUPLICATA = "Email già registrata";
+    public static final String PASSWORD_NON_VALIDA = "Password non valida";
     public static final String NOTIFICATION_UPDATE = "notification-update";
     public static final String ISSUE_UPDATE = "issue-update";
     public static final String PROJECT_UPDATE = "project-update";

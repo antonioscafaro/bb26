@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
-import { useAuth } from '../context/AuthContext.shared';
 import { useIssues } from '../context/IssueContext.shared';
 import { Toast } from '../components/common/Toast';
 import { verifyPassword } from '../utils/verifyPassword';
@@ -35,7 +34,6 @@ const itemVariants: Variants = {
 export const UserManagement = () => {
     const { onMenuClick } = useOutletContext<PageContext>();
     const { state, createUser, updateUser, deleteUser } = useIssues();
-    const { currentUser } = useAuth();
     const { users } = state;
     const isMobile = useIsMobile();
     const [isModalOpen, setModalOpen] = useState(false);
@@ -75,7 +73,7 @@ export const UserManagement = () => {
     const handlePasswordConfirm = async (password: string) => {
         if (!userToDelete) return;
 
-        await verifyPassword(currentUser!.email, password);
+        await verifyPassword(password);
 
         try {
             await deleteUser(userToDelete.id);

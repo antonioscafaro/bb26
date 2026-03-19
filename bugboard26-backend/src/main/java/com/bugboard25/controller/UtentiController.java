@@ -1,6 +1,7 @@
 package com.bugboard25.controller;
 
 import com.bugboard25.dto.UtenteCreateRequestDTO;
+import com.bugboard25.dto.VerificaPasswordRequestDTO;
 import com.bugboard25.dto.UtentiDTO;
 import com.bugboard25.dto.IssueDTO;
 import com.bugboard25.dto.NotificheDTO;
@@ -76,6 +77,16 @@ public class UtentiController {
     public ResponseEntity<UtentiDTO> updateUtente(@PathVariable String email, @RequestBody UtenteCreateRequestDTO dto) {
         UtentiDTO utenteAggiornato = utentiService.updateUtenteByEmail(email, dto);
         return ResponseEntity.ok(utenteAggiornato);
+    }
+
+    @PostMapping("/verify-password")
+    public ResponseEntity<Void> verifyPassword(@RequestBody VerificaPasswordRequestDTO dto,
+                                                java.security.Principal principal) {
+        boolean isValid = utentiService.verificaPassword(principal.getName(), dto.getPassword());
+        if (!isValid) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{email}")

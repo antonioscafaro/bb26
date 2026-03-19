@@ -113,7 +113,7 @@ export const ProjectsPage = () => {
 
     const confirmDelete = async (password: string) => {
         if (!selectedProject) return;
-        await verifyPassword(currentUser!.email, password);
+        await verifyPassword(password);
         try {
             await deleteProject(selectedProject.id);
             Toast.success('Progetto eliminato!');

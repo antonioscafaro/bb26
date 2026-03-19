@@ -113,6 +113,12 @@ public class UtentiService implements UserDetailsService {
                 .toList();
     }
 
+
+    public boolean verificaPassword(String email, String password) {
+        Utenti utente = utentiRepository.findById(email)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
+        return passwordEncoder.matches(password, utente.getPasswordHash());
+    }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Utenti utente = utentiRepository.findById(email)
