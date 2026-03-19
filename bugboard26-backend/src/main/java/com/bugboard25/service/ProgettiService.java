@@ -123,10 +123,49 @@ public class ProgettiService {
     }
 
     public void deleteProgettoById(int id) {
-        notifyProjectMembers(id);
-
         Progetti progettoDaEliminare = progettiRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
+
+        // Collect emails to notify BEFORE delete (cascade removes members)
+        List<String> emailsDaNotificare = collectProjectEmails(id);
+
         progettiRepository.delete(progettoDaEliminare);
+
+        // Notify AFTER delete to avoid SSE race condition
+        notifyEmails(emailsDaNotificare);
+    }
+
+    /**
+     * Collects all emails that need to be notified for a project update:
+     * project members + all administrators.
+     */
+    private List<String> collectProjectEmails(int projectId) {
+        java.util.Set<String> emails = new java.util.LinkedHashSet<>();
+        try {
+            Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
+            if (progettoOpt.isPresent()) {
+                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
+                for (ProgettoMembri membro : membri) {
+                    emails.add(membro.getUtente().getEmail());
+                }
+            }
+            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
+            for (UtentiDTO amministratore : amministratori) {
+                emails.add(amministratore.getEmail());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to collect project emails: {}", e.getMessage());
+        }
+        return new java.util.ArrayList<>(emails);
+    }
+
+    private void notifyEmails(List<String> emails) {
+        try {
+            for (String email : emails) {
+                sseService.sendUpdateSignal(email, ErrorMessages.PROJECT_UPDATE);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to send project update notifications: {}", e.getMessage());
+        }
     }
 }
