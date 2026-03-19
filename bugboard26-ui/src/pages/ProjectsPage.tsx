@@ -10,7 +10,7 @@ import { Icons } from '../components/common/Icons';
 import { ProjectFormModal } from '../components/projects/ProjectFormModal';
 import { PasswordConfirmModal } from '../components/common/PasswordConfirmModal';
 import { Toast } from '../components/common/Toast';
-import api from '../api/axios';
+import { verifyPassword } from '../utils/verifyPassword';
 import type { Project } from '../types';
 import { ProjectUsersModal } from '../components/projects/ProjectUsersModal';
 import { ActionButton } from '../components/common/ActionButton';
@@ -113,15 +113,7 @@ export const ProjectsPage = () => {
 
     const confirmDelete = async (password: string) => {
         if (!selectedProject) return;
-        // Verify password via backend authentication
-        try {
-            const token = btoa(`${currentUser!.email}:${password}`);
-            await api.get(`/utenti/email/${currentUser!.email}`, {
-                headers: { Authorization: `Basic ${token}` }
-            });
-        } catch {
-            throw new Error('Password non valida');
-        }
+        await verifyPassword(currentUser!.email, password);
         try {
             await deleteProject(selectedProject.id);
             Toast.success('Progetto eliminato!');

@@ -5,7 +5,7 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useAuth } from '../context/AuthContext.shared';
 import { useIssues } from '../context/IssueContext.shared';
 import { Toast } from '../components/common/Toast';
-import api from '../api/axios';
+import { verifyPassword } from '../utils/verifyPassword';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { PasswordConfirmModal } from '../components/common/PasswordConfirmModal';
 import type { User } from '../types';
@@ -75,15 +75,7 @@ export const UserManagement = () => {
     const handlePasswordConfirm = async (password: string) => {
         if (!userToDelete) return;
 
-        // Verify password via backend authentication
-        try {
-            const token = btoa(`${currentUser!.email}:${password}`);
-            await api.get(`/utenti/email/${currentUser!.email}`, {
-                headers: { Authorization: `Basic ${token}` }
-            });
-        } catch {
-            throw new Error('Password non valida');
-        }
+        await verifyPassword(currentUser!.email, password);
 
         try {
             await deleteUser(userToDelete.id);
