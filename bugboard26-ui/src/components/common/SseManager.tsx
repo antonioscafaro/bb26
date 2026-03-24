@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext.shared';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 export const SseManager: React.FC = () => {
     const { currentUser } = useAuth();
@@ -8,17 +9,20 @@ export const SseManager: React.FC = () => {
     useEffect(() => {
         if (!currentUser?.email) return;
 
-        let eventSource: EventSource | null = null;
+        let eventSource: EventSourcePolyfill | null = null;
         let isCancelled = false;
 
         const connect = () => {
             if (isCancelled) return;
 
-            // Use relative URL so it goes through Vercel rewrite / nginx proxy (same origin, no CORS)
             const url = `/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
             console.log("Connecting to SSE:", url);
 
-            eventSource = new EventSource(url);
+            eventSource = new EventSourcePolyfill(url, {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true',
+                },
+            });
 
             eventSource.onopen = () => {
                 console.log("SSE Connection Opened");
@@ -26,8 +30,6 @@ export const SseManager: React.FC = () => {
 
             eventSource.onerror = (e) => {
                 console.warn("SSE Connection Error, will auto-reconnect...", e);
-                // Don't call close()! EventSource auto-reconnects on error.
-                // Only close if the readyState is CLOSED (server rejected)
                 if (eventSource?.readyState === EventSource.CLOSED) {
                     console.log("SSE: Server closed connection, retrying in 5s...");
                     eventSource.close();
@@ -37,7 +39,6 @@ export const SseManager: React.FC = () => {
                 }
             };
 
-            // Listen for specific events
             eventSource.addEventListener('project-update', () => {
                 console.log("SSE Received: project-update");
                 window.dispatchEvent(new CustomEvent('project-update'));
@@ -64,5 +65,5 @@ export const SseManager: React.FC = () => {
         };
     }, [currentUser]);
 
-    return null; // Component renders nothing
+    return null;
 };
