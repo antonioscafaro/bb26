@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://EC2-DNS:8080/api/:path*"
+      "destination": "http://ec2-18-193-122-23.eu-central-1.compute.amazonaws.com:8080/api/:path*"
     },
     {
       "source": "/((?!api/).*)",
