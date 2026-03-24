@@ -1,4 +1,4 @@
-# 🐛 BugBoard26
+# BugBoard26
 
 **BugBoard26** è un sistema di issue tracking e bug management sviluppato come progetto per il corso di Ingegneria del Software presso l'Università degli Studi di Napoli Federico II (A.A. 2025/2026).
 
