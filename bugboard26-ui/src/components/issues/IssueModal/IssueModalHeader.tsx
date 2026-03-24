@@ -67,14 +67,13 @@ export const IssueModalHeader = ({ issue, onClose, onArchive, onRestore, onReope
             <div className="flex-1 min-w-0 mr-4">
                 {canEditTitle ? (
                     <motion.input
-                        layoutId={`card-title-${issue.id}`}
                         value={localTitle}
                         onChange={(e) => setLocalTitle(e.target.value)}
                         className="text-2xl font-medium text-on-surface bg-transparent border-b-2 border-transparent focus:border-primary focus:outline-none transition w-full"
                         placeholder="Titolo issue..."
                     />
                 ) : (
-                    <motion.h2 layoutId={`card-title-${issue.id}`} className="text-2xl font-medium text-on-surface">
+                    <motion.h2 className="text-2xl font-medium text-on-surface">
                         {issue.title}
                     </motion.h2>
                 )}

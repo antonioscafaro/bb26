@@ -75,7 +75,7 @@ export const IssueCard: React.FC<IssueCardProps> = ({
       {...cardProps}
     >
       <motion.h3
-        layoutId={isSelected ? undefined : `card-title-${issue.id}`}
+        layout="position"
         className="font-medium text-on-surface mb-2 truncate select-none"
       >
         {issue.title}
