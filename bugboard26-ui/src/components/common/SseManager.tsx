@@ -15,7 +15,7 @@ export const SseManager: React.FC = () => {
             if (isCancelled) return;
 
             // Use relative URL so it goes through Vercel rewrite / nginx proxy (same origin, no CORS)
-            const url = `http://ec2-18-193-122-23.eu-central-1.compute.amazonaws.com/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
+            const url = `https://posticteric-tonnishly-leonida.ngrok-free.dev/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
             console.log("Connecting to SSE:", url);
 
             eventSource = new EventSource(url);
