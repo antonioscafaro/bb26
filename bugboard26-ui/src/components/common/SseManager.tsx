@@ -15,8 +15,7 @@ export const SseManager: React.FC = () => {
         const connect = () => {
             if (isCancelled) return;
 
-            const sseBaseUrl = 'https://posticteric-tonnishly-leonida.ngrok-free.dev';
-            const url = `${sseBaseUrl}/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
+            const url = `/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
             console.log("Connecting to SSE:", url);
 
             eventSource = new EventSourcePolyfill(url, {
