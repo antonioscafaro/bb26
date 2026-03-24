@@ -75,14 +75,20 @@ CE-1 (amministratore), CE-6 (lista vuota di etichette), CE-7 (tutti i campi valo
 \texttt{EmptyAssignee} &
 CE-2 (autore), CE-4 (stringa vuota come assegnatario) \\
 \hline
-\texttt{AuthorAssignsIssue} &
-CE-2 (autore), CE-3 (assegnatario valido membro del progetto), CE-5 (cambio di assegnatario da uno gi\`a presente) \\
+\texttt{AuthorCannotAssignIssue} &
+CE-2 (autore), tentativo non valido di cambiare l'assegnatario (il metodo lancia \texttt{ForbiddenException}) \\
+\hline
+\texttt{AuthorEditsAllowedFields} &
+CE-2 (autore), CE-7 (campi consentiti: titolo, descrizione, priorit\`a) \\
+\hline
+\texttt{AssigneeCannotEditDescription} &
+Ruolo assegnatario, tentativo non valido di modificare la descrizione (il metodo lancia \texttt{ForbiddenException}) \\
 \hline
 \texttt{AdminSetsLabels} &
 CE-1 (amministratore), CE-5 (stesso assegnatario), CE-6 (lista con etichette) \\
 \hline
 \texttt{AssigneeNotProjectMember} &
-CE-2 (autore), CE-3 classe non valida (assegnatario non membro del progetto) \\
+CE-1 (amministratore), CE-3 classe non valida (assegnatario non membro del progetto) \\
 \hline
 \texttt{IntruderUpdates} &
 CE-1 classe non valida (utente senza permessi) \\
@@ -94,18 +100,18 @@ CE-1 classe non valida (utente senza permessi) \\
 I test sono stati pensati per coprire tutti i rami principali del metodo:
 
 \begin{itemize}
-    \item \textbf{Controllo dei permessi}: il metodo controlla se l'utente \`e amministratore, assegnatario o autore. Abbiamo coperto sia il caso in cui l'utente ha i permessi (amministratore in \texttt{AdminSetsFields}, autore in \texttt{EmptyAssignee}) sia il caso in cui non li ha (\texttt{IntruderUpdates}, dove ci aspettiamo una \texttt{ForbiddenException}).
+    \item \textbf{Controllo dei permessi}: il metodo controlla se l'utente \`e amministratore, assegnatario o autore. Abbiamo coperto sia il caso in cui l'utente ha i permessi (amministratore in \texttt{AdminSetsFields}, autore in \texttt{EmptyAssignee} e \texttt{AuthorEditsAllowedFields}) sia il caso in cui non li ha (\texttt{IntruderUpdates} e \texttt{AssigneeCannotEditDescription}, dove ci aspettiamo una \texttt{ForbiddenException}).
 
     \item \textbf{Gestione dell'assegnatario}: ci sono tre rami possibili:
     \begin{itemize}
         \item assegnatario nullo, quindi non si fa nulla;
         \item stringa vuota, quindi l'assegnatario viene rimosso (coperto da \texttt{EmptyAssignee});
-        \item email valida, quindi si controlla che l'utente sia membro del progetto. Questo ramo \`e coperto nel caso positivo da \texttt{AuthorAssignsIssue} e nel caso negativo da \texttt{AssigneeNotProjectMember}.
+        \item email valida, quindi si controlla che l'utente sia membro del progetto. Il caso positivo \`e coperto da \texttt{AdminSetsFields}, mentre quello negativo da \texttt{AssigneeNotProjectMember}. Il test \texttt{AuthorCannotAssignIssue} verifica che un autore non amministratore non possa cambiare l'assegnatario.
     \end{itemize}
 
     \item \textbf{Gestione delle etichette}: il codice entra nel ramo delle etichette solo se la lista non \`e nulla e non \`e vuota. Il test \texttt{AdminSetsLabels} copre il caso con etichette presenti, mentre \texttt{AdminSetsFields} copre il caso con lista vuota.
 
-    \item \textbf{Creazione della notifica}: la notifica di assegnazione parte solo quando l'assegnatario cambia. I test \texttt{AdminSetsFields} e \texttt{AuthorAssignsIssue} verificano che la notifica venga creata, mentre \texttt{AdminSetsLabels} verifica che non venga creata quando l'assegnatario \`e lo stesso di prima.
+    \item \textbf{Creazione della notifica}: la notifica di assegnazione parte solo quando l'assegnatario cambia. Il test \texttt{AdminSetsFields} verifica che la notifica venga creata, mentre \texttt{AdminSetsLabels} verifica che non venga creata quando l'assegnatario \`e lo stesso di prima.
 \end{itemize}
 
 % -----------------------------------------------------------------

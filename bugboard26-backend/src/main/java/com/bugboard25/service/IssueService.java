@@ -8,8 +8,6 @@ import com.bugboard25.entity.enumerations.TipoIssue;
 import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.exception.*;
 import com.bugboard25.repository.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,8 +19,6 @@ import java.util.Optional;
 
 @Service
 public class IssueService {
-
-    private static final Logger logger = LoggerFactory.getLogger(IssueService.class);
 
     private final IssueRepository issueRepository;
     private final UtentiRepository utentiRepository;
@@ -37,11 +33,11 @@ public class IssueService {
     private final SseService sseService;
 
     public IssueService(IssueRepository issueRepository, UtentiRepository utentiRepository,
-                        ProgettiRepository progettiRepository, EtichetteRepository etichetteRepository,
-                        NotificheService notificheService, AllegatiService allegatiService,
-                        IssueEtichetteService issueEtichetteService, EtichetteService etichetteService,
-                        ProgettoMembriRepository progettoMembriRepository, UtentiService utentiService,
-                        SseService sseService) {
+            ProgettiRepository progettiRepository, EtichetteRepository etichetteRepository,
+            NotificheService notificheService, AllegatiService allegatiService,
+            IssueEtichetteService issueEtichetteService, EtichetteService etichetteService,
+            ProgettoMembriRepository progettoMembriRepository, UtentiService utentiService,
+            SseService sseService) {
         this.issueRepository = issueRepository;
         this.utentiRepository = utentiRepository;
         this.progettiRepository = progettiRepository;
@@ -56,22 +52,28 @@ public class IssueService {
     }
 
     private void notifyProjectMembers(int projectId) {
-         try {
-             Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
-             if (progettoOpt.isPresent()) {
-                 List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
-                 for (ProgettoMembri membro : membri) {
-                     sseService.sendUpdateSignal(membro.getUtente().getEmail(), ErrorMessages.ISSUE_UPDATE);
-                 }
-             }
+        try {
+            java.util.Set<String> emailsDaNotificare = new java.util.LinkedHashSet<>();
 
-             List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
-             for (UtentiDTO amministratore : amministratori) {
-                 sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.ISSUE_UPDATE);
-             }
-         } catch (Exception e) {
-             logger.error("Failed to broadcast issue update: {}", e.getMessage());
-         }
+            Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
+            if (progettoOpt.isPresent()) {
+                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
+                for (ProgettoMembri membro : membri) {
+                    emailsDaNotificare.add(membro.getUtente().getEmail());
+                }
+            }
+
+            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
+            for (UtentiDTO amministratore : amministratori) {
+                emailsDaNotificare.add(amministratore.getEmail());
+            }
+
+            for (String email : emailsDaNotificare) {
+                sseService.sendUpdateSignal(email, ErrorMessages.ISSUE_UPDATE);
+            }
+        } catch (Exception e) {
+            // SSE broadcast failure is non-critical
+        }
     }
 
     public IssueDTO getIssueById(int id) {
@@ -81,10 +83,12 @@ public class IssueService {
     }
 
     private List<Issue> filterVisibleIssues(List<Issue> issues, String emailRichiedente) {
-        if (emailRichiedente == null) return issues;
+        if (emailRichiedente == null)
+            return issues;
 
         Utenti richiedente = utentiRepository.findById(emailRichiedente).orElse(null);
-        if (richiedente == null) return issues;
+        if (richiedente == null)
+            return issues;
 
         if (richiedente.getRuolo() == TipoRuolo.AMMINISTRATORE) {
             return issues;
@@ -93,7 +97,8 @@ public class IssueService {
         return issues.stream()
                 .filter(i -> {
                     if (i.getStatoIssue() == StatoIssue.CHIUSA) {
-                        boolean isAssignee = i.getAssegnatario() != null && i.getAssegnatario().getEmail().equals(emailRichiedente);
+                        boolean isAssignee = i.getAssegnatario() != null
+                                && i.getAssegnatario().getEmail().equals(emailRichiedente);
                         boolean isAuthor = i.getAutore() != null && i.getAutore().getEmail().equals(emailRichiedente);
                         return isAssignee || isAuthor;
                     }
@@ -188,7 +193,8 @@ public class IssueService {
         issue.setTitolo(requestDTO.getTitolo());
         issue.setDescrizione(requestDTO.getDescrizione());
         issue.setTipoIssue(requestDTO.getTipoIssue());
-        issue.setPrioritaIssue(PrioritaIssue.NESSUNA);
+        issue.setPrioritaIssue(
+                requestDTO.getPrioritaIssue() != null ? requestDTO.getPrioritaIssue() : PrioritaIssue.NESSUNA);
         issue.setStatoIssue(StatoIssue.TODO);
         issue.setAutore(autore);
         issue.setIdProgetto(progetto);
@@ -201,7 +207,8 @@ public class IssueService {
             try {
                 allegatiService.salvaFile(file, issue.getId());
             } catch (IOException e) {
-                throw new FileUploadException("Upload file fallito. L'issue è stata creata (" + issue.getId() + ") ma l'allegato no.", e);
+                throw new FileUploadException(
+                        "Upload file fallito. L'issue è stata creata (" + issue.getId() + ") ma l'allegato no.", e);
             }
         }
 
@@ -238,11 +245,16 @@ public class IssueService {
             handleAssignment(issue, requestDTO.getAssegnatario());
         }
 
-        if (requestDTO.getDescrizione() != null) issue.setDescrizione(requestDTO.getDescrizione());
-        if (requestDTO.getTipoIssue() != null) issue.setTipoIssue(requestDTO.getTipoIssue());
-        if (requestDTO.getStatoIssue() != null) issue.setStatoIssue(requestDTO.getStatoIssue());
-        if (requestDTO.getPrioritaIssue() != null) issue.setPrioritaIssue(requestDTO.getPrioritaIssue());
-        if (requestDTO.getTitolo() != null) issue.setTitolo(requestDTO.getTitolo());
+        if (requestDTO.getDescrizione() != null)
+            issue.setDescrizione(requestDTO.getDescrizione());
+        if (requestDTO.getTipoIssue() != null)
+            issue.setTipoIssue(requestDTO.getTipoIssue());
+        if (requestDTO.getStatoIssue() != null)
+            issue.setStatoIssue(requestDTO.getStatoIssue());
+        if (requestDTO.getPrioritaIssue() != null)
+            issue.setPrioritaIssue(requestDTO.getPrioritaIssue());
+        if (requestDTO.getTitolo() != null)
+            issue.setTitolo(requestDTO.getTitolo());
 
         if (requestDTO.getEtichette() != null && !requestDTO.getEtichette().isEmpty()) {
             for (String nomeEtichetta : requestDTO.getEtichette()) {
@@ -263,9 +275,10 @@ public class IssueService {
     }
 
     private void validatePermissions(Issue issue, Utenti richiedente, String emailRichiedente,
-                                     IssueUpdateRequestDTO requestDTO) {
+            IssueUpdateRequestDTO requestDTO) {
         boolean isAdmin = richiedente.getRuolo() == TipoRuolo.AMMINISTRATORE;
-        boolean isAssignee = issue.getAssegnatario() != null && issue.getAssegnatario().getEmail().equals(emailRichiedente);
+        boolean isAssignee = issue.getAssegnatario() != null
+                && issue.getAssegnatario().getEmail().equals(emailRichiedente);
         boolean isReporter = issue.getAutore() != null && issue.getAutore().getEmail().equals(emailRichiedente);
 
         if (!isAdmin && !isAssignee && !isReporter) {
@@ -292,9 +305,8 @@ public class IssueService {
         Utenti assegnatario = utentiRepository.findById(assegnatarioEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Assegnatario non trovato"));
 
-        com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey pk =
-                new com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey(
-                        issue.getIdProgetto().getId(), assegnatario.getEmail());
+        com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey pk = new com.bugboard25.entity.composedprimarykeys.ProgettoMembriPrimaryKey(
+                issue.getIdProgetto().getId(), assegnatario.getEmail());
 
         if (!progettoMembriRepository.existsById(pk) && assegnatario.getRuolo() != TipoRuolo.AMMINISTRATORE) {
             throw new BadRequestException(ErrorMessages.UTENTE_NON_MEMBRO);

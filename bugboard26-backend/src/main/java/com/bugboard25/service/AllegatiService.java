@@ -7,8 +7,6 @@ import com.bugboard25.exception.ErrorMessages;
 import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.AllegatiRepository;
 import com.bugboard25.repository.IssueRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +26,6 @@ import java.util.UUID;
 @Service
 public class AllegatiService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AllegatiService.class);
 
     private final AllegatiRepository allegatiRepository;
     private final IssueRepository issueRepository;
@@ -97,7 +94,6 @@ public class AllegatiService {
                 throw new ResourceNotFoundException("Impossibile leggere il file: " + uniqueFileName);
             }
         } catch (MalformedURLException e) {
-            logger.error("Errore nel percorso del file: {}", uniqueFileName, e);
             throw new ResourceNotFoundException("Errore nel percorso del file: " + uniqueFileName);
         }
     }

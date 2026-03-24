@@ -18,10 +18,9 @@ public class SseController {
 
     @GetMapping(path = "/subscribe/{email}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@PathVariable String email, HttpServletResponse response) {
-        // Prevent proxy buffering (needed for Vercel, nginx, etc.)
+        // Disable buffering at proxy/CDN level (Nginx, AWS ALB, Vercel, etc.)
         response.setHeader("X-Accel-Buffering", "no");
         response.setHeader("Cache-Control", "no-cache, no-transform");
-        response.setHeader("Connection", "keep-alive");
         return sseService.subscribe(email);
     }
 }

@@ -1,35 +1,23 @@
+version: '3.8'
 services:
-  # Database Service
-  db:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_DB=bb26_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Gold1
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-  # Servizio Backend
   backend:
-    build: ./bugboard26-backend
+    image: alee444/backend-java:v1
     ports:
       - "8080:8080"
+    volumes:
+      - /home/ubuntu/project_uploads:/app/uploads
     environment:
-      - DB_URL=jdbc:postgresql://db:5432/bb26_db
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=Gold1
-    depends_on:
-      - db
-
-  # Servizio Frontend
-  frontend:
-    build: ./bugboard26-ui
-    ports:
-      - "3000:80"
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ep-broad-mud-agt6onpr-pooler.c-2.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require
+      - SPRING_DATASOURCE_USERNAME=neondb_owner
+      - SPRING_DATASOURCE_PASSWORD=npg_mh43eLWwfNtQ
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: always
+    environment:
+      NGROK_AUTHTOKEN: 3BOhzRobb0R185amYJgxOVpcSan_4GoDB8objxbB3euFMaqS2
+    command:
+      - "http"
+      - "--url=posticteric-tonnishly-leonida.ngrok-free.dev"
+      - "backend:8080"
     depends_on:
       - backend
-
-volumes:
-  db_data:

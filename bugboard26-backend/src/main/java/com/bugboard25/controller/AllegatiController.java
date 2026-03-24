@@ -3,8 +3,6 @@ package com.bugboard25.controller;
 import com.bugboard25.dto.AllegatoDTO;
 import com.bugboard25.entity.Allegati;
 import com.bugboard25.service.AllegatiService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +18,6 @@ import java.util.List;
 @RequestMapping("/api/allegati")
 public class AllegatiController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AllegatiController.class);
 
     private final AllegatiService allegatiService;
 
@@ -37,7 +34,6 @@ public class AllegatiController {
             AllegatoDTO allegatoSalvato = allegatiService.salvaFile(file, idIssue);
             return ResponseEntity.status(HttpStatus.CREATED).body(allegatoSalvato);
         } catch (IOException e) {
-            logger.error("Errore durante il caricamento del file per issue {}", idIssue, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

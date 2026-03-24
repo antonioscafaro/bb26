@@ -14,8 +14,6 @@ import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.ProgettiRepository;
 import com.bugboard25.repository.ProgettoMembriRepository;
 import com.bugboard25.repository.UtentiRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +22,6 @@ import java.util.Optional;
 @Service
 public class ProgettoMembriService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProgettoMembriService.class);
 
     private final ProgettiRepository progettiRepository;
     private final UtentiRepository utentiRepository;
@@ -106,25 +103,30 @@ public class ProgettoMembriService {
      */
     private void notifyMembershipChange(int projectId, String affectedEmail) {
         try {
+            java.util.Set<String> emailsDaNotificare = new java.util.LinkedHashSet<>();
+
             // Notify current project members
             Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
             if (progettoOpt.isPresent()) {
                 List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
                 for (ProgettoMembri membro : membri) {
-                    sseService.sendUpdateSignal(membro.getUtente().getEmail(), ErrorMessages.PROJECT_UPDATE);
+                    emailsDaNotificare.add(membro.getUtente().getEmail());
                 }
             }
-            // Notify the affected user directly (they may have just been removed
-            // and won't be found in the member list above)
-            sseService.sendUpdateSignal(affectedEmail, ErrorMessages.PROJECT_UPDATE);
+            // Include the affected user (they may have just been removed)
+            emailsDaNotificare.add(affectedEmail);
 
-            // Notify admins
+            // Include admins
             List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
             for (UtentiDTO amministratore : amministratori) {
-                sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.PROJECT_UPDATE);
+                emailsDaNotificare.add(amministratore.getEmail());
+            }
+
+            for (String email : emailsDaNotificare) {
+                sseService.sendUpdateSignal(email, ErrorMessages.PROJECT_UPDATE);
             }
         } catch (Exception e) {
-            logger.error("Failed to broadcast membership change: {}", e.getMessage());
+            // SSE broadcast failure is non-critical
         }
     }
 }

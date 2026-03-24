@@ -33,21 +33,21 @@ Raccoglie i Data Transfer Object (DTO), ovvero classi usate per trasferire dati 
 
 \needspace{10\baselineskip}
 \subsubsection{Package entity}
-Qui ci sono le entità JPA che mappano le tabelle del database. Ogni classe corrisponde a una tabella (es.\ \texttt{Issue}, \texttt{Utenti}, \texttt{Progetti}) con campi, relazioni e vincoli definiti tramite annotazioni JPA. Il sotto-package \texttt{ComposedPrimaryKeys} contiene le chiavi primarie composite (es.\ \texttt{Issue\_EtichettePrimaryKey}, \texttt{Progetto\_MembriPrimaryKey}), mentre \texttt{enumerations} contiene i tipi enumerativi (\texttt{priorita\_issue}, \texttt{stato\_issue}, \texttt{tipo\_issue}, \texttt{tipo\_notifica}, \texttt{tipo\_ruolo}).
+Qui ci sono le entità JPA che mappano le tabelle del database. Ogni classe corrisponde a una tabella (es.\ \texttt{Issue}, \texttt{Utenti}, \texttt{Progetti}) con campi, relazioni e vincoli definiti tramite annotazioni JPA. Il sotto-package \texttt{composedprimarykeys} contiene le chiavi primarie composite (es.\ \texttt{IssueEtichettePrimaryKey}, \texttt{ProgettoMembriPrimaryKey}), mentre \texttt{enumerations} contiene i tipi enumerativi (\texttt{PrioritaIssue}, \texttt{StatoIssue}, \texttt{TipoIssue}, \texttt{TipoNotifica}, \texttt{TipoRuolo}).
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{package entity.png}
+    \includegraphics[width=1\textwidth]{package entity.png}
     \caption{Package diagram del package entity}
 \end{figure}
 
 \needspace{10\baselineskip}
 \subsubsection{Package exception}
-Contiene le classi per la gestione degli errori e le eccezioni personalizzate (come \texttt{ResourceNotFoundException} o \texttt{BadRequestException}). Invece di far gestire i problemi ai singoli componenti, la classe \texttt{GlobalExceptionHandler} cattura le eccezioni a livello globale e le converte in risposte HTTP standardizzate e coerenti per il frontend.
+Contiene le classi per la gestione degli errori e le eccezioni personalizzate (come \texttt{ResourceNotFoundException}, \texttt{BadRequestException}, \texttt{ForbiddenException} e \texttt{FileUploadException}). Il file \texttt{ErrorMessages} raccoglie le costanti con i messaggi di errore. Invece di far gestire i problemi ai singoli componenti, la classe \texttt{GlobalExceptionHandler} cattura le eccezioni a livello globale e le converte in risposte HTTP standardizzate e coerenti per il frontend.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{package extensions.png}
+    \includegraphics[width=0.8\textwidth]{package exception.png}
     \caption{Package diagram del package exception}
 \end{figure}
 

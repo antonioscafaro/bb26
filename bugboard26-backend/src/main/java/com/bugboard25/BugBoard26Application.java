@@ -3,8 +3,6 @@ package com.bugboard25;
 import com.bugboard25.entity.Utenti;
 import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.repository.UtentiRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +14,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class BugBoard26Application {
 
-	private static final Logger logger = LoggerFactory.getLogger(BugBoard26Application.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(BugBoard26Application.class, args);
@@ -40,15 +37,7 @@ public class BugBoard26Application {
 				admin.setRuolo(TipoRuolo.AMMINISTRATORE);
 
 				repository.save(admin);
-				logger.info("Utente Admin generato con successo!");
 			}
-
-			logger.info("------------------------------------------------");
-			logger.info("Utenti nel database:");
-			repository.findAll().forEach(utente ->
-				logger.info("Email: {}, Nome: {}", utente.getEmail(), utente.getNome())
-			);
-			logger.info("------------------------------------------------");
 		};
 	}
 }

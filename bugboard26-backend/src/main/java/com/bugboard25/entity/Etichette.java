@@ -1,6 +1,7 @@
 package com.bugboard25.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 public class Etichette {
@@ -17,6 +18,9 @@ public class Etichette {
 
     @Column(nullable = false, length = 7)
     private String colore;
+
+    @OneToMany(mappedBy = "etichetta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IssueEtichette> issueEtichette;
 
     public void setId(int id) {
         this.id = id;

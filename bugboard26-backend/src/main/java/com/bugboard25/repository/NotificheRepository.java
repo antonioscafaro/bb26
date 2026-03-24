@@ -10,4 +10,5 @@ import java.util.List;
 public interface NotificheRepository extends JpaRepository<Notifiche, Integer> {
     List<Notifiche> findAllByDestinatarioAndLetto(Utenti destinatario, Sort sort, boolean letto);
     List<Notifiche> findAllByDestinatarioAndLettoIsFalse(Utenti destinatario, Sort sort);
+    void deleteAllByDestinatario(Utenti destinatario);
 }

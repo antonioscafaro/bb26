@@ -530,11 +530,11 @@ INPUT ./package entity.png
 INPUT ./package entity.png
 INPUT ./package entity.png
 INPUT ./package entity.png
-INPUT ./package extensions.png
-INPUT ./package extensions.png
-INPUT ./package extensions.png
-INPUT ./package extensions.png
-INPUT ./package extensions.png
+INPUT ./package exception.png
+INPUT ./package exception.png
+INPUT ./package exception.png
+INPUT ./package exception.png
+INPUT ./package exception.png
 INPUT ./package repository.png
 INPUT ./package repository.png
 INPUT ./package repository.png

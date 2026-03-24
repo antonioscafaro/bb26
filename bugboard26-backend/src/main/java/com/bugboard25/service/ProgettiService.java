@@ -12,8 +12,6 @@ import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.ProgettiRepository;
 import com.bugboard25.repository.ProgettoMembriRepository;
 import com.bugboard25.repository.UtentiRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,7 +21,6 @@ import java.util.Optional;
 @Service
 public class ProgettiService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProgettiService.class);
 
     private final ProgettiRepository progettiRepository;
     private final UtentiRepository utentiRepository;
@@ -76,19 +73,26 @@ public class ProgettiService {
 
     private void notifyProjectMembers(int projectId) {
         try {
+            java.util.Set<String> emailsDaNotificare = new java.util.LinkedHashSet<>();
+
             Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
             if (progettoOpt.isPresent()) {
-                 List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
-                 for (ProgettoMembri membro : membri) {
-                     sseService.sendUpdateSignal(membro.getUtente().getEmail(), ErrorMessages.PROJECT_UPDATE);
-                 }
+                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
+                for (ProgettoMembri membro : membri) {
+                    emailsDaNotificare.add(membro.getUtente().getEmail());
+                }
             }
+
             List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
             for (UtentiDTO amministratore : amministratori) {
-                sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.PROJECT_UPDATE);
+                emailsDaNotificare.add(amministratore.getEmail());
+            }
+
+            for (String email : emailsDaNotificare) {
+                sseService.sendUpdateSignal(email, ErrorMessages.PROJECT_UPDATE);
             }
         } catch (Exception e) {
-            logger.error("Failed to broadcast project update: {}", e.getMessage());
+            // SSE broadcast failure is non-critical
         }
     }
 
@@ -154,7 +158,7 @@ public class ProgettiService {
                 emails.add(amministratore.getEmail());
             }
         } catch (Exception e) {
-            logger.error("Failed to collect project emails: {}", e.getMessage());
+            // Email collection failure is non-critical
         }
         return new java.util.ArrayList<>(emails);
     }
@@ -165,7 +169,7 @@ public class ProgettiService {
                 sseService.sendUpdateSignal(email, ErrorMessages.PROJECT_UPDATE);
             }
         } catch (Exception e) {
-            logger.error("Failed to send project update notifications: {}", e.getMessage());
+            // SSE notification failure is non-critical
         }
     }
 }

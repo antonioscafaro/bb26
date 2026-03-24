@@ -17,8 +17,6 @@ import com.bugboard25.repository.IssueRepository;
 import com.bugboard25.repository.ProgettiRepository;
 import com.bugboard25.repository.ProgettoMembriRepository;
 import com.bugboard25.repository.UtentiRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,7 +29,6 @@ import java.util.regex.Pattern;
 @Service
 public class CommentiService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommentiService.class);
 
     private final CommentiRepository commentiRepository;
     private final IssueRepository issueRepository;
@@ -116,19 +113,26 @@ public class CommentiService {
 
     private void broadcastIssueUpdate(int projectId) {
         try {
+            java.util.Set<String> emailsDaNotificare = new java.util.LinkedHashSet<>();
+
             Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
             if (progettoOpt.isPresent()) {
                 List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
                 for (ProgettoMembri membro : membri) {
-                    sseService.sendUpdateSignal(membro.getUtente().getEmail(), ErrorMessages.ISSUE_UPDATE);
+                    emailsDaNotificare.add(membro.getUtente().getEmail());
                 }
             }
+
             List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
             for (UtentiDTO amministratore : amministratori) {
-                sseService.sendUpdateSignal(amministratore.getEmail(), ErrorMessages.ISSUE_UPDATE);
+                emailsDaNotificare.add(amministratore.getEmail());
+            }
+
+            for (String email : emailsDaNotificare) {
+                sseService.sendUpdateSignal(email, ErrorMessages.ISSUE_UPDATE);
             }
         } catch (Exception e) {
-            logger.error("Failed to broadcast comment update: {}", e.getMessage());
+            // SSE broadcast failure is non-critical
         }
     }
 }

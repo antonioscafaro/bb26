@@ -31,11 +31,11 @@ Le decisioni architetturali e implementative sono state guidate dai seguenti cri
   \item \texttt{components/}: componenti riutilizzabili organizzati per dominio funzionale (\texttt{issues/}, \texttt{projects/}, \texttt{layout/}, \texttt{common/})
   \item \texttt{hooks/}: custom hooks per incapsulare logica riutilizzabile (drag \& drop, responsive detection, theming)
   \item \texttt{context/}: gestione dello stato globale tramite React Context API per autenticazione, progetto corrente e issue
-  \item \texttt{api/}: livello centralizzato per le chiamate HTTP tramite Axios, con interceptor per la gestione automatica dei token JWT
+  \item \texttt{api/}: livello centralizzato per le chiamate HTTP tramite Axios, con interceptor per l'aggiunta automatica delle credenziali di autenticazione
   \item \texttt{types/}: definizioni TypeScript per la type safety end-to-end
   \end{itemize}
 
-\item \textbf{Comunicazione REST stateless}: l'interazione tra front-end e back-end avviene tramite API RESTful stateless. Ogni richiesta contiene tutte le informazioni necessarie per essere elaborata (incluso il token JWT di autenticazione), senza che il server mantenga stato di sessione. Questo approccio favorisce la scalabilità orizzontale del back-end.
+\item \textbf{Comunicazione REST stateless}: l'interazione tra front-end e back-end avviene tramite API RESTful stateless. Ogni richiesta contiene tutte le informazioni necessarie per essere elaborata (incluse le credenziali di autenticazione), senza che il server mantenga stato di sessione. Questo approccio favorisce la scalabilit\`a orizzontale del back-end.
 
 \end{itemize}
 \newpage

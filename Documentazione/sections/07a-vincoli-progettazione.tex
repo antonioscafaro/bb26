@@ -35,7 +35,6 @@ Il back-end utilizza il seguente stack tecnologico:
 \item \textbf{Framework}: Spring Boot
 \item \textbf{Build Tool}: Apache Maven per gestione dipendenze e build automation
 \item \textbf{Database Access}: Spring Data JPA
-\item \textbf{Migrations}: Flyway per versioning dello schema database
 \end{itemize}
 
 \subparagraph{Moduli Spring Boot}
@@ -44,7 +43,7 @@ Il progetto integra i seguenti moduli dell'ecosistema Spring:
 
 \begin{itemize}[leftmargin=1.1em]
 \item \textbf{Spring Web}: per sviluppo API REST con annotazioni \texttt{@RestController} e serializzazione JSON automatica
-\item \textbf{Spring Security}: per autenticazione JWT, password hashing con BCrypt, autorizzazione basata su ruoli
+\item \textbf{Spring Security}: per autenticazione HTTP Basic, password hashing con BCrypt, autorizzazione basata su ruoli
 \end{itemize}
 
 % ---------------------------------------------------------------------
@@ -76,8 +75,8 @@ Questa combinazione permette di creare un design system custom che emula estetic
 \subparagraph{HTTP Client e Gestione Stato}
 
 \begin{itemize}[leftmargin=1.1em]
-\item \textbf{Axios}: per chiamate API REST con interceptors per gestione automatica JWT
-\item \textbf{Context API / Zustand}: per gestione stato globale dell'applicazione
+\item \textbf{Axios}: per chiamate API REST con interceptors per gestione automatica delle credenziali
+\item \textbf{Context API}: per gestione stato globale dell'applicazione
 \end{itemize}
 
 % ---------------------------------------------------------------------
@@ -99,7 +98,6 @@ L'accesso al database avviene tramite:
 \begin{itemize}[leftmargin=1.1em]
 \item \textbf{Spring Data JPA}: per astrazione dell'accesso dati con repository pattern
 \item \textbf{Hibernate}: come provider JPA per mapping object-relational
-\item \textbf{Flyway}: per gestione evolution schema database tramite migration SQL versionate
 \end{itemize}
 
 % ---------------------------------------------------------------------
@@ -142,7 +140,7 @@ L'orchestrazione dei container in ambiente di sviluppo è gestita tramite \textb
 
 \begin{itemize}[leftmargin=1.1em]
 \item \textbf{Password hashing}: BCrypt tramite Spring Security
-\item \textbf{Autenticazione}: JSON Web Tokens (JWT) con algoritmo HMAC SHA-26
+\item \textbf{Autenticazione}: HTTP Basic tramite Spring Security
 \item \textbf{Protezione brute force}: blocco account per 15 minuti dopo 5 tentativi falliti
 \end{itemize}
 
