@@ -15,7 +15,8 @@ export const SseManager: React.FC = () => {
         const connect = () => {
             if (isCancelled) return;
 
-            const url = `/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
+            const sseBaseUrl = 'https://posticteric-tonnishly-leonida.ngrok-free.dev';
+            const url = `${sseBaseUrl}/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
             console.log("Connecting to SSE:", url);
 
             eventSource = new EventSourcePolyfill(url, {
@@ -30,6 +31,8 @@ export const SseManager: React.FC = () => {
 
             eventSource.onerror = (e) => {
                 console.warn("SSE Connection Error, will auto-reconnect...", e);
+                // Don't call close()! EventSource auto-reconnects on error.
+                // Only close if the readyState is CLOSED (server rejected)
                 if (eventSource?.readyState === EventSource.CLOSED) {
                     console.log("SSE: Server closed connection, retrying in 5s...");
                     eventSource.close();
@@ -39,6 +42,7 @@ export const SseManager: React.FC = () => {
                 }
             };
 
+            // Listen for specific events
             eventSource.addEventListener('project-update', () => {
                 console.log("SSE Received: project-update");
                 window.dispatchEvent(new CustomEvent('project-update'));
@@ -65,5 +69,5 @@ export const SseManager: React.FC = () => {
         };
     }, [currentUser]);
 
-    return null;
+    return null; // Component renders nothing
 };
