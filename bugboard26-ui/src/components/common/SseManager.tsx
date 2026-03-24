@@ -1,32 +1,68 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext.shared';
 
-const POLL_INTERVAL_MS = 30_000; // 30 seconds
-
 export const SseManager: React.FC = () => {
     const { currentUser } = useAuth();
-    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         if (!currentUser?.email) return;
 
-        const fireAllEvents = () => {
-            window.dispatchEvent(new CustomEvent('project-update'));
-            window.dispatchEvent(new CustomEvent('notification-update'));
-            window.dispatchEvent(new CustomEvent('issue-update'));
+        let eventSource: EventSource | null = null;
+        let isCancelled = false;
+
+        const connect = () => {
+            if (isCancelled) return;
+
+            // Use relative URL so it goes through Vercel rewrite / nginx proxy (same origin, no CORS)
+            const url = `/api/sse/subscribe/${encodeURIComponent(currentUser.email)}`;
+            console.log("Connecting to SSE:", url);
+
+            eventSource = new EventSource(url);
+
+            eventSource.onopen = () => {
+                console.log("SSE Connection Opened");
+            };
+
+            eventSource.onerror = (e) => {
+                console.warn("SSE Connection Error, will auto-reconnect...", e);
+                // Don't call close()! EventSource auto-reconnects on error.
+                // Only close if the readyState is CLOSED (server rejected)
+                if (eventSource?.readyState === EventSource.CLOSED) {
+                    console.log("SSE: Server closed connection, retrying in 5s...");
+                    eventSource.close();
+                    retryTimeoutRef.current = setTimeout(() => {
+                        if (!isCancelled) connect();
+                    }, 5000);
+                }
+            };
+
+            // Listen for specific events
+            eventSource.addEventListener('project-update', () => {
+                console.log("SSE Received: project-update");
+                window.dispatchEvent(new CustomEvent('project-update'));
+            });
+
+            eventSource.addEventListener('notification-update', () => {
+                console.log("SSE Received: notification-update");
+                window.dispatchEvent(new CustomEvent('notification-update'));
+            });
+
+            eventSource.addEventListener('issue-update', () => {
+                console.log("SSE Received: issue-update");
+                window.dispatchEvent(new CustomEvent('issue-update'));
+            });
         };
 
-        // Fire once immediately on mount for fast initial load
-        fireAllEvents();
-
-        // Then poll periodically
-        intervalRef.current = setInterval(fireAllEvents, POLL_INTERVAL_MS);
+        connect();
 
         return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
+            console.log("Closing SSE Connection");
+            isCancelled = true;
+            if (eventSource) eventSource.close();
+            if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
         };
     }, [currentUser]);
 
     return null; // Component renders nothing
 };
-
