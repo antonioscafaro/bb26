@@ -92,6 +92,7 @@ class IssueServiceTest {
         issue.setAutore(author);
         issue.setTitolo("Old Title");
         issue.setIdProgetto(progetto);
+        issue.setStatoIssue(StatoIssue.TODO);
     }
 
     @Test
@@ -277,6 +278,42 @@ class IssueServiceTest {
 
         assertEquals("Non hai i permessi per modificare questa issue.", exception.getMessage());
         verify(issueRepository, never()).save(any());
+    }
+
+    @Test
+    void testUpdateIssueById_ResolvedIssueCannotBeModified(){
+        issue.setStatoIssue(StatoIssue.RISOLTA);
+
+        IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
+        dto.setTitolo("Try to edit resolved");
+
+        when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
+
+        ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
+            issueService.updateIssueById(100, dto, "admin@test.com");
+        });
+
+        assertEquals("L'issue è stata risolta e non può essere più modificata", exception.getMessage());
+        verify(issueRepository, never()).save(any());
+    }
+
+    @Test
+    void testUpdateIssueById_ResolvedIssueCanBeArchived(){
+        issue.setStatoIssue(StatoIssue.RISOLTA);
+
+        IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
+        dto.setStatoIssue(StatoIssue.ARCHIVIATA);
+
+        when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
+        when(utentiRepository.findById("admin@test.com")).thenReturn(Optional.of(admin));
+        when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
+        when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        IssueDTO result = issueService.updateIssueById(100, dto, "admin@test.com");
+
+        assertNotNull(result);
+        assertEquals(StatoIssue.ARCHIVIATA, result.getStatoIssue());
+        verify(issueRepository, times(1)).save(any(Issue.class));
     }
 
     @Test
