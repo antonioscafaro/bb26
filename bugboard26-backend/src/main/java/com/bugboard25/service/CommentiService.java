@@ -18,6 +18,7 @@ import com.bugboard25.repository.ProgettiRepository;
 import com.bugboard25.repository.ProgettoMembriRepository;
 import com.bugboard25.repository.UtentiRepository;
 import org.springframework.stereotype.Service;
+import com.bugboard25.dto.AutoreCommentoDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +30,6 @@ import java.util.regex.Pattern;
 @Service
 public class CommentiService {
 
-
     private final CommentiRepository commentiRepository;
     private final IssueRepository issueRepository;
     private final UtentiRepository utentiRepository;
@@ -40,9 +40,9 @@ public class CommentiService {
     private final SseService sseService;
 
     public CommentiService(CommentiRepository commentiRepository, IssueRepository issueRepository,
-                           UtentiRepository utentiRepository, ProgettiRepository progettiRepository,
-                           ProgettoMembriRepository progettoMembriRepository, NotificheService notificheService,
-                           UtentiService utentiService, SseService sseService) {
+            UtentiRepository utentiRepository, ProgettiRepository progettiRepository,
+            ProgettoMembriRepository progettoMembriRepository, NotificheService notificheService,
+            UtentiService utentiService, SseService sseService) {
         this.commentiRepository = commentiRepository;
         this.issueRepository = issueRepository;
         this.utentiRepository = utentiRepository;
@@ -59,9 +59,15 @@ public class CommentiService {
 
         List<Commenti> commenti = commentiRepository.findAllByIssue(issue);
 
-        return commenti.stream()
-                .map(CommentoCompletoDTO::new)
-                .toList();
+        return commenti.stream().map(c -> {
+            List<String> emails = estraiMenzioni(c.getTesto());
+            List<AutoreCommentoDTO> menzionati = new ArrayList<>();
+            for (String email : emails) {
+                utentiRepository.findById(email)
+                        .ifPresent(u -> menzionati.add(new AutoreCommentoDTO(u)));
+            }
+            return new CommentoCompletoDTO(c, menzionati);
+        }).toList();
     }
 
     public List<String> estraiMenzioni(String testoDelCommento) {
@@ -102,7 +108,8 @@ public class CommentiService {
                 dtoMenzione.setIdCommento(commenti.getId());
                 dtoMenzione.setMenzionante(commenti.getAutore().getNome());
                 dtoMenzione.setDestinatario(utenteMenzionato);
-                dtoMenzione.setTesto("Sei stato menzionato da: " + commenti.getAutore().getNome());
+                dtoMenzione.setTesto(
+                        "Sei stato menzionato da: " + commenti.getAutore().getNome() + " in " + issue.getTitolo());
 
                 notificheService.creaNotificaMenzione(dtoMenzione);
             } catch (Exception e) {
@@ -110,9 +117,15 @@ public class CommentiService {
             }
         }
 
+        List<AutoreCommentoDTO> menzionati = new ArrayList<>();
+        for (String utenteMenzionato : utentiMenzionati) {
+            utentiRepository.findById(utenteMenzionato)
+                    .ifPresent(u -> menzionati.add(new AutoreCommentoDTO(u)));
+        }
+
         broadcastIssueUpdate(issue.getIdProgetto().getId());
 
-        return new CommentoCompletoDTO(commenti);
+        return new CommentoCompletoDTO(commenti, menzionati);
     }
 
     private void broadcastIssueUpdate(int projectId) {
@@ -140,4 +153,3 @@ public class CommentiService {
         }
     }
 }
-
