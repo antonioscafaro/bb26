@@ -338,6 +338,9 @@ public class IssueService {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
 
+        if (issue.getStatoIssue() != StatoIssue.RISOLTA) {
+            throw new ForbiddenException(ErrorMessages.ISSUE_NON_ARCHIVIABILE);
+        }
         issue.setStatoIssue(StatoIssue.ARCHIVIATA);
         issue = issueRepository.save(issue);
         notifyProjectMembers(issue.getIdProgetto().getId());

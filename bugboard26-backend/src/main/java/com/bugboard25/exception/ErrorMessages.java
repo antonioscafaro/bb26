@@ -25,4 +25,5 @@ public final class ErrorMessages {
     public static final String NOTIFICATION_UPDATE = "notification-update";
     public static final String ISSUE_UPDATE = "issue-update";
     public static final String PROJECT_UPDATE = "project-update";
+    public static final String ISSUE_NON_ARCHIVIABILE = "L'issue non è risolta e non può essere archiviata";
 }
