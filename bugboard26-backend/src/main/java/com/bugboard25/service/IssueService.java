@@ -233,7 +233,15 @@ public class IssueService {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
 
-        if (issue.getStatoIssue() == StatoIssue.RISOLTA) {
+        boolean soloArchiviazione = requestDTO.getStatoIssue() == StatoIssue.ARCHIVIATA
+                && requestDTO.getTitolo() == null
+                && requestDTO.getDescrizione() == null
+                && requestDTO.getTipoIssue() == null
+                && requestDTO.getPrioritaIssue() == null
+                && requestDTO.getAssegnatario() == null
+                && (requestDTO.getEtichette() == null || requestDTO.getEtichette().isEmpty());
+
+        if (issue.getStatoIssue() == StatoIssue.RISOLTA && !soloArchiviazione) {
             throw new ForbiddenException(ErrorMessages.ISSUE_NON_MODIFICABILE);
         }
 
