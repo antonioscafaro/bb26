@@ -83,7 +83,7 @@ export const IssueModalHeader = ({ issue, onClose, onArchive, onRestore, onReope
             </div>
             <div className="flex items-center gap-2">
                 {/* // Pulsanti di Azione Condizionali */}
-                {isAdmin && !isArchived && onArchive && (
+                {isAdmin && issue.status === 'done' && onArchive && (
                     <button onClick={onArchive} className="text-on-surface-variant hover:bg-surface-variant rounded-full p-2" aria-label="Archivia issue">
                         <Archive size={24} />
                     </button>
