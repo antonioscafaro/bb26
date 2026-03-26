@@ -231,7 +231,7 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                     <Select
                         value={issue.assignee?.id || ''}
                         onChange={(e) => handleAssigneeChange(e.target.value)}
-                        disabled={!isAdmin}
+                        disabled={!isAdmin || issue.status === 'done'}
                         className="py-2"
                     >
                         <option value="">Non assegnato</option>
