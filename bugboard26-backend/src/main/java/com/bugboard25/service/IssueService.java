@@ -79,7 +79,7 @@ public class IssueService {
     public IssueDTO getIssueById(int id) {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
-        return new IssueDTO(issue);
+        return new IssueDTO(issue, utentiRepository);
     }
 
     private List<Issue> filterVisibleIssues(List<Issue> issues, String emailRichiedente) {
@@ -114,7 +114,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findAllByIdProgetto(progetto, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -127,7 +127,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findAllByAssegnatarioAndIdProgetto(utente, progetto, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -135,7 +135,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findAllByStatoIssue(statoIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -143,7 +143,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findAllByPrioritaIssue(prioritaIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -151,7 +151,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findAllByDataCreazioneBetween(dataInizio, dataFine, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -161,7 +161,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findAllByAutore(utente, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -169,7 +169,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findAllByTipoIssue(tipoIssue, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -179,7 +179,7 @@ public class IssueService {
         List<Issue> issues = issueRepository.findByEtichetta(etichetta, sort);
         return filterVisibleIssues(issues, emailRichiedente)
                 .stream()
-                .map(IssueDTO::new)
+                .map(i -> new IssueDTO(i, utentiRepository))
                 .toList();
     }
 
@@ -226,7 +226,7 @@ public class IssueService {
 
         notifyProjectMembers(progetto.getId());
         Issue updatedIssue = issueRepository.findById(issue.getId()).orElse(issue);
-        return new IssueDTO(updatedIssue);
+        return new IssueDTO(updatedIssue, utentiRepository);
     }
 
     public IssueDTO updateIssueById(int id, IssueUpdateRequestDTO requestDTO, String emailRichiedente) {
@@ -271,7 +271,7 @@ public class IssueService {
         issue.setDataUltimoAggiornamento(new Date());
         issue = issueRepository.save(issue);
         notifyProjectMembers(issue.getIdProgetto().getId());
-        return new IssueDTO(issue);
+        return new IssueDTO(issue, utentiRepository);
     }
 
     private void validatePermissions(Issue issue, Utenti richiedente, String emailRichiedente,
@@ -329,6 +329,6 @@ public class IssueService {
         issue.setStatoIssue(StatoIssue.ARCHIVIATA);
         issue = issueRepository.save(issue);
         notifyProjectMembers(issue.getIdProgetto().getId());
-        return new IssueDTO(issue);
+        return new IssueDTO(issue, utentiRepository);
     }
 }

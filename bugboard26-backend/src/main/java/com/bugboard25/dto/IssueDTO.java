@@ -4,9 +4,13 @@ import com.bugboard25.entity.Issue;
 import com.bugboard25.entity.enumerations.PrioritaIssue;
 import com.bugboard25.entity.enumerations.StatoIssue;
 import com.bugboard25.entity.enumerations.TipoIssue;
+import com.bugboard25.repository.UtentiRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IssueDTO {
     private int id;
@@ -25,6 +29,10 @@ public class IssueDTO {
     private List<CommentoCompletoDTO> commenti;
 
     public IssueDTO(Issue issue) {
+        this(issue, null);
+    }
+
+    public IssueDTO(Issue issue, UtentiRepository utentiRepository) {
         this.id = issue.getId();
         this.titolo = issue.getTitolo();
         this.descrizione = issue.getDescrizione();
@@ -60,9 +68,29 @@ public class IssueDTO {
 
         if (issue.getCommenti() != null) {
             this.commenti = issue.getCommenti().stream()
-                    .map(CommentoCompletoDTO::new)
+                    .map(c -> {
+                        if (utentiRepository != null) {
+                            List<String> emails = estraiMenzioni(c.getTesto());
+                            List<AutoreCommentoDTO> menzionati = new ArrayList<>();
+                            for (String email : emails) {
+                                utentiRepository.findById(email)
+                                        .ifPresent(u -> menzionati.add(new AutoreCommentoDTO(u)));
+                            }
+                            return new CommentoCompletoDTO(c, menzionati);
+                        }
+                        return new CommentoCompletoDTO(c);
+                    })
                     .toList();
         }
+    }
+
+    private static List<String> estraiMenzioni(String testo) {
+        List<String> emails = new ArrayList<>();
+        Matcher matcher = Pattern.compile("\\B@([\\w.+%-]+@[\\w.-]+\\.[a-zA-Z]{2,})").matcher(testo);
+        while (matcher.find()) {
+            emails.add(matcher.group(1));
+        }
+        return emails;
     }
 
     public int getId() { return id; }
