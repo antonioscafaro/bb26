@@ -62,14 +62,14 @@ public class ReportService {
         if (progetto != null) {
             return new ReportDataHolder(
                     issueRepository.findByIdProgettoAndDataCreazioneBetween(progetto, dataInizio, dataFine),
-                    issueRepository.findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(progetto, StatoIssue.RISOLTA, dataInizio, dataFine),
+                    issueRepository.findRisolteOArchiviateByProjectBetween(progetto, dataInizio, dataFine),
                     issueRepository.findCriticalAlertsByProject(progetto, dateCriticalLimit).stream().map(i -> new IssueDTO(i, utentiRepository)).toList(),
                     issueRepository.countCurrentlyOpenByProject(progetto)
             );
         }
         return new ReportDataHolder(
                 issueRepository.findByDataCreazioneBetween(dataInizio, dataFine),
-                issueRepository.findByStatoIssueAndDataUltimoAggiornamentoBetween(StatoIssue.RISOLTA, dataInizio, dataFine),
+                issueRepository.findRisolteOArchiviateBetween(dataInizio, dataFine),
                 issueRepository.findCriticalAlerts(dateCriticalLimit).stream().map(i -> new IssueDTO(i, utentiRepository)).toList(),
                 issueRepository.countCurrentlyOpen()
         );

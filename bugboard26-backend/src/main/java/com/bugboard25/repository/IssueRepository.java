@@ -32,6 +32,12 @@ public interface IssueRepository extends JpaRepository<Issue, Integer> {
     List<Issue> findByStatoIssueAndDataUltimoAggiornamentoBetween(StatoIssue stato, Date start, Date end);
     List<Issue> findByIdProgettoAndStatoIssueAndDataUltimoAggiornamentoBetween(Progetti progetto, StatoIssue stato, Date start, Date end);
 
+    @Query("SELECT i FROM Issue i WHERE i.statoIssue IN ('RISOLTA', 'ARCHIVIATA') AND i.dataUltimoAggiornamento BETWEEN :start AND :end")
+    List<Issue> findRisolteOArchiviateBetween(@Param("start") Date start, @Param("end") Date end);
+
+    @Query("SELECT i FROM Issue i WHERE i.idProgetto = :progetto AND i.statoIssue IN ('RISOLTA', 'ARCHIVIATA') AND i.dataUltimoAggiornamento BETWEEN :start AND :end")
+    List<Issue> findRisolteOArchiviateByProjectBetween(@Param("progetto") Progetti progetto, @Param("start") Date start, @Param("end") Date end);
+
     @Query("SELECT COUNT(i) FROM Issue i WHERE i.statoIssue NOT IN ('RISOLTA', 'CHIUSA', 'ARCHIVIATA')")
     long countCurrentlyOpen();
 
