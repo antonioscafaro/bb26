@@ -139,7 +139,6 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, c
                 currentUser={currentUser}
                 isArchived={issue.status === 'archived'}
                 isRejected={issue.status === 'rejected'}
-                isDone={issue.status === 'done'}
             />
 
             {children}
