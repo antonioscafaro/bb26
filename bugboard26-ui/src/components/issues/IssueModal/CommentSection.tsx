@@ -13,6 +13,7 @@ interface CommentSectionProps {
     currentUser: User;
     isArchived: boolean;
     isRejected: boolean;
+    isDone: boolean;
 }
 
 /**
@@ -25,7 +26,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     projectId,
     currentUser,
     isArchived,
-    isRejected
+    isRejected,
+    isDone
 }) => {
     const { addComment } = useIssues();
     const [newComment, setNewComment] = useState('');
@@ -325,7 +327,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             </div>
 
             {/* Comment Form */}
-            {!isArchived && !isRejected && (
+            {!isArchived && !isRejected && !isDone && (
                 <form onSubmit={handleSubmitComment} className="mt-6 pb-6">
                     <div className="flex items-start space-x-3">
                         <img

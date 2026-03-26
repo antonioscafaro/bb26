@@ -38,7 +38,8 @@ export const IssueCard: React.FC<IssueCardProps> = ({
     (issue.assignee && issue.assignee.email === currentUser.email) ||
     (issue.reporter && issue.reporter.email === currentUser.email);
 
-  const canDrag = !isMobile && dragAndDropProps && !isExiting && canMove;
+  const isDone = issue.status === 'done';
+  const canDrag = !isMobile && dragAndDropProps && !isExiting && canMove && !isDone;
 
   const hoverProps = reduceMotion || isDragging || isExiting ? {} : {
     whileHover: { y: -4, transition: { duration: 0.15 } }

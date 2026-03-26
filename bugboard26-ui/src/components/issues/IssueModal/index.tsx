@@ -63,11 +63,12 @@ export const IssueModal: React.FC<IssueModalProps> = ({
 
   const isArchived = currentIssue?.status === 'archived';
   const isRejected = currentIssue?.status === 'rejected';
+  const isDone = currentIssue?.status === 'done';
   const isAdmin = currentUser.role === USER_ROLE.ADMIN;
   const isAssignee = currentIssue?.assignee?.id === currentUser.id;
   const isAuthor = currentIssue?.reporter?.id === currentUser.id;
-  const canEdit = !isArchived && !isRejected && (isAdmin || isAssignee || isAuthor);
-  const canEditDescription = !isArchived && !isRejected && (isAdmin || isAuthor);
+  const canEdit = !isArchived && !isRejected && !isDone && (isAdmin || isAssignee || isAuthor);
+  const canEditDescription = !isArchived && !isRejected && !isDone && (isAdmin || isAuthor);
 
   // Handle status change immediate blur removal
   const handleStatusChangeStart = () => {

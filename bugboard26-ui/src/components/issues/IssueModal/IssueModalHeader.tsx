@@ -21,6 +21,7 @@ export const IssueModalHeader = ({ issue, onClose, onArchive, onRestore, onReope
 }) => {
     const isArchived = issue.status === 'archived';
     const isRejected = issue.status === 'rejected';
+    const isDone = issue.status === 'done';
     const { updateIssue: updateIssueApi } = useIssues();
 
     // Editable title state with debounce
@@ -83,7 +84,7 @@ export const IssueModalHeader = ({ issue, onClose, onArchive, onRestore, onReope
             </div>
             <div className="flex items-center gap-2">
                 {/* // Pulsanti di Azione Condizionali */}
-                {isAdmin && !isArchived && !isRejected && onArchive && (
+                {isAdmin && !isArchived && !isRejected && !isDone && onArchive && (
                     <button onClick={onArchive} className="text-on-surface-variant hover:bg-surface-variant rounded-full p-2" aria-label="Archivia issue">
                         <Archive size={24} />
                     </button>
