@@ -96,8 +96,8 @@ export const MyIssuesPage = () => {
         const issue = issues.find(i => i.id === draggedId);
         if (!issue) return;
 
-        // Block drag from/to done — resolved issues cannot be modified (backend constraint)
-        if (issue.status === 'done' || targetStatus === 'done') {
+        // Block drag FROM done — resolved issues cannot be moved out (backend constraint)
+        if (issue.status === 'done') {
             Toast.error('Le issue risolte non possono essere modificate');
             return;
         }
