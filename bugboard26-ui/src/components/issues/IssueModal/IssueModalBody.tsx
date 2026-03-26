@@ -135,6 +135,7 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, c
             <CommentSection
                 comments={issue.comments || []}
                 issueId={issue.id}
+                projectId={issue.projectId}
                 currentUser={currentUser}
                 isArchived={issue.status === 'archived'}
                 isRejected={issue.status === 'rejected'}
