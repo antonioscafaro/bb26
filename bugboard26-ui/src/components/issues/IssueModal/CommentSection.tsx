@@ -67,6 +67,83 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         });
     };
 
+    /**
+     * Renders comment content with styled mentions.
+     * Uses the mentions data provided by the backend (no frontend parsing logic).
+     * @email patterns in text are matched to the backend-resolved mentions array.
+     */
+    const renderCommentContent = (content: string, mentions?: CommentType['mentions']) => {
+        if (!mentions || mentions.length === 0) return content;
+
+        // Build a lookup map from email -> display name using backend data
+        const mentionMap = new Map<string, string>();
+        for (const m of mentions) {
+            const displayName = [m.name, m.surname].filter(Boolean).join(' ') || m.email;
+            mentionMap.set(m.email, displayName);
+        }
+
+        // Match @email patterns in the text to locate where to render mention spans
+        const regex = /\B@([\w.+%-]+@[\w.-]+\.[a-zA-Z]{2,})/g;
+        const parts: React.ReactNode[] = [];
+        let lastIndex = 0;
+        let match: RegExpExecArray | null;
+
+        while ((match = regex.exec(content)) !== null) {
+            // Text before this mention
+            if (match.index > lastIndex) {
+                parts.push(content.slice(lastIndex, match.index));
+            }
+
+            const email = match[1];
+            const displayName = mentionMap.get(email);
+
+            if (displayName) {
+                // Render known mention as blue styled text
+                parts.push(
+                    <span
+                        key={`mention-${match.index}`}
+                        role="button"
+                        tabIndex={0}
+                        title={`Clicca per copiare: ${email}`}
+                        style={{
+                            color: '#3b82f6',
+                            cursor: 'pointer',
+                            fontWeight: 500,
+                        }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(email).then(() => {
+                                Toast.success('Email copiata negli appunti!');
+                            });
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                navigator.clipboard.writeText(email).then(() => {
+                                    Toast.success('Email copiata negli appunti!');
+                                });
+                            }
+                        }}
+                    >
+                        {displayName}
+                    </span>
+                );
+            } else {
+                // Email not resolved by backend — keep original text
+                parts.push(match[0]);
+            }
+
+            lastIndex = regex.lastIndex;
+        }
+
+        // Remaining text after last mention
+        if (lastIndex < content.length) {
+            parts.push(content.slice(lastIndex));
+        }
+
+        return parts.length > 0 ? parts : content;
+    };
+
     return (
         <>
             <h3 className="font-medium text-on-surface mb-4">
@@ -103,7 +180,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                                         </span>
                                     </div>
                                     <p className="text-on-surface-variant text-sm whitespace-pre-wrap break-words">
-                                        {comment.content}
+                                        {renderCommentContent(comment.content, comment.mentions)}
                                     </p>
                                 </div>
                             </motion.div>

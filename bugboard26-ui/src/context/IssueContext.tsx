@@ -283,7 +283,12 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
         id: newComment.id.toString(),
         content: newComment.testo,
         timestamp: newComment.dataCreazione,
-        author: commentData.author // Use the author from input as response lacks details
+        author: commentData.author, // Use the author from input as response lacks details
+        mentions: newComment.menzionati?.map((m: { email?: string; nome?: string; cognome?: string }) => ({
+          email: m.email || '',
+          name: m.nome || '',
+          surname: m.cognome || ''
+        })) || []
       };
 
       dispatch({ type: 'ADD_COMMENT', payload: { issueId, comment: mappedComment } });

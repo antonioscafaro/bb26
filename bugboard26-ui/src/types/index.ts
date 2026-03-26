@@ -12,11 +12,18 @@ export interface User {
   avatarUrl?: string;
 }
 
+export interface Mention {
+  email: string;
+  name: string;
+  surname?: string;
+}
+
 export interface Comment {
   id: string;
   content: string;
   author: User;
   timestamp: string;
+  mentions?: Mention[];
 }
 
 export interface Attachment {
@@ -91,6 +98,7 @@ export interface BackendComment {
   dataCreazione: string;
   autore: BackendCommentAuthor;
   idIssue?: number;
+  menzionati?: BackendCommentAuthor[];
 }
 
 export interface BackendIssue {

@@ -95,7 +95,12 @@ export const mapBackendCommentToComment = (c: BackendComment): Comment => ({
         surname: c.autore?.cognome || '',
         role: 'UTENTE',
         avatarUrl: `https://ui-avatars.com/api/?name=${c.autore?.nome || '?'}+${c.autore?.cognome || '?'}&background=random`
-    }
+    },
+    mentions: c.menzionati?.map(m => ({
+        email: m.email || '',
+        name: m.nome || '',
+        surname: m.cognome || ''
+    })) || []
 });
 
 export const mapBackendIssueToIssue = (i: BackendIssue): Issue => ({
