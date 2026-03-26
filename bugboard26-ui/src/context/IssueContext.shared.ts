@@ -27,6 +27,7 @@ export type IssueContextType = {
     loading: boolean;
     createIssue: (issueData: Omit<Issue, 'id' | 'createdAt' | 'updatedAt' | 'comments'>, file?: File) => Promise<void>;
     updateIssue: (issueId: string, issueData: Partial<Issue>) => Promise<void>;
+    archiveIssue: (issueId: string) => Promise<void>;
     addComment: (issueId: string, commentData: Omit<Comment, 'id' | 'timestamp'>) => Promise<void>;
     createUser: (userData: Omit<User, 'id'> & { password?: string }) => Promise<void>;
     updateUser: (userId: string, userData: Partial<User>) => Promise<void>;

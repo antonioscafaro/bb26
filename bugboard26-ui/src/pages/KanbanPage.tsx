@@ -48,7 +48,7 @@ const TabButton = ({ title, isActive, onClick }: { title: string, isActive: bool
 
 export const KanbanPage = () => {
     const { currentUser, onMenuClick } = useOutletContext<PageContext>();
-    const { state, updateIssue } = useIssues();
+    const { state, updateIssue, archiveIssue } = useIssues();
     const { issues } = state;
     const { selectedProjectId } = useProjects();
 
@@ -138,7 +138,7 @@ export const KanbanPage = () => {
         }, modalExitDelay);
 
         setTimeout(async () => {
-            await updateIssue(issueIdToArchive, { status: ISSUE_STATUS.ARCHIVED });
+            await archiveIssue(issueIdToArchive);
 
             Toast.success(`Issue "${archiveTitle}" archiviata`);
             setIssueToArchive(null);

@@ -268,6 +268,30 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
     }
   };
 
+  const archiveIssue = async (issueId: string) => {
+    try {
+      const response = await api.put<BackendIssue>(`/issues/archiviate/${issueId}`);
+      const updatedIssue = response.data;
+
+      const existingIssue = state.issues.find(i => i.id === issueId);
+      if (!existingIssue) {
+        console.warn(`Issue ${issueId} non trovata nello stato locale durante l'archiviazione.`);
+        return;
+      }
+
+      const mappedIssue: Issue = {
+        ...existingIssue,
+        status: mapStatusFromBackend(updatedIssue.statoIssue),
+        updatedAt: updatedIssue.dataUltimoAggiornamento,
+      };
+
+      dispatch({ type: 'UPDATE_ISSUE', payload: mappedIssue });
+    } catch (error) {
+      console.error("Failed to archive issue", error);
+      throw error;
+    }
+  };
+
   const addComment = async (issueId: string, commentData: Omit<Comment, 'id' | 'timestamp'>) => {
     try {
       const payload = {
@@ -383,6 +407,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
       loading,
       createIssue,
       updateIssue,
+      archiveIssue,
       addComment,
       createUser,
       updateUser,
