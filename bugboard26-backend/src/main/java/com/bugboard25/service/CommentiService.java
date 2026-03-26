@@ -67,7 +67,7 @@ public class CommentiService {
     public List<String> estraiMenzioni(String testoDelCommento) {
         List<String> emailMenzionati = new ArrayList<>();
 
-        String regex = "\\B@([\\w]+)";
+        String regex = "\\B@([\\w.+%-]+@[\\w.-]+\\.[a-zA-Z]{2,})";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(testoDelCommento);
@@ -97,13 +97,17 @@ public class CommentiService {
 
         List<String> utentiMenzionati = estraiMenzioni(commenti.getTesto());
         for (String utenteMenzionato : utentiMenzionati) {
-            NotificheMenzioneCreateRequestDTO dtoMenzione = new NotificheMenzioneCreateRequestDTO();
-            dtoMenzione.setIdCommento(commenti.getId());
-            dtoMenzione.setMenzionante(commenti.getAutore().getNome());
-            dtoMenzione.setDestinatario(utenteMenzionato);
-            dtoMenzione.setTesto("Sei stato menzionato da: " + utenteMenzionato);
+            try {
+                NotificheMenzioneCreateRequestDTO dtoMenzione = new NotificheMenzioneCreateRequestDTO();
+                dtoMenzione.setIdCommento(commenti.getId());
+                dtoMenzione.setMenzionante(commenti.getAutore().getNome());
+                dtoMenzione.setDestinatario(utenteMenzionato);
+                dtoMenzione.setTesto("Sei stato menzionato da: " + commenti.getAutore().getNome());
 
-            notificheService.creaNotificaMenzione(dtoMenzione);
+                notificheService.creaNotificaMenzione(dtoMenzione);
+            } catch (Exception e) {
+                // Se la menzione non corrisponde a un utente valido, si continua senza bloccare
+            }
         }
 
         broadcastIssueUpdate(issue.getIdProgetto().getId());
