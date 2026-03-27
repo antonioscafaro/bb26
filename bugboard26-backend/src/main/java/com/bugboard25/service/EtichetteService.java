@@ -22,7 +22,7 @@ public class EtichetteService {
     private final IssueRepository issueRepository;
 
     public EtichetteService(EtichetteRepository etichetteRepository, ProgettiRepository progettiRepository,
-                            IssueRepository issueRepository) {
+            IssueRepository issueRepository) {
         this.etichetteRepository = etichetteRepository;
         this.progettiRepository = progettiRepository;
         this.issueRepository = issueRepository;
@@ -71,19 +71,28 @@ public class EtichetteService {
         return new EtichettaDTO(etichetta);
     }
 
-    public Etichette findOrCreate(String nomeEtichetta, Progetti progetto) {
+    public Etichette findOrCreate(EtichettaCreateRequestDTO requestDTO) {
         final String coloreDefault = "#CCCCCC";
-        List<Etichette> etichetteTrovate = etichetteRepository.findByNome(nomeEtichetta);
+        List<Etichette> etichetteTrovate = etichetteRepository.findByNome(requestDTO.getNome());
+
+        Progetti progetto = progettiRepository.findById(requestDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
 
         for (Etichette et : etichetteTrovate) {
-            if (et.getIdProgetto().getId() == progetto.getId()) {
+            if (et.getIdProgetto().getId() == requestDTO.getId()) {
                 return et;
             }
         }
 
         Etichette nuovaEtichetta = new Etichette();
-        nuovaEtichetta.setNome(nomeEtichetta);
-        nuovaEtichetta.setColore(coloreDefault);
+        nuovaEtichetta.setNome(requestDTO.getNome());
+        if (requestDTO.getColore() != null && !requestDTO.getColore().isEmpty()
+                && !(requestDTO.getColore().equals(coloreDefault))) {
+            nuovaEtichetta.setColore(requestDTO.getColore());
+        } else {
+            nuovaEtichetta.setColore(coloreDefault);
+        }
+
         nuovaEtichetta.setIdProgetto(progetto);
 
         return etichetteRepository.save(nuovaEtichetta);
