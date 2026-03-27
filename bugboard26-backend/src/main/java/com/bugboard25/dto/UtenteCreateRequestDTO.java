@@ -3,11 +3,20 @@ package com.bugboard25.dto;
 import com.bugboard25.entity.enumerations.TipoRuolo;
 
 public class UtenteCreateRequestDTO {
+    private String emailCreante;
     private String email;
     private String password;
     private String nome;
     private String cognome;
     private TipoRuolo ruolo;
+
+    public String getEmailCreante() {
+        return emailCreante;
+    }
+
+    public void setEmailCreante(String emailCreante) {
+        this.emailCreante = emailCreante;
+    }
 
     public String getEmail() {
         return email;

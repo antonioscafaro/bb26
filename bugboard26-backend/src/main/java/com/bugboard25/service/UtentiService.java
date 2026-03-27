@@ -38,9 +38,9 @@ public class UtentiService implements UserDetailsService {
     private final IssueRepository issueRepository;
 
     public UtentiService(UtentiRepository utentiRepository, ProgettiRepository progettiRepository,
-                         PasswordEncoder passwordEncoder, NotificheRepository notificheRepository,
-                         CommentiRepository commentiRepository, ProgettoMembriRepository progettoMembriRepository,
-                         IssueRepository issueRepository) {
+            PasswordEncoder passwordEncoder, NotificheRepository notificheRepository,
+            CommentiRepository commentiRepository, ProgettoMembriRepository progettoMembriRepository,
+            IssueRepository issueRepository) {
         this.utentiRepository = utentiRepository;
         this.progettiRepository = progettiRepository;
         this.passwordEncoder = passwordEncoder;
@@ -94,6 +94,14 @@ public class UtentiService implements UserDetailsService {
     }
 
     public UtentiDTO updateUtenteByEmail(String email, UtenteCreateRequestDTO requestDTO) {
+
+        Utenti creante = utentiRepository.findById(requestDTO.getEmailCreante())
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
+
+        if (creante.getRuolo() != TipoRuolo.AMMINISTRATORE) {
+            throw new BadRequestException(ErrorMessages.UTENTE_NON_AUTORIZZATO);
+        }
+
         Utenti utente = utentiRepository.findById(email)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
 
@@ -110,7 +118,7 @@ public class UtentiService implements UserDetailsService {
 
     @Transactional
     public void deleteUtenteByEmail(CancellazioneUtenteDTO utenteDTO) {
-        if (utenteDTO.getEmailCancellante().equals(utenteDTO.getEmailCancellazione())){
+        if (utenteDTO.getEmailCancellante().equals(utenteDTO.getEmailCancellazione())) {
             throw new BadRequestException(ErrorMessages.SUICIDIO);
         }
 
@@ -130,8 +138,10 @@ public class UtentiService implements UserDetailsService {
         issueRepository.findAll().stream()
                 .filter(i -> utente.equals(i.getAutore()) || utente.equals(i.getAssegnatario()))
                 .forEach(i -> {
-                    if (utente.equals(i.getAutore())) i.setAutore(null);
-                    if (utente.equals(i.getAssegnatario())) i.setAssegnatario(null);
+                    if (utente.equals(i.getAutore()))
+                        i.setAutore(null);
+                    if (utente.equals(i.getAssegnatario()))
+                        i.setAssegnatario(null);
                     issueRepository.save(i);
                 });
 

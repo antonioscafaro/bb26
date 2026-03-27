@@ -27,4 +27,5 @@ public final class ErrorMessages {
     public static final String PROJECT_UPDATE = "project-update";
     public static final String ISSUE_NON_ARCHIVIABILE = "L'issue non è risolta e non può essere archiviata";
     public static final String SUICIDIO = "Non puoi cancellare te stesso";
+    public static final String UTENTE_NON_AUTORIZZATO = "Non hai i permessi per modificare questo utente";
 }
