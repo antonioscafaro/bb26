@@ -7,6 +7,7 @@ package com.bugboard25.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.bugboard25.dto.EtichettaCreateRequestDTO;
 import com.bugboard25.dto.IssueCreateRequestDTO;
 import com.bugboard25.dto.IssueDTO;
 import com.bugboard25.dto.IssueUpdateRequestDTO;
@@ -127,7 +128,7 @@ class IssueServiceTest {
         assertEquals(PrioritaIssue.CRITICA, result.getPrioritaIssue());
         assertEquals(TipoIssue.BUG, result.getTipoIssue());
 
-        verify(etichetteService, never()).findOrCreate(anyString(), any());
+        verify(etichetteService, never()).findOrCreate(any(EtichettaCreateRequestDTO.class));
         verify(issueRepository, times(1)).save(any(Issue.class));
         verify(notificheService, times(1)).creaNotificaAssegnazione(any());
     }
@@ -231,14 +232,15 @@ class IssueServiceTest {
         label2.setId(11);
         label2.setNome("Label 2");
 
-        when(etichetteService.findOrCreate(eq("Label 1"), any())).thenReturn(label1);
-        when(etichetteService.findOrCreate(eq("Label 2"), any())).thenReturn(label2);
+        when(etichetteService.findOrCreate(any(EtichettaCreateRequestDTO.class)))
+                .thenReturn(label1)
+                .thenReturn(label2);
 
         IssueDTO result = issueService.updateIssueById(100, dto, "admin@test.com");
 
         assertNotNull(result);
         assertEquals("admin@test.com", result.getAssegnatario().getEmail());
-        verify(etichetteService, times(2)).findOrCreate(anyString(), any(Progetti.class));
+        verify(etichetteService, times(2)).findOrCreate(any(EtichettaCreateRequestDTO.class));
         verify(issueRepository, times(1)).save(any());
     }
 
@@ -344,13 +346,13 @@ class IssueServiceTest {
         when(progettoMembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
         when(utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
 
-        when(etichetteService.findOrCreate(eq("Label 1"), any())).thenReturn(label1);
+        when(etichetteService.findOrCreate(any(EtichettaCreateRequestDTO.class))).thenReturn(label1);
 
         IssueDTO result = issueService.creaIssue(dto, null);
 
         assertNotNull(result);
         verify(issueRepository, times(1)).save(any(Issue.class));
-        verify(etichetteService, times(1)).findOrCreate(eq("Label 1"), any(Progetti.class));
+        verify(etichetteService, times(1)).findOrCreate(any(EtichettaCreateRequestDTO.class));
         verify(allegatiService, never()).salvaFile(any(), anyInt());
     }
 
