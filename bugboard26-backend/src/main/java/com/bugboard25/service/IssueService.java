@@ -241,6 +241,9 @@ public class IssueService {
             issue.setTitolo(requestDTO.getTitolo());
 
         if (requestDTO.getEtichette() != null && !requestDTO.getEtichette().isEmpty()) {
+            // Rimuovi tutte le associazioni esistenti prima di ri-aggiungerle
+            issueEtichetteService.rimuoviTutteDaIssue(issue.getId());
+
             for (String nomeEtichetta : requestDTO.getEtichette()) {
                 Etichette etichettaDaAssociare = etichetteService.findOrCreate(nomeEtichetta, progetto);
 
