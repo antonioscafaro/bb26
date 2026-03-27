@@ -2,7 +2,7 @@ import { useState, useRef, type FormEvent } from 'react';
 import { motion, AnimatePresence, type Transition } from 'framer-motion';
 import { X } from 'lucide-react';
 
-import type { User, IssuePriority, IssueType } from '../../types';
+import type { User, IssuePriority, IssueType, Label } from '../../types';
 import { useIssues } from '../../context/IssueContext.shared';
 import { useProjects } from '../../context/ProjectContext.shared';
 import { priorityConfig, typeConfig } from '../../config/uiConstants';
@@ -51,7 +51,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
 }) => {
   const { createIssue } = useIssues();
   const { selectedProjectId } = useProjects();
-  const [labels, setLabels] = useState<string[]>([]);
+  const [labels, setLabels] = useState<Label[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);

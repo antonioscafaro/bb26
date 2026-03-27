@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import type { Issue, User, UserRole } from '../../../types';
+import type { Issue, User, UserRole, Label } from '../../../types';
 import api from '../../../api/axios';
 import { useIssues } from '../../../context/IssueContext.shared';
 import { priorityConfig } from '../../../config/uiConstants';
@@ -36,7 +36,7 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
     const [projectMembers, setProjectMembers] = useState<User[]>([]);
 
     // Local labels state for debounced updates
-    const [localLabels, setLocalLabels] = useState<string[]>(issue.labels || []);
+    const [localLabels, setLocalLabels] = useState<Label[]>(issue.labels || []);
     const labelsRef = useRef(localLabels);
     const isFirstRender = useRef(true);
 
@@ -62,7 +62,7 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
     }, [issue.projectId]);
 
     // Update issue function with toast notifications
-    const updateIssue = useCallback(async (field: string, value: string | User | null | string[] | number, successMessage: string, shouldClose = false) => {
+    const updateIssue = useCallback(async (field: string, value: string | User | null | Label[] | number, successMessage: string, shouldClose = false) => {
         try {
             const updatedIssue = { ...issue, [field]: value };
 
@@ -151,8 +151,17 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
     }, [localLabels, issue.labels, updateIssue]);
 
     // Handle labels change - now just updates local state
-    const handleLabelsChange = (newLabels: string[]) => {
+    const handleLabelsChange = (newLabels: Label[]) => {
         setLocalLabels(newLabels);
+    };
+
+    // Determines if a color is light enough that dark text should be used
+    const isLightColor = (hex: string): boolean => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.6;
     };
 
     // --- Render Logic ---
@@ -275,14 +284,22 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                     ) : (
                         <div className="flex flex-wrap gap-2">
                             {(issue.labels || []).length > 0 ? (
-                                (issue.labels || []).map(label => (
-                                    <span
-                                        key={label}
-                                        className="text-sm font-medium bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-m3-sm border border-outline"
-                                    >
-                                        {label}
-                                    </span>
-                                ))
+                                (issue.labels || []).map(label => {
+                                    const light = isLightColor(label.colore || '#CCCCCC');
+                                    return (
+                                        <span
+                                            key={label.nome}
+                                            className="text-sm font-medium px-3 py-1.5 rounded-m3-sm"
+                                            style={{
+                                                backgroundColor: label.colore || '#CCCCCC',
+                                                color: light ? '#1a1a1a' : '#ffffff',
+                                                border: `1px solid ${light ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)'}`,
+                                            }}
+                                        >
+                                            {label.nome}
+                                        </span>
+                                    );
+                                })
                             ) : (
                                 <span className="text-sm text-on-surface-variant italic">
                                     Nessuna etichetta

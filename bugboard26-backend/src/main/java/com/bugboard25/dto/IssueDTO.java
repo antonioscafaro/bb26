@@ -13,6 +13,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class IssueDTO {
+
+    public static class LabelInfo {
+        private String nome;
+        private String colore;
+
+        public LabelInfo(String nome, String colore) {
+            this.nome = nome;
+            this.colore = colore;
+        }
+
+        public String getNome() { return nome; }
+        public String getColore() { return colore; }
+    }
+
     private int id;
     private ProgettiDTO progetto;
     private UtentiDTO autore;
@@ -25,7 +39,7 @@ public class IssueDTO {
     private Date dataCreazione;
     private Date dataUltimoAggiornamento;
     private List<AllegatoDTO> allegati;
-    private List<String> labels;
+    private List<LabelInfo> labels;
     private List<CommentoCompletoDTO> commenti;
 
     public IssueDTO(Issue issue) {
@@ -62,7 +76,7 @@ public class IssueDTO {
 
         if (issue.getEtichette() != null) {
             this.labels = issue.getEtichette().stream()
-                    .map(ie -> ie.getEtichetta().getNome())
+                    .map(ie -> new LabelInfo(ie.getEtichetta().getNome(), ie.getEtichetta().getColore()))
                     .toList();
         }
 
@@ -105,6 +119,6 @@ public class IssueDTO {
     public Date getDataCreazione() { return dataCreazione; }
     public Date getDataUltimoAggiornamento() { return dataUltimoAggiornamento; }
     public List<AllegatoDTO> getAllegati() { return allegati; }
-    public List<String> getLabels() { return labels; }
+    public List<LabelInfo> getLabels() { return labels; }
     public List<CommentoCompletoDTO> getCommenti() { return commenti; }
 }

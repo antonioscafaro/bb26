@@ -175,7 +175,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
         prioritaIssue: mapPriorityToBackend(issueData.priority),
         emailAutore: issueData.reporter.email,
         idProgetto: parseInt(issueData.projectId),
-        etichette: issueData.labels
+        etichette: (issueData.labels || []).map(l => l.nome)
       };
 
       formData.append('issueData', new Blob([JSON.stringify(issueDto)], { type: 'application/json' }));
@@ -229,7 +229,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
         payload.assegnatario = "";
       }
 
-      if (issueData.labels !== undefined) payload.etichette = issueData.labels;
+      if (issueData.labels !== undefined) payload.etichette = issueData.labels.map((l: { nome: string }) => l.nome);
 
       const response = await api.put<BackendIssue>(`/issues/${issueId}`, payload);
       const updatedIssue = response.data;
@@ -256,8 +256,10 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
           role: mapRoleFromBackend(updatedIssue.assegnatario.ruolo),
           avatarUrl: `https://ui-avatars.com/api/?name=${updatedIssue.assegnatario.nome}+${updatedIssue.assegnatario.cognome}&background=random`
         } : undefined,
-        // Backend DTO typically doesn't return labels, so preserve existing ones unless provided in the update
-        labels: issueData.labels || existingIssue.labels || [],
+        // Backend now returns labels with colors, map them correctly
+        labels: updatedIssue.labels
+          ? (updatedIssue.labels as { nome: string; colore: string }[]).map(l => ({ nome: l.nome, colore: l.colore || '#CCCCCC' }))
+          : (issueData.labels || existingIssue.labels || []),
         attachments: updatedIssue.allegati || existingIssue.attachments || []
       };
 

@@ -34,6 +34,11 @@ export interface Attachment {
   data_caricamento: string;
 }
 
+export interface Label {
+  nome: string;
+  colore: string;
+}
+
 export interface Issue {
   id: string;
   title: string;
@@ -47,7 +52,7 @@ export interface Issue {
   updatedAt: string;
   comments?: Comment[];
   projectId: string;
-  labels?: string[];
+  labels?: Label[];
   attachments?: Attachment[];
 }
 
@@ -115,7 +120,7 @@ export interface BackendIssue {
   progetto?: { id: number; nome: string };
   commenti?: BackendComment[];
   allegati?: Attachment[];
-  labels?: string[];
+  labels?: { nome: string; colore: string }[];
 }
 
 export interface BackendProject {

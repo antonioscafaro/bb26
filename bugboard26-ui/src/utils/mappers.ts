@@ -122,7 +122,7 @@ export const mapBackendIssueToIssue = (i: BackendIssue): Issue => ({
     assignee: i.assegnatario ? mapBackendUserToUser(i.assegnatario) : undefined,
     projectId: i.progetto ? i.progetto.id.toString() : '',
     comments: i.commenti ? i.commenti.map(mapBackendCommentToComment) : [],
-    labels: i.labels || [],
+    labels: (i.labels || []).map(l => ({ nome: l.nome, colore: l.colore || '#CCCCCC' })),
     attachments: i.allegati || []
 });
 

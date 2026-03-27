@@ -92,14 +92,26 @@ export const IssueCard: React.FC<IssueCardProps> = ({
       </div>
 
       <motion.div layout className="flex flex-wrap gap-2 mb-4 min-h-[26px]">
-        {(issue.labels || []).slice(0, 3).map(label => (
-          <span
-            key={label}
-            className="text-xs font-medium bg-secondary-container text-on-secondary-container px-2 py-1 rounded-m3-sm select-none"
-          >
-            {label}
-          </span>
-        ))}
+        {(issue.labels || []).slice(0, 3).map(label => {
+          const hex = label.colore || '#CCCCCC';
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          const isLight = (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6;
+          return (
+            <span
+              key={label.nome}
+              className="text-xs font-medium px-2 py-1 rounded-m3-sm select-none"
+              style={{
+                backgroundColor: hex,
+                color: isLight ? '#1a1a1a' : '#ffffff',
+                border: `1px solid ${isLight ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)'}`,
+              }}
+            >
+              {label.nome}
+            </span>
+          );
+        })}
       </motion.div>
 
       <div className="flex justify-between items-center select-none">
