@@ -7,6 +7,7 @@ import { Toast } from '../components/common/Toast';
 import { verifyPassword } from '../utils/verifyPassword';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { PasswordConfirmModal } from '../components/common/PasswordConfirmModal';
+import { useAuth } from '../context/AuthContext.shared';
 import type { User } from '../types';
 import { Header } from '../components/layout/Header';
 import { Icons } from '../components/common/Icons';
@@ -34,6 +35,7 @@ const itemVariants: Variants = {
 export const UserManagement = () => {
     const { onMenuClick } = useOutletContext<PageContext>();
     const { state, createUser, updateUser, deleteUser } = useIssues();
+    const { currentUser } = useAuth();
     const { users } = state;
     const isMobile = useIsMobile();
     const [isModalOpen, setModalOpen] = useState(false);
@@ -76,7 +78,7 @@ export const UserManagement = () => {
         await verifyPassword(password);
 
         try {
-            await deleteUser(userToDelete.id);
+            await deleteUser(userToDelete.id, currentUser!.email);
             Toast.success(`Utente "${userToDelete.name}" eliminato con successo`);
             setUserToDelete(null);
         } catch (error) {
@@ -104,6 +106,7 @@ export const UserManagement = () => {
                                             user={user}
                                             onEdit={() => handleEdit(user)}
                                             onRemove={() => handleRemove(user)}
+                                            isSelf={user.email === currentUser?.email}
                                         />
                                     ))}
                                 </AnimatePresence>
@@ -164,12 +167,14 @@ export const UserManagement = () => {
                                                                 aria-label="Modifica utente"
                                                                 className="text-on-surface-variant hover:bg-primary/10 hover:text-primary"
                                                             />
-                                                            <ActionButton
-                                                                onClick={() => handleRemove(user)}
-                                                                icon={<Icons.Trash />}
-                                                                aria-label="Rimuovi utente"
-                                                                className="text-on-surface-variant hover:bg-error/10 hover:text-error"
-                                                            />
+                                                            {user.email !== currentUser?.email && (
+                                                                <ActionButton
+                                                                    onClick={() => handleRemove(user)}
+                                                                    icon={<Icons.Trash />}
+                                                                    aria-label="Rimuovi utente"
+                                                                    className="text-on-surface-variant hover:bg-error/10 hover:text-error"
+                                                                />
+                                                            )}
                                                         </div>
                                                     </td>
                                                 </motion.tr>

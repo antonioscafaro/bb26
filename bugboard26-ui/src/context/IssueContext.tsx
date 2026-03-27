@@ -370,9 +370,14 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
     }
   };
 
-  const deleteUser = async (userId: string) => {
+  const deleteUser = async (userId: string, currentUserEmail: string) => {
     try {
-      await api.delete(`/utenti/${userId}`);
+      await api.delete(`/utenti/${userId}`, {
+        data: {
+          emailCancellazione: userId,
+          emailCancellante: currentUserEmail
+        }
+      });
       dispatch({ type: 'DELETE_USER', payload: { userId } });
     } catch (error) {
       console.error("Failed to delete user", error);

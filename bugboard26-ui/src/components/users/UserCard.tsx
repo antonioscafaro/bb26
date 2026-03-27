@@ -10,10 +10,11 @@ const itemVariants: Variants = {
     exit: { opacity: 0, y: -20, scale: 0.98, transition: { duration: 0.2 } }
 };
 
-export const UserCard = ({ user, onEdit, onRemove }: {
+export const UserCard = ({ user, onEdit, onRemove, isSelf }: {
     user: User;
     onEdit: () => void;
     onRemove: () => void;
+    isSelf?: boolean;
 }) => (
     <motion.div
         layout
@@ -35,7 +36,9 @@ export const UserCard = ({ user, onEdit, onRemove }: {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 pl-2">
             <ActionButton onClick={onEdit} icon={<Icons.Edit />} aria-label="Modifica utente" className="text-on-surface-variant hover:bg-primary/10 hover:text-primary" />
-            <ActionButton onClick={onRemove} icon={<Icons.Trash />} aria-label="Rimuovi utente" className="text-on-surface-variant hover:bg-error/10 hover:text-error" />
+            {!isSelf && (
+                <ActionButton onClick={onRemove} icon={<Icons.Trash />} aria-label="Rimuovi utente" className="text-on-surface-variant hover:bg-error/10 hover:text-error" />
+            )}
         </div>
     </motion.div>
 );
