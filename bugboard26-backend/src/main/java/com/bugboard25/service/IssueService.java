@@ -185,9 +185,7 @@ public class IssueService {
         }
 
         if (requestDTO.getEtichette() != null && !requestDTO.getEtichette().isEmpty()) {
-            for (String nomeEtichetta : requestDTO.getEtichette()) {
-                EtichettaCreateRequestDTO etichettaDTO = new EtichettaCreateRequestDTO();
-                etichettaDTO.setNome(nomeEtichetta);
+            for (EtichettaCreateRequestDTO etichettaDTO : requestDTO.getEtichette()) {
                 etichettaDTO.setId(progetto.getId());
                 Etichette etichettaDaAssociare = etichetteService.findOrCreate(etichettaDTO);
 
@@ -238,9 +236,7 @@ public class IssueService {
         if (requestDTO.getEtichette() != null && !requestDTO.getEtichette().isEmpty()) {
             issueEtichetteService.rimuoviTutteDaIssue(issue.getId());
 
-            for (String nomeEtichetta : requestDTO.getEtichette()) {
-                EtichettaCreateRequestDTO etichettaDTO = new EtichettaCreateRequestDTO();
-                etichettaDTO.setNome(nomeEtichetta);
+            for (EtichettaCreateRequestDTO etichettaDTO : requestDTO.getEtichette()) {
                 etichettaDTO.setId(progetto.getId());
                 Etichette etichettaDaAssociare = etichetteService.findOrCreate(etichettaDTO);
 

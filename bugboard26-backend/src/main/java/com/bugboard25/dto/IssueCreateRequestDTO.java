@@ -12,7 +12,7 @@ public class IssueCreateRequestDTO {
     private PrioritaIssue prioritaIssue;
     private String emailAutore;
     private int idProgetto;
-    private List<String> etichette;
+    private List<EtichettaCreateRequestDTO> etichette;
 
     public String getTitolo() {
         return titolo;
@@ -38,7 +38,7 @@ public class IssueCreateRequestDTO {
         return emailAutore;
     }
 
-    public List<String> getEtichette() {
+    public List<EtichettaCreateRequestDTO> getEtichette() {
         return etichette;
     }
 
@@ -66,7 +66,7 @@ public class IssueCreateRequestDTO {
         this.idProgetto = idProgetto;
     }
 
-    public void setEtichette(List<String> etichette) {
+    public void setEtichette(List<EtichettaCreateRequestDTO> etichette) {
         this.etichette = etichette;
     }
 }

@@ -212,7 +212,13 @@ class IssueServiceTest {
         issue.setAssegnatario(admin);
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
         dto.setAssegnatario("admin@test.com");
-        dto.setEtichette(Arrays.asList("Label 1", "Label 2"));
+        EtichettaCreateRequestDTO labelReq1 = new EtichettaCreateRequestDTO();
+        labelReq1.setNome("Label 1");
+        labelReq1.setColore("#EF4444");
+        EtichettaCreateRequestDTO labelReq2 = new EtichettaCreateRequestDTO();
+        labelReq2.setNome("Label 2");
+        labelReq2.setColore("#3B82F6");
+        dto.setEtichette(Arrays.asList(labelReq1, labelReq2));
 
         when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
         when(utentiRepository.findById("admin@test.com")).thenReturn(Optional.of(admin));
@@ -327,7 +333,10 @@ class IssueServiceTest {
         dto.setTipoIssue(TipoIssue.BUG);
         dto.setEmailAutore(author.getEmail());
         dto.setIdProgetto(1);
-        dto.setEtichette(Arrays.asList("Label 1"));
+        EtichettaCreateRequestDTO labelReq = new EtichettaCreateRequestDTO();
+        labelReq.setNome("Label 1");
+        labelReq.setColore("#EF4444");
+        dto.setEtichette(Arrays.asList(labelReq));
 
         Etichette label1 = new Etichette();
         label1.setId(10);

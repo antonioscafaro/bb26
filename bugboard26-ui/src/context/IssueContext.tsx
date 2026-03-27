@@ -175,7 +175,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
         prioritaIssue: mapPriorityToBackend(issueData.priority),
         emailAutore: issueData.reporter.email,
         idProgetto: parseInt(issueData.projectId),
-        etichette: (issueData.labels || []).map(l => l.nome)
+        etichette: (issueData.labels || []).map(l => ({ nome: l.nome, colore: l.colore }))
       };
 
       formData.append('issueData', new Blob([JSON.stringify(issueDto)], { type: 'application/json' }));
@@ -229,7 +229,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
         payload.assegnatario = "";
       }
 
-      if (issueData.labels !== undefined) payload.etichette = issueData.labels.map((l: { nome: string }) => l.nome);
+      if (issueData.labels !== undefined) payload.etichette = issueData.labels.map((l: { nome: string; colore: string }) => ({ nome: l.nome, colore: l.colore }));
 
       const response = await api.put<BackendIssue>(`/issues/${issueId}`, payload);
       const updatedIssue = response.data;

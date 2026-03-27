@@ -12,13 +12,13 @@ public class IssueUpdateRequestDTO {
     private StatoIssue statoIssue;
     private PrioritaIssue prioritaIssue;
     private String assegnatario;
-    private java.util.List<String> etichette;
+    private java.util.List<EtichettaCreateRequestDTO> etichette;
 
-    public java.util.List<String> getEtichette() {
+    public java.util.List<EtichettaCreateRequestDTO> getEtichette() {
         return etichette;
     }
 
-    public void setEtichette(java.util.List<String> etichette) {
+    public void setEtichette(java.util.List<EtichettaCreateRequestDTO> etichette) {
         this.etichette = etichette;
     }
 
