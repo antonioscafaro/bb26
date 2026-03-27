@@ -309,8 +309,21 @@ class IssueServiceTest {
     void testUpdateIssueById_ResolvedIssueCanBeArchived(){
         issue.setStatoIssue(StatoIssue.RISOLTA);
 
+        when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
+        when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        IssueDTO result = issueService.archiviaIssueById(100);
+
+        assertNotNull(result);
+        assertEquals(StatoIssue.ARCHIVIATA, result.getStatoIssue());
+        verify(issueRepository, times(1)).save(any(Issue.class));
+    }
+
+    @Test
+    void testUpdateIssueById_SetsDataRisoluzioneOnResolution(){
         IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
-        dto.setStatoIssue(StatoIssue.ARCHIVIATA);
+        dto.setStatoIssue(StatoIssue.RISOLTA);
+        dto.setEtichette(new ArrayList<>());
 
         when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
         when(utentiRepository.findById("admin@test.com")).thenReturn(Optional.of(admin));
@@ -320,7 +333,27 @@ class IssueServiceTest {
         IssueDTO result = issueService.updateIssueById(100, dto, "admin@test.com");
 
         assertNotNull(result);
-        assertEquals(StatoIssue.ARCHIVIATA, result.getStatoIssue());
+        assertEquals(StatoIssue.RISOLTA, result.getStatoIssue());
+        assertNotNull(result.getDataRisoluzione());
+        verify(issueRepository, times(1)).save(any(Issue.class));
+    }
+
+    @Test
+    void testUpdateIssueById_DoesNotSetDataRisoluzioneOnOtherStatus(){
+        IssueUpdateRequestDTO dto = new IssueUpdateRequestDTO();
+        dto.setStatoIssue(StatoIssue.IN_LAVORAZIONE);
+        dto.setEtichette(new ArrayList<>());
+
+        when(issueRepository.findById(100)).thenReturn(Optional.of(issue));
+        when(utentiRepository.findById("admin@test.com")).thenReturn(Optional.of(admin));
+        when(progettiRepository.findById(1)).thenReturn(Optional.of(progetto));
+        when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        IssueDTO result = issueService.updateIssueById(100, dto, "admin@test.com");
+
+        assertNotNull(result);
+        assertEquals(StatoIssue.IN_LAVORAZIONE, result.getStatoIssue());
+        assertNull(result.getDataRisoluzione());
         verify(issueRepository, times(1)).save(any(Issue.class));
     }
 
@@ -347,9 +380,6 @@ class IssueServiceTest {
 
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
-        when(progettoMembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
-        when(utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
-
         when(etichetteService.findOrCreate(any(EtichettaCreateRequestDTO.class))).thenReturn(label1);
 
         IssueDTO result = issueService.creaIssue(dto, null);
@@ -371,8 +401,7 @@ class IssueServiceTest {
 
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
-        when(progettoMembriRepository.findByProgetto(any(Progetti.class))).thenReturn(new ArrayList<>());
-        when(utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE)).thenReturn(new ArrayList<>());
+
 
         MultipartFile file = mock(MultipartFile.class);
         when(file.isEmpty()).thenReturn(false);

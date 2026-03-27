@@ -160,12 +160,14 @@ public class ReportService {
     private double calcolaTempoMedioRisoluzione(List<Issue> issues) {
         if (issues.isEmpty()) return 0.0;
         long sommaOre = 0;
+        int count = 0;
         for (Issue i : issues) {
-            if (i.getDataUltimoAggiornamento() == null || i.getDataCreazione() == null) continue;
-            long diffInMillies = Math.abs(i.getDataUltimoAggiornamento().getTime() - i.getDataCreazione().getTime());
+            if (i.getDataRisoluzione() == null || i.getDataCreazione() == null) continue;
+            long diffInMillies = i.getDataRisoluzione().getTime() - i.getDataCreazione().getTime();
             sommaOre += TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+            count++;
         }
-        return (double) sommaOre / issues.size();
+        return count == 0 ? 0.0 : (double) sommaOre / count;
     }
 
     private Map<String, Double> calcolaDistribuzioneTipo(List<Issue> issues) {

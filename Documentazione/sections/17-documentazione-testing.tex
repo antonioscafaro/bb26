@@ -54,6 +54,11 @@ Campi aggiornabili (titolo, stato, descrizione, priorit\`a, tipo) &
 Tutti i campi valorizzati &
 / \\
 \hline
+CE-7b &
+Stato issue (campo DTO) &
+Transizione a RISOLTA (deve impostare \texttt{dataRisoluzione}) &
+Transizione a stato diverso da RISOLTA (\texttt{dataRisoluzione} resta null) \\
+\hline
 \end{longtable}
 
 \paragraph{Copertura delle classi di equivalenza nei test}
@@ -93,6 +98,18 @@ CE-1 (amministratore), CE-3 classe non valida (assegnatario non membro del proge
 \texttt{IntruderUpdates} &
 CE-1 classe non valida (utente senza permessi) \\
 \hline
+\texttt{ResolvedIssueCannotBeModified} &
+Issue con stato RISOLTA, tentativo di modifica non consentito (il metodo lancia \texttt{ForbiddenException}) \\
+\hline
+\texttt{ResolvedIssueCanBeArchived} &
+Issue con stato RISOLTA, archiviazione tramite \texttt{archiviaIssueById} (verifica che il metodo dedicato funzioni correttamente) \\
+\hline
+\texttt{SetsDataRisoluzioneOnResolution} &
+CE-1 (amministratore), CE-7b classe valida (transizione a RISOLTA deve impostare \texttt{dataRisoluzione}) \\
+\hline
+\texttt{DoesNotSetDataRisoluzioneOnOtherStatus} &
+CE-1 (amministratore), CE-7b classe non valida (transizione a IN\_LAVORAZIONE non deve impostare \texttt{dataRisoluzione}) \\
+\hline
 \end{longtable}
 
 \paragraph{Criteri di copertura strutturale}
@@ -112,6 +129,10 @@ I test sono stati pensati per coprire tutti i rami principali del metodo:
     \item \textbf{Gestione delle etichette}: il codice entra nel ramo delle etichette solo se la lista non \`e nulla e non \`e vuota. Il test \texttt{AdminSetsLabels} copre il caso con etichette presenti, mentre \texttt{AdminSetsFields} copre il caso con lista vuota.
 
     \item \textbf{Creazione della notifica}: la notifica di assegnazione parte solo quando l'assegnatario cambia. Il test \texttt{AdminSetsFields} verifica che la notifica venga creata, mentre \texttt{AdminSetsLabels} verifica che non venga creata quando l'assegnatario \`e lo stesso di prima.
+
+    \item \textbf{Blocco modifica issue risolta}: il metodo impedisce qualsiasi modifica a una issue con stato RISOLTA. Il test \texttt{ResolvedIssueCannotBeModified} verifica che venga lanciata una \texttt{ForbiddenException}, mentre il test \texttt{ResolvedIssueCanBeArchived} verifica che l'archiviazione avvenga tramite il metodo dedicato \texttt{archiviaIssueById}.
+
+    \item \textbf{Impostazione data di risoluzione}: quando lo stato viene cambiato a RISOLTA, il metodo deve impostare automaticamente il campo \texttt{dataRisoluzione} con il timestamp corrente. Il test \texttt{SetsDataRisoluzioneOnResolution} verifica che il campo venga correttamente popolato, mentre \texttt{DoesNotSetDataRisoluzioneOnOtherStatus} verifica che non venga impostato per transizioni verso stati diversi.
 \end{itemize}
 
 % -----------------------------------------------------------------

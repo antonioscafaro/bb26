@@ -38,6 +38,7 @@ public class IssueDTO {
     private PrioritaIssue prioritaIssue;
     private Date dataCreazione;
     private Date dataUltimoAggiornamento;
+    private Date dataRisoluzione;
     private List<AllegatoDTO> allegati;
     private List<LabelInfo> labels;
     private List<CommentoCompletoDTO> commenti;
@@ -55,6 +56,7 @@ public class IssueDTO {
         this.prioritaIssue = issue.getPrioritaIssue();
         this.dataCreazione = issue.getDataCreazione();
         this.dataUltimoAggiornamento = issue.getDataUltimoAggiornamento();
+        this.dataRisoluzione = issue.getDataRisoluzione();
 
         if (issue.getIdProgetto() != null) {
             this.progetto = new ProgettiDTO(issue.getIdProgetto());
@@ -118,6 +120,7 @@ public class IssueDTO {
     public PrioritaIssue getPrioritaIssue() { return prioritaIssue; }
     public Date getDataCreazione() { return dataCreazione; }
     public Date getDataUltimoAggiornamento() { return dataUltimoAggiornamento; }
+    public Date getDataRisoluzione() { return dataRisoluzione; }
     public List<AllegatoDTO> getAllegati() { return allegati; }
     public List<LabelInfo> getLabels() { return labels; }
     public List<CommentoCompletoDTO> getCommenti() { return commenti; }

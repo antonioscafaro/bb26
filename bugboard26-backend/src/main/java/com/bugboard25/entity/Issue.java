@@ -50,6 +50,10 @@ public class Issue {
     @Column(name = "data_ultimo_aggiornamento")
     private Date dataUltimoAggiornamento;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_risoluzione")
+    private Date dataRisoluzione;
+
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Allegati> allegati;
 
@@ -108,6 +112,14 @@ public class Issue {
 
     public Date getDataUltimoAggiornamento() {
         return dataUltimoAggiornamento;
+    }
+
+    public Date getDataRisoluzione() {
+        return dataRisoluzione;
+    }
+
+    public void setDataRisoluzione(Date dataRisoluzione) {
+        this.dataRisoluzione = dataRisoluzione;
     }
 
     public Date getDataCreazione() {

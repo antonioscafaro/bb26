@@ -226,8 +226,12 @@ public class IssueService {
             issue.setDescrizione(requestDTO.getDescrizione());
         if (requestDTO.getTipoIssue() != null)
             issue.setTipoIssue(requestDTO.getTipoIssue());
-        if (requestDTO.getStatoIssue() != null)
+        if (requestDTO.getStatoIssue() != null) {
             issue.setStatoIssue(requestDTO.getStatoIssue());
+            if (requestDTO.getStatoIssue() == StatoIssue.RISOLTA) {
+                issue.setDataRisoluzione(new Date());
+            }
+        }
         if (requestDTO.getPrioritaIssue() != null)
             issue.setPrioritaIssue(requestDTO.getPrioritaIssue());
         if (requestDTO.getTitolo() != null)

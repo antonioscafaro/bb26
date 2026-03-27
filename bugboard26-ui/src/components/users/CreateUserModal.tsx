@@ -59,7 +59,8 @@ export const CreateUserModal = ({ isOpen, onClose, onSave, user, isBottomSheet =
       </div>
       <div>
         <label htmlFor="user-email" className="block text-sm font-medium text-on-surface-variant mb-1">Email</label>
-        <Input type="email" id="user-email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <Input type="email" id="user-email" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isEditing} />
+        {isEditing && <p className="text-xs text-on-surface-variant/60 mt-1 ml-2">L'email non può essere modificata</p>}
       </div>
       <div>
         <label htmlFor="user-password" className="block text-sm font-medium text-on-surface-variant mb-1">
