@@ -205,15 +205,7 @@ public class IssueService {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA));
 
-        boolean soloArchiviazione = requestDTO.getStatoIssue() == StatoIssue.ARCHIVIATA
-                && requestDTO.getTitolo() == null
-                && requestDTO.getDescrizione() == null
-                && requestDTO.getTipoIssue() == null
-                && requestDTO.getPrioritaIssue() == null
-                && requestDTO.getAssegnatario() == null
-                && (requestDTO.getEtichette() == null || requestDTO.getEtichette().isEmpty());
-
-        if (issue.getStatoIssue() == StatoIssue.RISOLTA && !soloArchiviazione) {
+        if (issue.getStatoIssue() == StatoIssue.RISOLTA) {
             throw new ForbiddenException(ErrorMessages.ISSUE_NON_MODIFICABILE);
         }
 
@@ -241,7 +233,6 @@ public class IssueService {
             issue.setTitolo(requestDTO.getTitolo());
 
         if (requestDTO.getEtichette() != null && !requestDTO.getEtichette().isEmpty()) {
-            // Rimuovi tutte le associazioni esistenti prima di ri-aggiungerle
             issueEtichetteService.rimuoviTutteDaIssue(issue.getId());
 
             for (String nomeEtichetta : requestDTO.getEtichette()) {
