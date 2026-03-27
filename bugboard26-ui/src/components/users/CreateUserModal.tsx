@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
 
 import type { User } from '../../types';
 import { USER_ROLE } from '../../constants';
@@ -21,6 +21,7 @@ export const CreateUserModal = ({ isOpen, onClose, onSave, user, isBottomSheet =
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<User['role']>(USER_ROLE.NORMAL);
+  const [showPassword, setShowPassword] = useState(false);
   const isEditing = !!user;
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export const CreateUserModal = ({ isOpen, onClose, onSave, user, isBottomSheet =
       setEmail(user.email || '');
       setRole(user.role || USER_ROLE.NORMAL);
       setPassword('');
+      setShowPassword(false);
     } else if (!isOpen) {
       setName('');
       setSurname('');
@@ -59,12 +61,31 @@ export const CreateUserModal = ({ isOpen, onClose, onSave, user, isBottomSheet =
         <label htmlFor="user-email" className="block text-sm font-medium text-on-surface-variant mb-1">Email</label>
         <Input type="email" id="user-email" value={email} onChange={(e) => setEmail(e.target.value)} required />
       </div>
-      {!isEditing && (
-        <div>
-          <label htmlFor="user-password" className="block text-sm font-medium text-on-surface-variant mb-1">Password</label>
-          <Input type="password" id="user-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      <div>
+        <label htmlFor="user-password" className="block text-sm font-medium text-on-surface-variant mb-1">
+          Password{isEditing && <span className="text-xs text-on-surface-variant/60 ml-1">(lascia vuoto per non modificare)</span>}
+        </label>
+        <div className="relative">
+          <Input
+            type={showPassword ? 'text' : 'password'}
+            id="user-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required={!isEditing}
+            placeholder={isEditing ? 'Nuova password...' : ''}
+          />
+          {password && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-surface-variant text-on-surface-variant"
+              aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          )}
         </div>
-      )}
+      </div>
       <div>
         <label htmlFor="user-role" className="block text-sm font-medium text-on-surface-variant mb-1">Ruolo</label>
         <Select id="user-role" value={role} onChange={(e) => setRole(e.target.value as User['role'])}>

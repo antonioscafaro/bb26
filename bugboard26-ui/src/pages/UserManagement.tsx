@@ -53,11 +53,14 @@ export const UserManagement = () => {
         setModalOpen(true);
     };
 
-    const handleSave = async (userToSave: Partial<User>) => {
+    const handleSave = async (userToSave: Partial<User> & { password?: string }) => {
         try {
             if (userToSave.id) {
-                await updateUser(userToSave.id, userToSave as Partial<User>);
-                Toast.success(`Utente "${userToSave.name}" aggiornato con successo!`);
+                await updateUser(userToSave.id, userToSave);
+                const msg = userToSave.password
+                    ? `Utente "${userToSave.name}" aggiornato e password modificata!`
+                    : `Utente "${userToSave.name}" aggiornato con successo!`;
+                Toast.success(msg);
             } else {
                 await createUser(userToSave as Omit<User, 'id'> & { password?: string });
                 Toast.success(`Utente "${userToSave.name}" creato con successo!`);

@@ -347,13 +347,19 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
     }
   };
 
-  const updateUser = async (userId: string, userData: Partial<User>) => {
+  const updateUser = async (userId: string, userData: Partial<User> & { password?: string }) => {
     try {
-      const response = await api.put(`/utenti/${userId}`, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const payload: Record<string, any> = {
         nome: userData.name,
         cognome: userData.surname,
-        ruolo: mapRoleToBackend(userData.role || 'UTENTE')
-      });
+        ruolo: mapRoleToBackend(userData.role || 'UTENTE'),
+        emailCreante: currentUser?.email
+      };
+      if (userData.password) {
+        payload.password = userData.password;
+      }
+      const response = await api.put(`/utenti/${userId}`, payload);
       const updatedUser = response.data;
       const mappedUser: User = {
         id: updatedUser.email,
