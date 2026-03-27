@@ -1,16 +1,33 @@
 package com.bugboard25.service;
 
+import com.bugboard25.dto.UtentiDTO;
+import com.bugboard25.entity.Progetti;
+import com.bugboard25.entity.ProgettoMembri;
+import com.bugboard25.entity.enumerations.TipoRuolo;
+import com.bugboard25.repository.ProgettiRepository;
+import com.bugboard25.repository.ProgettoMembriRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SseService {
 
+    private final ProgettiRepository progettiRepository;
+    private final ProgettoMembriRepository progettoMembriRepository;
+    private final UtentiService utentiService;
+
+    public SseService(ProgettiRepository pr, ProgettoMembriRepository prm, UtentiService u) {
+        progettiRepository = pr;
+        progettoMembriRepository = prm;
+        utentiService = u;
+    }
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
@@ -74,7 +91,8 @@ public class SseService {
      */
     @Scheduled(fixedRate = 15000)
     public void sendHeartbeat() {
-        if (emitters.isEmpty()) return;
+        if (emitters.isEmpty())
+            return;
 
         for (Map.Entry<String, SseEmitter> entry : emitters.entrySet()) {
             try {
@@ -84,5 +102,73 @@ public class SseService {
             }
         }
     }
-}
 
+    /**
+     * Notifica tutti i membri del progetto e gli amministratori via SSE.
+     */
+    public void notifyProjectMembers(int projectId, String eventName) {
+        try {
+            java.util.Set<String> emailsDaNotificare = collectProjectEmails(projectId);
+
+            for (String email : emailsDaNotificare) {
+                sendUpdateSignal(email, eventName);
+            }
+        } catch (Exception e) {
+            // SSE broadcast failure is non-critical
+        }
+    }
+
+    /**
+     * Notifica tutti i membri del progetto, gli amministratori, e un utente aggiuntivo via SSE.
+     * Utile per i cambi di membership dove l'utente rimosso deve comunque essere notificato.
+     */
+    public void notifyProjectMembers(int projectId, String eventName, String extraEmail) {
+        try {
+            java.util.Set<String> emailsDaNotificare = collectProjectEmails(projectId);
+            emailsDaNotificare.add(extraEmail);
+
+            for (String email : emailsDaNotificare) {
+                sendUpdateSignal(email, eventName);
+            }
+        } catch (Exception e) {
+            // SSE broadcast failure is non-critical
+        }
+    }
+
+    /**
+     * Raccoglie le email di tutti i membri del progetto e degli amministratori.
+     * Utile quando le email devono essere raccolte prima di una cancellazione a cascata.
+     */
+    public java.util.Set<String> collectProjectEmails(int projectId) {
+        java.util.Set<String> emails = new java.util.LinkedHashSet<>();
+        try {
+            Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
+            if (progettoOpt.isPresent()) {
+                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
+                for (ProgettoMembri membro : membri) {
+                    emails.add(membro.getUtente().getEmail());
+                }
+            }
+            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
+            for (UtentiDTO amministratore : amministratori) {
+                emails.add(amministratore.getEmail());
+            }
+        } catch (Exception e) {
+            // Email collection failure is non-critical
+        }
+        return emails;
+    }
+
+    /**
+     * Notifica una lista di email già raccolta.
+     */
+    public void notifyEmails(java.util.Set<String> emails, String eventName) {
+        try {
+            for (String email : emails) {
+                sendUpdateSignal(email, eventName);
+            }
+        } catch (Exception e) {
+            // SSE notification failure is non-critical
+        }
+    }
+}

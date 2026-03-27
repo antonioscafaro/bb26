@@ -2,20 +2,14 @@ package com.bugboard25.service;
 
 import com.bugboard25.dto.CommentiCreateRequestDTO;
 import com.bugboard25.dto.CommentoCompletoDTO;
-import com.bugboard25.dto.UtentiDTO;
 import com.bugboard25.dto.NotificheMenzioneCreateRequestDTO;
 import com.bugboard25.entity.Commenti;
 import com.bugboard25.entity.Issue;
-import com.bugboard25.entity.Progetti;
-import com.bugboard25.entity.ProgettoMembri;
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.exception.ErrorMessages;
 import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.CommentiRepository;
 import com.bugboard25.repository.IssueRepository;
-import com.bugboard25.repository.ProgettiRepository;
-import com.bugboard25.repository.ProgettoMembriRepository;
 import com.bugboard25.repository.UtentiRepository;
 import org.springframework.stereotype.Service;
 import com.bugboard25.dto.AutoreCommentoDTO;
@@ -23,7 +17,6 @@ import com.bugboard25.dto.AutoreCommentoDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,23 +26,16 @@ public class CommentiService {
     private final CommentiRepository commentiRepository;
     private final IssueRepository issueRepository;
     private final UtentiRepository utentiRepository;
-    private final ProgettiRepository progettiRepository;
-    private final ProgettoMembriRepository progettoMembriRepository;
     private final NotificheService notificheService;
-    private final UtentiService utentiService;
     private final SseService sseService;
 
     public CommentiService(CommentiRepository commentiRepository, IssueRepository issueRepository,
-            UtentiRepository utentiRepository, ProgettiRepository progettiRepository,
-            ProgettoMembriRepository progettoMembriRepository, NotificheService notificheService,
-            UtentiService utentiService, SseService sseService) {
+            UtentiRepository utentiRepository,
+            NotificheService notificheService, SseService sseService) {
         this.commentiRepository = commentiRepository;
         this.issueRepository = issueRepository;
         this.utentiRepository = utentiRepository;
-        this.progettiRepository = progettiRepository;
-        this.progettoMembriRepository = progettoMembriRepository;
         this.notificheService = notificheService;
-        this.utentiService = utentiService;
         this.sseService = sseService;
     }
 
@@ -123,33 +109,8 @@ public class CommentiService {
                     .ifPresent(u -> menzionati.add(new AutoreCommentoDTO(u)));
         }
 
-        broadcastIssueUpdate(issue.getIdProgetto().getId());
+        sseService.notifyProjectMembers(issue.getIdProgetto().getId(), ErrorMessages.ISSUE_UPDATE);
 
         return new CommentoCompletoDTO(commenti, menzionati);
-    }
-
-    private void broadcastIssueUpdate(int projectId) {
-        try {
-            java.util.Set<String> emailsDaNotificare = new java.util.LinkedHashSet<>();
-
-            Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
-            if (progettoOpt.isPresent()) {
-                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
-                for (ProgettoMembri membro : membri) {
-                    emailsDaNotificare.add(membro.getUtente().getEmail());
-                }
-            }
-
-            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
-            for (UtentiDTO amministratore : amministratori) {
-                emailsDaNotificare.add(amministratore.getEmail());
-            }
-
-            for (String email : emailsDaNotificare) {
-                sseService.sendUpdateSignal(email, ErrorMessages.ISSUE_UPDATE);
-            }
-        } catch (Exception e) {
-            // SSE broadcast failure is non-critical
-        }
     }
 }

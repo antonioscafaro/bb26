@@ -1,41 +1,33 @@
 package com.bugboard25.service;
 
 import com.bugboard25.dto.ProgettiDTO;
-import com.bugboard25.dto.UtentiDTO;
 import com.bugboard25.dto.ProgettoCreateRequestDTO;
 import com.bugboard25.entity.Progetti;
-import com.bugboard25.entity.ProgettoMembri;
 import com.bugboard25.entity.Utenti;
-import com.bugboard25.entity.enumerations.TipoRuolo;
 import com.bugboard25.exception.ErrorMessages;
 import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.ProgettiRepository;
-import com.bugboard25.repository.ProgettoMembriRepository;
 import com.bugboard25.repository.UtentiRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProgettiService {
 
-
     private final ProgettiRepository progettiRepository;
     private final UtentiRepository utentiRepository;
-    private final ProgettoMembriRepository progettoMembriRepository;
-    private final UtentiService utentiService;
     private final ProgettoMembriService progettoMembriService;
     private final SseService sseService;
 
     public ProgettiService(ProgettiRepository progettiRepository, UtentiRepository utentiRepository,
-                           ProgettoMembriRepository progettoMembriRepository, UtentiService utentiService,
-                           ProgettoMembriService progettoMembriService, SseService sseService) {
+            ProgettoMembriService progettoMembriService, SseService sseService) {
         this.progettiRepository = progettiRepository;
         this.utentiRepository = utentiRepository;
-        this.progettoMembriRepository = progettoMembriRepository;
-        this.utentiService = utentiService;
         this.progettoMembriService = progettoMembriService;
         this.sseService = sseService;
     }
@@ -71,31 +63,6 @@ public class ProgettiService {
         }
     }
 
-    private void notifyProjectMembers(int projectId) {
-        try {
-            java.util.Set<String> emailsDaNotificare = new java.util.LinkedHashSet<>();
-
-            Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
-            if (progettoOpt.isPresent()) {
-                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
-                for (ProgettoMembri membro : membri) {
-                    emailsDaNotificare.add(membro.getUtente().getEmail());
-                }
-            }
-
-            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
-            for (UtentiDTO amministratore : amministratori) {
-                emailsDaNotificare.add(amministratore.getEmail());
-            }
-
-            for (String email : emailsDaNotificare) {
-                sseService.sendUpdateSignal(email, ErrorMessages.PROJECT_UPDATE);
-            }
-        } catch (Exception e) {
-            // SSE broadcast failure is non-critical
-        }
-    }
-
     public ProgettiDTO creaProgetto(ProgettoCreateRequestDTO requestDTO) {
         Utenti creatore = utentiRepository.findById(requestDTO.getCreatore())
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
@@ -109,67 +76,35 @@ public class ProgettiService {
         progetto = progettiRepository.save(progetto);
 
         progettoMembriService.associaUtente(progetto, creatore);
-        notifyProjectMembers(progetto.getId());
+        sseService.notifyProjectMembers(progetto.getId(), ErrorMessages.PROJECT_UPDATE);
 
         return new ProgettiDTO(progetto);
     }
 
     public ProgettiDTO updateProgettoById(int id, ProgettoCreateRequestDTO requestDTO) {
         Progetti progetto = progettiRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO + " con ID: " + id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO + " con ID: " + id));
 
         progetto.setNome(requestDTO.getNome());
         progetto.setDescrizione(requestDTO.getDescrizione());
 
         progetto = progettiRepository.save(progetto);
-        notifyProjectMembers(progetto.getId());
+        sseService.notifyProjectMembers(progetto.getId(), ErrorMessages.PROJECT_UPDATE);
         return new ProgettiDTO(progetto);
     }
 
+    @Transactional
     public void deleteProgettoById(int id) {
         Progetti progettoDaEliminare = progettiRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROGETTO_NON_TROVATO));
 
         // Collect emails to notify BEFORE delete (cascade removes members)
-        List<String> emailsDaNotificare = collectProjectEmails(id);
+        java.util.Set<String> emailsDaNotificare = sseService.collectProjectEmails(id);
 
         progettiRepository.delete(progettoDaEliminare);
 
         // Notify AFTER delete to avoid SSE race condition
-        notifyEmails(emailsDaNotificare);
-    }
-
-    /**
-     * Collects all emails that need to be notified for a project update:
-     * project members + all administrators.
-     */
-    private List<String> collectProjectEmails(int projectId) {
-        java.util.Set<String> emails = new java.util.LinkedHashSet<>();
-        try {
-            Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
-            if (progettoOpt.isPresent()) {
-                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
-                for (ProgettoMembri membro : membri) {
-                    emails.add(membro.getUtente().getEmail());
-                }
-            }
-            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
-            for (UtentiDTO amministratore : amministratori) {
-                emails.add(amministratore.getEmail());
-            }
-        } catch (Exception e) {
-            // Email collection failure is non-critical
-        }
-        return new java.util.ArrayList<>(emails);
-    }
-
-    private void notifyEmails(List<String> emails) {
-        try {
-            for (String email : emails) {
-                sseService.sendUpdateSignal(email, ErrorMessages.PROJECT_UPDATE);
-            }
-        } catch (Exception e) {
-            // SSE notification failure is non-critical
-        }
+        sseService.notifyEmails(emailsDaNotificare, ErrorMessages.PROJECT_UPDATE);
     }
 }

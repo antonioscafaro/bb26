@@ -13,6 +13,7 @@ import com.bugboard25.repository.NotificheRepository;
 import com.bugboard25.repository.ProgettiRepository;
 import com.bugboard25.repository.ProgettoMembriRepository;
 import com.bugboard25.repository.UtentiRepository;
+import com.bugboard25.dto.CancellazioneUtenteDTO;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -108,8 +109,12 @@ public class UtentiService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUtenteByEmail(String email) {
-        Utenti utente = utentiRepository.findById(email)
+    public void deleteUtenteByEmail(CancellazioneUtenteDTO utenteDTO) {
+        if (utenteDTO.getEmailCancellante().equals(utenteDTO.getEmailCancellazione())){
+            throw new BadRequestException(ErrorMessages.SUICIDIO);
+        }
+
+        Utenti utente = utentiRepository.findById(utenteDTO.getEmailCancellazione())
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.UTENTE_NON_TROVATO));
 
         // 1. Delete notifications where user is destinatario

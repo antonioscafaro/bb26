@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1774530565.02493 "c:/Users/aless/Documents/bb26/Documentazione/main.tex" "main.pdf" "main" 1774530570.09552 0
+["pdflatex"] 1774609065.05072 "c:/Users/aless/Documents/bb26/Documentazione/main.tex" "main.pdf" "main" 1774609070.17435 0
   "DB.pdf" 1773774456 67681 9f587ee92ab862b283aeed075330e093 ""
   "DBVECCHIO.pdf" 1773774456 60520 ece52cb0fe0c0fad530466aa655db3b4 ""
   "MOCK.png" 1773747069 150985 0c0c6ff4cb9bd9268478f39f40dce1d0 ""
@@ -239,10 +239,10 @@
   "c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1758659244 5574153 af86687748baf417d9e7d549313527be ""
   "c:/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1758659387 3621636 a74145fabcff4689976e6f1f6def17a0 ""
   "c:/texlive/2025/texmf.cnf" 1758659229 713 e69b156964470283e0530f5060668171 ""
-  "main.aux" 1774530569 49033 379dc11353556fb2549c3dd088dd126b "pdflatex"
-  "main.out" 1774530569 6021 450639c9f5a363b0471fb528909f64c4 "pdflatex"
+  "main.aux" 1774609069 49033 379dc11353556fb2549c3dd088dd126b "pdflatex"
+  "main.out" 1774609069 6021 450639c9f5a363b0471fb528909f64c4 "pdflatex"
   "main.tex" 1774379335 8179 a7cff3b6e89cf618fcaf9d612078f41c ""
-  "main.toc" 1774530569 23377 53133f59a01afd37b00ddf0be0af92b9 "pdflatex"
+  "main.toc" 1774609069 23377 53133f59a01afd37b00ddf0be0af92b9 "pdflatex"
   "package config.png" 1774379335 30413 b8a3480fcd1327efcdeb2e3aea4fe8cb ""
   "package controller.png" 1774379335 525296 ddf0ac2fededeb659bc10419fa7c95e6 ""
   "package dto.png" 1774379335 588834 3596a5c177ebf814f265f670e282bf71 ""
@@ -256,8 +256,8 @@
   "sections/03-casi-uso.tex" 1773748029 7074 3d33f8416a125cb9f3c4af87791fc4ac ""
   "sections/04-caratterizzazione-utenti.tex" 1773748029 10850 503ca45a89a5d041e1b96f8ecf64f866 ""
   "sections/05-requisiti-sistema.tex" 1773748029 3031 bee2d62f325fd18d9bc1fd4e852f0139 ""
-  "sections/06-requisiti-funzionali.tex" 1774379335 29662 3f7e16e4e17d38a18c1e738fb1ca10e1 ""
-  "sections/07-requisiti-non-funzionali.tex" 1773748029 8995 5954539d93d743535911dad872a861f8 ""
+  "sections/06-requisiti-funzionali.tex" 1774609064 28734 c0530452b8976f3f26c58791b1b744a9 ""
+  "sections/07-requisiti-non-funzionali.tex" 1774609064 8974 5ecb26ce18e7dd4b21a0a855d0bb4432 ""
   "sections/08-cockburn.tex" 1773748029 5475 acdf1e9335473227f6ebc8296139150c ""
   "sections/09-mockup.tex" 1773748029 3950 739e2f007dbf3688a1046b4264da3a1f ""
   "sections/10-system-design.tex" 1774379335 5956 3f4406314d02eb1b405c777b2c4e3c06 ""

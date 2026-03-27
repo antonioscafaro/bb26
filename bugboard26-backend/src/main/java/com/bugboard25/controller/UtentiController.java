@@ -1,10 +1,6 @@
 package com.bugboard25.controller;
 
-import com.bugboard25.dto.UtenteCreateRequestDTO;
-import com.bugboard25.dto.VerificaPasswordRequestDTO;
-import com.bugboard25.dto.UtentiDTO;
-import com.bugboard25.dto.IssueDTO;
-import com.bugboard25.dto.NotificheDTO;
+import com.bugboard25.dto.*;
 import com.bugboard25.service.IssueService;
 import com.bugboard25.service.NotificheService;
 import com.bugboard25.service.UtentiService;
@@ -90,8 +86,8 @@ public class UtentiController {
     }
 
     @DeleteMapping("/{email}")
-    public ResponseEntity<Void> deleteUtenteByEmail(@PathVariable String email) {
-        utentiService.deleteUtenteByEmail(email);
+    public ResponseEntity<Void> deleteUtenteByEmail(@RequestBody CancellazioneUtenteDTO utenteDTO) {
+        utentiService.deleteUtenteByEmail(utenteDTO);
         return ResponseEntity.noContent().build();
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class IssueService {
@@ -29,14 +28,13 @@ public class IssueService {
     private final IssueEtichetteService issueEtichetteService;
     private final EtichetteService etichetteService;
     private final ProgettoMembriRepository progettoMembriRepository;
-    private final UtentiService utentiService;
     private final SseService sseService;
 
     public IssueService(IssueRepository issueRepository, UtentiRepository utentiRepository,
             ProgettiRepository progettiRepository, EtichetteRepository etichetteRepository,
             NotificheService notificheService, AllegatiService allegatiService,
             IssueEtichetteService issueEtichetteService, EtichetteService etichetteService,
-            ProgettoMembriRepository progettoMembriRepository, UtentiService utentiService,
+            ProgettoMembriRepository progettoMembriRepository,
             SseService sseService) {
         this.issueRepository = issueRepository;
         this.utentiRepository = utentiRepository;
@@ -47,33 +45,7 @@ public class IssueService {
         this.issueEtichetteService = issueEtichetteService;
         this.etichetteService = etichetteService;
         this.progettoMembriRepository = progettoMembriRepository;
-        this.utentiService = utentiService;
         this.sseService = sseService;
-    }
-
-    private void notifyProjectMembers(int projectId) {
-        try {
-            java.util.Set<String> emailsDaNotificare = new java.util.LinkedHashSet<>();
-
-            Optional<Progetti> progettoOpt = progettiRepository.findById(projectId);
-            if (progettoOpt.isPresent()) {
-                List<ProgettoMembri> membri = progettoMembriRepository.findByProgetto(progettoOpt.get());
-                for (ProgettoMembri membro : membri) {
-                    emailsDaNotificare.add(membro.getUtente().getEmail());
-                }
-            }
-
-            List<UtentiDTO> amministratori = utentiService.getUtentiByRuolo(TipoRuolo.AMMINISTRATORE);
-            for (UtentiDTO amministratore : amministratori) {
-                emailsDaNotificare.add(amministratore.getEmail());
-            }
-
-            for (String email : emailsDaNotificare) {
-                sseService.sendUpdateSignal(email, ErrorMessages.ISSUE_UPDATE);
-            }
-        } catch (Exception e) {
-            // SSE broadcast failure is non-critical
-        }
     }
 
     public IssueDTO getIssueById(int id) {
@@ -224,7 +196,7 @@ public class IssueService {
             }
         }
 
-        notifyProjectMembers(progetto.getId());
+        sseService.notifyProjectMembers(progetto.getId(), ErrorMessages.ISSUE_UPDATE);
         Issue updatedIssue = issueRepository.findById(issue.getId()).orElse(issue);
         return new IssueDTO(updatedIssue, utentiRepository);
     }
@@ -282,7 +254,7 @@ public class IssueService {
 
         issue.setDataUltimoAggiornamento(new Date());
         issue = issueRepository.save(issue);
-        notifyProjectMembers(issue.getIdProgetto().getId());
+        sseService.notifyProjectMembers(issue.getIdProgetto().getId(), ErrorMessages.ISSUE_UPDATE);
         return new IssueDTO(issue, utentiRepository);
     }
 
@@ -343,7 +315,7 @@ public class IssueService {
         }
         issue.setStatoIssue(StatoIssue.ARCHIVIATA);
         issue = issueRepository.save(issue);
-        notifyProjectMembers(issue.getIdProgetto().getId());
+        sseService.notifyProjectMembers(issue.getIdProgetto().getId(), ErrorMessages.ISSUE_UPDATE);
         return new IssueDTO(issue, utentiRepository);
     }
 }
