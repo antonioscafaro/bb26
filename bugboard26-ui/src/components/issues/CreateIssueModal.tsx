@@ -185,7 +185,9 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
               <div className="text-center">
                 <Icons.Upload className="mx-auto" />
                 <div className="mt-4 flex justify-center text-sm leading-6 text-on-surface-variant">
-                  <p className="pl-1">Trascina qui il tuo file o</p>
+                  <p className="pl-1">
+                    {selectedFile ? `File: ${selectedFile.name}` : 'Trascina qui il tuo file o'}
+                  </p>
                 </div>
                 <button
                   type="button"
@@ -193,11 +195,11 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                   className="font-semibold text-primary hover:underline disabled:opacity-50"
                   disabled={isSubmitting}
                 >
-                  scegli un file
+                  {selectedFile ? 'Cambia file' : 'scegli un file'}
                 </button>
                 <p className="text-xs leading-5 text-on-surface-variant/80">PNG, JPG, GIF fino a 10MB</p>
               </div>
-              <input ref={fileInputRef} id="file-upload-mobile" name="file-upload" type="file" className="sr-only" disabled={isSubmitting} />
+              <input ref={fileInputRef} id="file-upload-mobile" name="file-upload" type="file" className="sr-only" disabled={isSubmitting} onChange={handleFileChange} accept="image/*" />
             </div>
           </FormField>
 
