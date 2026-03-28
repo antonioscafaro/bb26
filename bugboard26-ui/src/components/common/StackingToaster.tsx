@@ -16,13 +16,18 @@ export const StackingToaster = () => {
     return (
         <div
             className="fixed top-4 right-4 z-[9999] flex flex-col items-end"
-            onMouseEnter={() => {
-                startPause();
-                setIsHovered(true);
+            onPointerEnter={(e) => {
+                // Only pause auto-dismiss for mouse, not touch
+                if (e.pointerType === 'mouse') {
+                    startPause();
+                    setIsHovered(true);
+                }
             }}
-            onMouseLeave={() => {
-                endPause();
-                setIsHovered(false);
+            onPointerLeave={(e) => {
+                if (e.pointerType === 'mouse') {
+                    endPause();
+                    setIsHovered(false);
+                }
             }}
         >
             <AnimatePresence mode='popLayout'>
