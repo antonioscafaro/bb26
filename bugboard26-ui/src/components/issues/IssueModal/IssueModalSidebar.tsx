@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { Archive, ArchiveRestore, RotateCcw } from 'lucide-react';
 import type { Issue, User, UserRole, Label } from '../../../types';
 import api from '../../../api/axios';
 import { useIssues } from '../../../context/IssueContext.shared';
@@ -20,6 +21,9 @@ interface IssueModalSidebarProps {
     onClose?: () => void;
     isMobile?: boolean;
     onStatusChangeStart?: () => void;
+    onArchive?: () => void;
+    onRestore?: () => void;
+    onReopen?: () => void;
 }
 
 export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
@@ -30,7 +34,10 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
     setCurrentIssue,
     onClose,
     isMobile = false,
-    onStatusChangeStart
+    onStatusChangeStart,
+    onArchive,
+    onRestore,
+    onReopen
 }) => {
     const { state, updateIssue: updateIssueApi } = useIssues();
     const [projectMembers, setProjectMembers] = useState<User[]>([]);
@@ -341,6 +348,39 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                     </div>
                 </div>
             </div>
+
+            {/* Archive / Restore / Reopen Actions (mobile only) */}
+            {isMobile && isAdmin && (
+                <div className="border-t border-outline-variant pt-4 space-y-2">
+                    {issue.status === 'done' && onArchive && (
+                        <button
+                            onClick={onArchive}
+                            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-m3-m bg-surface border border-outline text-on-surface hover:bg-surface-variant transition-colors text-sm font-medium"
+                        >
+                            <Archive size={18} />
+                            Archivia Issue
+                        </button>
+                    )}
+                    {issue.status === 'archived' && onRestore && (
+                        <button
+                            onClick={onRestore}
+                            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-m3-m bg-surface border border-outline text-on-surface hover:bg-surface-variant transition-colors text-sm font-medium"
+                        >
+                            <ArchiveRestore size={18} />
+                            Ripristina Issue
+                        </button>
+                    )}
+                    {issue.status === 'rejected' && onReopen && (
+                        <button
+                            onClick={onReopen}
+                            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-m3-m bg-surface border border-outline text-on-surface hover:bg-surface-variant transition-colors text-sm font-medium"
+                        >
+                            <RotateCcw size={18} />
+                            Riapri Issue
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

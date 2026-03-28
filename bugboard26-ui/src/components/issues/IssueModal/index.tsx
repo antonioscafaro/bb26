@@ -136,6 +136,9 @@ export const IssueModal: React.FC<IssueModalProps> = ({
               isAdmin={isAdmin}
               isAssignee={isAssignee}
               onClose={onClose}
+              onArchive={onArchive}
+              onRestore={onRestore}
+              onReopen={onReopen}
             >
               {children}
             </IssueModalBody>

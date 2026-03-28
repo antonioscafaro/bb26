@@ -26,7 +26,7 @@ import { Toast } from '../../common/Toast';
  * Include descrizione (editabile per admin/autore), allegati, commenti e una vista "accordion" dei dettagli per il mobile.
  * @param {IssueModalBodyProps} props - Le props del componente.
  */
-export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, canEditDescription, isAdmin, isAssignee, children, onClose }: {
+export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, canEditDescription, isAdmin, isAssignee, children, onClose, onArchive, onRestore, onReopen }: {
     issue: Issue;
     currentUser: User;
     setCurrentIssue: React.Dispatch<React.SetStateAction<Issue>>;
@@ -36,6 +36,9 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, c
     isAssignee: boolean;
     children?: ReactNode;
     onClose?: () => void;
+    onArchive?: () => void;
+    onRestore?: () => void;
+    onReopen?: () => void;
 }) => {
     const [isDetailsOpen, setDetailsOpen] = useState(false);
     const { updateIssue: updateIssueApi } = useIssues();
@@ -169,6 +172,9 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, c
                                     setCurrentIssue={setCurrentIssue}
                                     isMobile
                                     onClose={onClose}
+                                    onArchive={onArchive}
+                                    onRestore={onRestore}
+                                    onReopen={onReopen}
                                 />
                             </div>
                         </motion.div>
