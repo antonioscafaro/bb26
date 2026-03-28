@@ -3,6 +3,7 @@ package com.bugboard25.service;
 import com.bugboard25.dto.AllegatoDTO;
 import com.bugboard25.entity.Allegati;
 import com.bugboard25.entity.Issue;
+import com.bugboard25.exception.BadRequestException;
 import com.bugboard25.exception.ErrorMessages;
 import com.bugboard25.exception.ResourceNotFoundException;
 import com.bugboard25.repository.AllegatiRepository;
@@ -21,10 +22,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class AllegatiService {
+
+    private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of(
+            "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"
+    );
 
 
     private final AllegatiRepository allegatiRepository;
@@ -44,6 +50,11 @@ public class AllegatiService {
     }
 
     public AllegatoDTO salvaFile(MultipartFile file, Integer idIssue) throws IOException {
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType)) {
+            throw new BadRequestException(ErrorMessages.TIPO_FILE_NON_CONSENTITO);
+        }
+
         Issue issue = issueRepository.findById(idIssue)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ISSUE_NON_TROVATA + " con id: " + idIssue));
 

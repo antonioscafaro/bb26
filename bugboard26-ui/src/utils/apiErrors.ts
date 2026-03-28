@@ -33,6 +33,7 @@ const ERROR_MESSAGE_MAP: Record<string, string> = {
   'Non hai i permessi per modificare questo utente': 'Non hai i permessi per modificare questo utente.',
   'Password non valida': 'La password inserita non è corretta.',
   "L'utente non è membro di questo progetto": 'L\'utente non fa parte di questo progetto.',
+  'Tipo di file non consentito. Sono ammesse solo immagini (JPEG, PNG, GIF, WebP, SVG).': 'Il file selezionato non è un\'immagine valida. Sono ammessi solo file JPEG, PNG, GIF, WebP e SVG.',
 };
 
 /**

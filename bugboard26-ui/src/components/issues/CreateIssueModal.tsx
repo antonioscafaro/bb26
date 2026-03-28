@@ -64,8 +64,15 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-      Toast.success("File selezionato: " + e.target.files[0].name);
+      const file = e.target.files[0];
+      if (!file.type.startsWith('image/')) {
+        Toast.error('Il file selezionato non è un\'immagine valida. Sono ammessi solo file JPEG, PNG, GIF, WebP e SVG.');
+        e.target.value = '';
+        setSelectedFile(null);
+        return;
+      }
+      setSelectedFile(file);
+      Toast.success("File selezionato: " + file.name);
     }
   };
 
