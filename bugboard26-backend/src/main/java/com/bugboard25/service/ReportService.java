@@ -43,7 +43,7 @@ public class ReportService {
         Progetti progetto = resolveProgetto(idProgetto);
 
         ReportDataHolder data = fetchIssueData(progetto, dataInizio, dataFine);
-        FilteredReportData filtered = applyUserFilter(data, emailUtente, progetto, idProgetto);
+        FilteredReportData filtered = applyUserFilter(data, emailUtente, progetto, idProgetto, dataFine);
 
         return buildReport(filtered, progetto, idProgetto);
     }
@@ -64,19 +64,19 @@ public class ReportService {
                     issueRepository.findByIdProgettoAndDataCreazioneBetween(progetto, dataInizio, dataFine),
                     issueRepository.findRisolteOArchiviateByProjectBetween(progetto, dataInizio, dataFine),
                     issueRepository.findCriticalAlertsByProject(progetto, dateCriticalLimit).stream().map(i -> new IssueDTO(i, utentiRepository)).toList(),
-                    issueRepository.countCurrentlyOpenByProject(progetto)
+                    issueRepository.countOpenDuringPeriodByProject(progetto, dataFine)
             );
         }
         return new ReportDataHolder(
                 issueRepository.findByDataCreazioneBetween(dataInizio, dataFine),
                 issueRepository.findRisolteOArchiviateBetween(dataInizio, dataFine),
                 issueRepository.findCriticalAlerts(dateCriticalLimit).stream().map(i -> new IssueDTO(i, utentiRepository)).toList(),
-                issueRepository.countCurrentlyOpen()
+                issueRepository.countOpenDuringPeriod(dataFine)
         );
     }
 
     private FilteredReportData applyUserFilter(ReportDataHolder data, String emailUtente,
-                                                Progetti progetto, int idProgetto) {
+                                                Progetti progetto, int idProgetto, Date dataFine) {
         Utenti utenteSelezionato = resolveUtente(emailUtente);
 
         if (utenteSelezionato != null) {
@@ -91,8 +91,8 @@ public class ReportService {
                     .toList();
 
             long openCount = (progetto != null)
-                    ? issueRepository.countCurrentlyOpenByProjectAndUser(progetto, u)
-                    : issueRepository.countCurrentlyOpenByUser(u);
+                    ? issueRepository.countOpenDuringPeriodByProjectAndUser(progetto, u, dataFine)
+                    : issueRepository.countOpenDuringPeriodByUser(u, dataFine);
 
             return new FilteredReportData(filteredCreate, filteredRisolte, data.allerteCritiche,
                     openCount, Collections.singletonList(utenteSelezionato));
