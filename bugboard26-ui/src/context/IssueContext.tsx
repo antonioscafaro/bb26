@@ -185,7 +185,7 @@ export const IssueProvider = ({ children }: IssueProviderProps): React.ReactElem
       }
 
       const response = await api.post('/issues', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': undefined }
       });
       const newIssue = response.data;
 
