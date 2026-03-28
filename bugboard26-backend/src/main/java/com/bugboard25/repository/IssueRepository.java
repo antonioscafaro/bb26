@@ -38,11 +38,11 @@ public interface IssueRepository extends JpaRepository<Issue, Integer> {
     @Query("SELECT i FROM Issue i WHERE i.idProgetto = :progetto AND i.statoIssue IN ('RISOLTA', 'ARCHIVIATA') AND i.dataRisoluzione BETWEEN :start AND :end")
     List<Issue> findRisolteOArchiviateByProjectBetween(@Param("progetto") Progetti progetto, @Param("start") Date start, @Param("end") Date end);
 
-    @Query("SELECT COUNT(i) FROM Issue i WHERE i.dataCreazione <= :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
-    long countOpenDuringPeriod(@Param("endDate") Date endDate);
+    @Query("SELECT COUNT(i) FROM Issue i WHERE i.dataCreazione BETWEEN :startDate AND :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
+    long countOpenDuringPeriod(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-    @Query("SELECT COUNT(i) FROM Issue i WHERE i.idProgetto = :progetto AND i.dataCreazione <= :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
-    long countOpenDuringPeriodByProject(@Param("progetto") Progetti progetto, @Param("endDate") Date endDate);
+    @Query("SELECT COUNT(i) FROM Issue i WHERE i.idProgetto = :progetto AND i.dataCreazione BETWEEN :startDate AND :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
+    long countOpenDuringPeriodByProject(@Param("progetto") Progetti progetto, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     @Query("SELECT i FROM Issue i WHERE i.prioritaIssue = 'CRITICA' AND i.statoIssue NOT IN ('RISOLTA', 'CHIUSA') AND i.dataCreazione < :dateLimit")
     List<Issue> findCriticalAlerts(@Param("dateLimit") Date dateLimit);
@@ -53,9 +53,9 @@ public interface IssueRepository extends JpaRepository<Issue, Integer> {
     long countByAssegnatario(Utenti assegnatario);
     long countByAssegnatarioAndIdProgetto(Utenti assegnatario, Progetti idProgetto);
 
-    @Query("SELECT COUNT(i) FROM Issue i WHERE (i.assegnatario = :user OR i.autore = :user) AND i.dataCreazione <= :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
-    long countOpenDuringPeriodByUser(@Param("user") Utenti user, @Param("endDate") Date endDate);
+    @Query("SELECT COUNT(i) FROM Issue i WHERE (i.assegnatario = :user OR i.autore = :user) AND i.dataCreazione BETWEEN :startDate AND :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
+    long countOpenDuringPeriodByUser(@Param("user") Utenti user, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-    @Query("SELECT COUNT(i) FROM Issue i WHERE i.idProgetto = :progetto AND (i.assegnatario = :user OR i.autore = :user) AND i.dataCreazione <= :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
-    long countOpenDuringPeriodByProjectAndUser(@Param("progetto") Progetti progetto, @Param("user") Utenti user, @Param("endDate") Date endDate);
+    @Query("SELECT COUNT(i) FROM Issue i WHERE i.idProgetto = :progetto AND (i.assegnatario = :user OR i.autore = :user) AND i.dataCreazione BETWEEN :startDate AND :endDate AND (i.dataRisoluzione IS NULL OR i.dataRisoluzione > :endDate) AND i.statoIssue NOT IN ('CHIUSA')")
+    long countOpenDuringPeriodByProjectAndUser(@Param("progetto") Progetti progetto, @Param("user") Utenti user, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }
