@@ -247,7 +247,7 @@ export const Reports = () => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <MetricCard title="Issue Create" value={reportData.totaleIssueCreate} />
                                 <MetricCard title="Issue Risolte" value={reportData.totaleIssueRisolte} />
-                                <MetricCard title="Issue Aperte" value={reportData.totaleIssueAperte} />
+                                <MetricCard title="Issue Attualmente Aperte" value={reportData.totaleIssueAperte} subtitle="Conteggio in tempo reale, varia per utente e progetto" />
                                 <MetricCard title="Tempo Medio Ris." value={reportData.tempoMedioRisoluzioneGlobale.toFixed(1)} unit="ore" />
                             </div>
 

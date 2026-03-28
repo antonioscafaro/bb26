@@ -39,8 +39,9 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
     onRestore,
     onReopen
 }) => {
-    const { state, updateIssue: updateIssueApi } = useIssues();
+    const { updateIssue: updateIssueApi } = useIssues();
     const [projectMembers, setProjectMembers] = useState<User[]>([]);
+    const [membersLoaded, setMembersLoaded] = useState(false);
 
     // Local labels state for debounced updates
     const [localLabels, setLocalLabels] = useState<Label[]>(issue.labels || []);
@@ -63,6 +64,8 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                 setProjectMembers(members);
             } catch {
                 console.error("Failed to fetch project members");
+            } finally {
+                setMembersLoaded(true);
             }
         };
         fetchMembers();
@@ -109,7 +112,7 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
 
     // Handle assignee change
     const handleAssigneeChange = (userId: string) => {
-        const newAssignee = userId ? state.users.find(u => u.id === userId) || null : null;
+        const newAssignee = userId ? projectMembers.find(u => u.id === userId) || null : null;
         const message = newAssignee
             ? `Issue assegnata a ${newAssignee.name}`
             : 'Issue non assegnata';
@@ -247,15 +250,19 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
                     <Select
                         value={issue.assignee?.id || ''}
                         onChange={(e) => handleAssigneeChange(e.target.value)}
-                        disabled={!isAdmin || issue.status === 'done'}
+                        disabled={!isAdmin || issue.status === 'done' || (membersLoaded && projectMembers.length === 0)}
                         className="py-2"
                     >
                         <option value="">Non assegnato</option>
-                        {projectMembers.length > 0 ? projectMembers.map(user => (
-                            <option key={user.id} value={user.id}>{user.name}</option>
-                        )) : state.users.map(user => (
-                            <option key={user.id} value={user.id}>{user.name}</option>
-                        ))}
+                        {!membersLoaded ? (
+                            <option value="" disabled>Caricamento...</option>
+                        ) : projectMembers.length > 0 ? (
+                            projectMembers.map(user => (
+                                <option key={user.id} value={user.id}>{user.name}</option>
+                            ))
+                        ) : (
+                            <option value="" disabled>Nessun membro nel progetto</option>
+                        )}
                     </Select>
                 </div>
             </div>
