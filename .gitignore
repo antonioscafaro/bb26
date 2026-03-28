@@ -61,3 +61,7 @@ AGENTS.md
 # Notes
 TODO.txt
 README.md.full
+
+# Documentazione - track only main.pdf
+Documentazione/*
+!Documentazione/Documentazione BugBoard26.pdf
