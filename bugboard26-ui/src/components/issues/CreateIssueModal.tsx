@@ -7,6 +7,7 @@ import { useIssues } from '../../context/IssueContext.shared';
 import { useProjects } from '../../context/ProjectContext.shared';
 import { priorityConfig, typeConfig } from '../../config/uiConstants';
 import { Toast } from '../common/Toast';
+import { getApiErrorMessage } from '../../utils/apiErrors';
 
 import { TagInput } from '../common/TagInput';
 import { Button } from '../common/Button';
@@ -114,7 +115,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
 
     } catch (error) {
       console.error("Error creating issue:", error);
-      Toast.error('Errore durante la creazione della issue');
+      Toast.error(getApiErrorMessage(error, 'Errore durante la creazione della issue'));
     } finally {
       setIsSubmitting(false);
     }

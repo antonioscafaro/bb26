@@ -6,6 +6,7 @@ import api from '../../../api/axios';
 import { useIssues } from '../../../context/IssueContext.shared';
 import { priorityConfig } from '../../../config/uiConstants';
 import { Toast } from '../../common/Toast';
+import { getApiErrorMessage } from '../../../utils/apiErrors';
 import { ISSUE_STATUS } from '../../../constants';
 import { TagInput } from '../../common/TagInput';
 import { Icons } from '../../common/Icons';
@@ -84,8 +85,8 @@ export const IssueModalSidebar: React.FC<IssueModalSidebarProps> = ({
             if (shouldClose && onClose) {
                 setTimeout(() => onClose(), 300);
             }
-        } catch {
-            Toast.error('Errore durante l\'aggiornamento');
+        } catch (error) {
+            Toast.error(getApiErrorMessage(error, 'Errore durante l\'aggiornamento'));
             setCurrentIssue(issue);
         }
     }, [issue, setCurrentIssue, updateIssueApi, onClose]);

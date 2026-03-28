@@ -10,6 +10,7 @@ import { IssueListPage } from '../components/issues/IssueListPage';
 import { StatusIssueCard } from '../components/issues/StatusIssueCard';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { Toast } from '../components/common/Toast';
+import { getApiErrorMessage } from '../utils/apiErrors';
 
 type PageContext = {
   currentUser: User;
@@ -51,8 +52,8 @@ export const RejectedIssuesPage = () => {
         });
       }, isMobile ? 300 : 400);
 
-    } catch {
-      Toast.error("Errore durante la riapertura dell'issue");
+    } catch (error) {
+      Toast.error(getApiErrorMessage(error, "Errore durante la riapertura dell'issue"));
       setExitingIssues(prev => {
         const newSet = new Set(prev);
         newSet.delete(issueId);

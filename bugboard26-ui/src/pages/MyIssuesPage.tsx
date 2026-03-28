@@ -9,6 +9,7 @@ import { useProjects } from '../context/ProjectContext.shared';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useDragAndDrop, type DropResult } from '../hooks/useDragAndDrop';
 import { Toast } from '../components/common/Toast';
+import { getApiErrorMessage } from '../utils/apiErrors';
 import { ISSUE_STATUS } from '../constants';
 import api from '../api/axios';
 import { mapBackendIssueToIssue } from '../utils/mappers';
@@ -76,7 +77,7 @@ export const MyIssuesPage = () => {
             setIssues(mappedIssues);
         } catch (error) {
             console.error("Failed to fetch my issues", error);
-            Toast.error("Errore nel caricamento delle tue issue");
+            Toast.error(getApiErrorMessage(error, 'Errore nel caricamento delle tue issue'));
         }
     }, [currentUser?.email, selectedProjectId]);
 
@@ -126,8 +127,8 @@ export const MyIssuesPage = () => {
                 });
             }, 400);
 
-        } catch {
-            Toast.error('Errore nello spostamento della issue');
+        } catch (error) {
+            Toast.error(getApiErrorMessage(error, 'Errore nello spostamento della issue'));
             setExitingIssues(prev => {
                 const newSet = new Set(prev);
                 newSet.delete(draggedId);

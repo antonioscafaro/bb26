@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { X, Archive, ArchiveRestore, RotateCcw } from 'lucide-react';
 import { useIssues } from '../../../context/IssueContext.shared';
 import { Toast } from '../../common/Toast';
+import { getApiErrorMessage } from '../../../utils/apiErrors';
 
 /**
  * Componente per l'header del modale di una Issue.
@@ -52,8 +53,8 @@ export const IssueModalHeader = ({ issue, onClose, onArchive, onRestore, onReope
                         setCurrentIssue(prev => ({ ...prev, title: currentTitle }));
                         Toast.success('Titolo aggiornato');
                     })
-                    .catch(() => {
-                        Toast.error('Errore durante l\'aggiornamento del titolo');
+                    .catch((error: unknown) => {
+                        Toast.error(getApiErrorMessage(error, 'Errore durante l\'aggiornamento del titolo'));
                         setLocalTitle(issue.title);
                     });
             }

@@ -4,6 +4,7 @@ import { useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useIssues } from '../context/IssueContext.shared';
 import { Toast } from '../components/common/Toast';
+import { getApiErrorMessage } from '../utils/apiErrors';
 import { verifyPassword } from '../utils/verifyPassword';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { PasswordConfirmModal } from '../components/common/PasswordConfirmModal';
@@ -65,8 +66,8 @@ export const UserManagement = () => {
                 await createUser(userToSave as Omit<User, 'id'> & { password?: string });
                 Toast.success(`Utente "${userToSave.name}" creato con successo!`);
             }
-        } catch {
-            Toast.error('Errore durante il salvataggio dell\'utente');
+        } catch (error) {
+            Toast.error(getApiErrorMessage(error, 'Errore durante il salvataggio dell\'utente'));
         }
     };
 
@@ -85,7 +86,7 @@ export const UserManagement = () => {
             Toast.success(`Utente "${userToDelete.name}" eliminato con successo`);
             setUserToDelete(null);
         } catch (error) {
-            Toast.error('Errore durante l\'eliminazione dell\'utente');
+            Toast.error(getApiErrorMessage(error, 'Errore durante l\'eliminazione dell\'utente'));
             throw error; // Re-throw to show error in password modal
         }
     };

@@ -13,6 +13,7 @@ import { ChartContainer } from '../components/reports/ChartContainer';
 import { Select } from '../components/common/Select';
 import api from '../api/axios';
 import { Toast } from '../components/common/Toast';
+import { getApiErrorMessage } from '../utils/apiErrors';
 
 type PageContext = { onMenuClick: () => void; };
 
@@ -124,7 +125,7 @@ export const Reports = () => {
             setReportData(response.data);
         } catch (error) {
             console.error("Failed to fetch report:", error);
-            Toast.error("Impossibile generare il report.");
+            Toast.error(getApiErrorMessage(error, 'Impossibile generare il report.'));
         } finally {
             setIsLoading(false);
         }

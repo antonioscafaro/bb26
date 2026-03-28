@@ -9,6 +9,7 @@ import { useProjects } from '../context/ProjectContext.shared';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useDragAndDrop, type DropResult } from '../hooks/useDragAndDrop';
 import { Toast } from '../components/common/Toast';
+import { getApiErrorMessage } from '../utils/apiErrors';
 import { ISSUE_STATUS } from '../constants';
 
 import { Header } from '../components/layout/Header';
@@ -97,8 +98,8 @@ export const KanbanPage = () => {
                 });
             }, 400);
 
-        } catch {
-            Toast.error('Errore nello spostamento della issue');
+        } catch (error) {
+            Toast.error(getApiErrorMessage(error, 'Errore nello spostamento della issue'));
             setExitingIssues(prev => {
                 const newSet = new Set(prev);
                 newSet.delete(draggedId);

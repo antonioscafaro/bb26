@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Users, Trash2, Plus } from 'lucide-react';
 import { Toast } from '../common/Toast';
+import { getApiErrorMessage } from '../../utils/apiErrors';
 
 import { Button } from '../common/Button';
 import { Select } from '../common/Select';
@@ -87,7 +88,7 @@ export const ProjectUsersModal: React.FC<ProjectUsersModalProps> = ({
 
         } catch (error) {
           console.error("Failed to fetch project users", error);
-          Toast.error("Errore nel caricamento degli utenti");
+          Toast.error(getApiErrorMessage(error, 'Errore nel caricamento degli utenti'));
         } finally {
           setIsLoading(false);
         }
@@ -114,7 +115,7 @@ export const ProjectUsersModal: React.FC<ProjectUsersModalProps> = ({
       Toast.success(`${userToAdd.name} aggiunto al progetto`);
     } catch (error) {
       console.error(error);
-      Toast.error('Errore nell\'aggiunta dell\'utente');
+      Toast.error(getApiErrorMessage(error, 'Errore nell\'aggiunta dell\'utente'));
     } finally {
       setIsLoading(false);
     }
@@ -131,7 +132,7 @@ export const ProjectUsersModal: React.FC<ProjectUsersModalProps> = ({
       Toast.success(`${user.name} rimosso dal progetto`);
     } catch (error) {
       console.error(error);
-      Toast.error('Errore nella rimozione dell\'utente');
+      Toast.error(getApiErrorMessage(error, 'Errore nella rimozione dell\'utente'));
     } finally {
       setIsLoading(false);
     }

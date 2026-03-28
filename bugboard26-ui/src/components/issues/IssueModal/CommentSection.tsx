@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { Comment as CommentType, User, UserRole } from '../../../types';
 import { useIssues } from '../../../context/IssueContext.shared';
 import { Toast } from '../../common/Toast';
+import { getApiErrorMessage } from '../../../utils/apiErrors';
 import { Button } from '../../common/Button';
 import api from '../../../api/axios';
 
@@ -178,8 +179,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             setNewComment('');
             Toast.success('Commento aggiunto con successo!');
 
-        } catch {
-            Toast.error('Errore durante l\'invio del commento');
+        } catch (error) {
+            Toast.error(getApiErrorMessage(error, 'Errore durante l\'invio del commento'));
         } finally {
             setIsSubmitting(false);
         }

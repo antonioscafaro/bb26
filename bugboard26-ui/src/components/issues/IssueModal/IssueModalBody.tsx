@@ -8,6 +8,7 @@ import { ProtectedImage } from '../../common/ProtectedImage';
 import api from '../../../api/axios';
 import { useIssues } from '../../../context/IssueContext.shared';
 import { Toast } from '../../common/Toast';
+import { getApiErrorMessage } from '../../../utils/apiErrors';
 
 /**
  * @typedef {Object} IssueModalBodyProps
@@ -72,8 +73,8 @@ export const IssueModalBody = ({ issue, currentUser, setCurrentIssue, canEdit, c
                         setCurrentIssue(prev => ({ ...prev, description: currentDesc }));
                         Toast.success('Descrizione aggiornata');
                     })
-                    .catch(() => {
-                        Toast.error('Errore durante l\'aggiornamento della descrizione');
+                    .catch((error: unknown) => {
+                        Toast.error(getApiErrorMessage(error, 'Errore durante l\'aggiornamento della descrizione'));
                         setLocalDescription(issue.description);
                     });
             }

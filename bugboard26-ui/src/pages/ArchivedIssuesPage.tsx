@@ -6,6 +6,7 @@ import { useIssues } from '../context/IssueContext.shared';
 import { useProjects } from '../context/ProjectContext.shared';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { Toast } from '../components/common/Toast';
+import { getApiErrorMessage } from '../utils/apiErrors';
 import type { User } from '../types';
 import { ISSUE_STATUS, USER_ROLE } from '../constants';
 
@@ -57,8 +58,8 @@ export const ArchivedIssuesPage = () => {
         });
       }, isMobile ? 300 : 400);
 
-    } catch {
-      Toast.error('Errore durante il ripristino della issue');
+    } catch (error) {
+      Toast.error(getApiErrorMessage(error, 'Errore durante il ripristino della issue'));
       setExitingIssues(prev => {
         const newSet = new Set(prev);
         newSet.delete(issueId);

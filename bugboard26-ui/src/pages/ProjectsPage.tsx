@@ -10,6 +10,7 @@ import { Icons } from '../components/common/Icons';
 import { ProjectFormModal } from '../components/projects/ProjectFormModal';
 import { PasswordConfirmModal } from '../components/common/PasswordConfirmModal';
 import { Toast } from '../components/common/Toast';
+import { getApiErrorMessage } from '../utils/apiErrors';
 import { verifyPassword } from '../utils/verifyPassword';
 import type { Project } from '../types';
 import { ProjectUsersModal } from '../components/projects/ProjectUsersModal';
@@ -106,8 +107,8 @@ export const ProjectsPage = () => {
                 Toast.success('Progetto creato!');
             }
             setFormOpen(false);
-        } catch {
-            Toast.error('Errore nel salvataggio del progetto.');
+        } catch (error) {
+            Toast.error(getApiErrorMessage(error, 'Errore nel salvataggio del progetto.'));
         }
     };
 
@@ -119,7 +120,7 @@ export const ProjectsPage = () => {
             Toast.success('Progetto eliminato!');
             setDeleteConfirmOpen(false);
         } catch (error) {
-            Toast.error('Errore nell\'eliminazione del progetto.');
+            Toast.error(getApiErrorMessage(error, 'Errore nell\'eliminazione del progetto.'));
             throw error;
         }
     };
