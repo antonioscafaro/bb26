@@ -40,47 +40,6 @@ BugBoard26/
 | **Grafici** | Recharts |
 | **Notifiche real-time** | Server-Sent Events (SSE) |
 
-## Requisiti
-
-- **Docker** e **Docker Compose** installati
-- Oppure per lo sviluppo locale:
-  - Java 17+
-  - Node.js 18+
-  - PostgreSQL 15+
-
-## Avvio rapido con Docker
-
-```bash
-# Clona il repository
-git clone https://github.com/antonioscafaro/bb26.git
-cd bb26
-
-# Avvia tutti i servizi
-docker compose up --build
-```
-
-L'applicazione sarà disponibile su:
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8080
-- **Database**: localhost:5432
-
-## Sviluppo locale
-
-### Backend
-
-```bash
-cd bugboard26-backend
-./mvnw spring-boot:run
-```
-
-### Frontend
-
-```bash
-cd bugboard26-ui
-npm install
-npm run dev
-```
-
 ## Struttura del Database
 
 Il database PostgreSQL include le seguenti entità principali:
